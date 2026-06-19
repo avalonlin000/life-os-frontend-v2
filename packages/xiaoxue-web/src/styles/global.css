@@ -1,0 +1,500 @@
+/* 配色 D：暖夜 · 深棕+奶油 - 与结衣统一 */
+
+:root {
+  --bg: #1a1510;
+  --bg-card: #1f1a14;
+  --bg-input: #252018;
+  
+  --text: #e8ddd0;
+  --text-muted: #8a7a6a;
+  
+  --accent: #e8c890;
+  --accent-gradient: linear-gradient(135deg, #c48a5a, #e8c890);
+  
+  --success: #7ab87a;
+  --warning: #e8a849;
+  --danger: #c45a5a;
+  
+  --border: #2a2218;
+  --border-focus: #c48a5a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* 布局 */
+.page-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.page-shell-sidebar {
+  width: 200px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+.page-shell-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-shell-content {
+  flex: 1;
+  padding: 24px;
+}
+
+/* 侧边导航 */
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.side-nav-list {
+  list-style: none;
+}
+
+.side-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+
+.side-nav-item:hover {
+  background: var(--bg-input);
+  color: var(--text);
+}
+
+.side-nav-item.active {
+  background: var(--bg-input);
+  color: var(--accent);
+  border-left: 3px solid var(--accent);
+}
+
+.side-nav-icon {
+  font-size: 18px;
+}
+
+.side-nav-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* 模块区块 */
+.module-section {
+  margin-bottom: 24px;
+}
+
+.module-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.module-section-title {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* 游戏筛选 */
+.game-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.game-filter-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-filter-btn:hover {
+  border-color: var(--border-focus);
+  color: var(--text);
+}
+
+.game-filter-btn.active {
+  background: rgba(232, 200, 144, 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* 占位卡片 */
+.placeholder-card {
+  background: var(--bg-card);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.placeholder-card p {
+  margin-bottom: 8px;
+}
+
+.placeholder-card .hint {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* 按钮 */
+.btn-placeholder {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 20px;
+  color: var(--accent);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-placeholder:hover {
+  border-color: var(--accent);
+  background: rgba(232, 200, 144, 0.05);
+}
+
+/* 交易卡片网格 */
+.trade-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* 队伍三维 */
+.team3d-page,
+.tk-page,
+.analyst-page {
+  max-width: 1200px;
+}
+
+.team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.team-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 72px;
+}
+
+.team-chip:hover {
+  border-color: var(--border-focus);
+}
+
+.team-chip.active {
+  background: rgba(232, 200, 144, 0.1);
+  border-color: var(--accent);
+}
+
+.team-chip-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.team-chip-region {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.team3d-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.team3d-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.team3d-header h3 {
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.region-tag,
+.season-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.team3d-dims {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.dim-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.dim-name {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.dim-value {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.team3d-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meta-block {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.meta-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.meta-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* TK 搜索 */
+.tk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tk-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.tk-concept {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.tk-meta {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.tk-meta span {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+.tk-content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+/* 分析师报告 */
+.analyst-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.analyst-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.analyst-card:hover {
+  border-color: var(--border-focus);
+}
+
+.analyst-card.active {
+  background: rgba(232, 200, 144, 0.1);
+  border-color: var(--accent);
+}
+
+.analyst-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.analyst-team {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.analyst-name {
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.analyst-summary {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.analyst-detail {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.analyst-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.analyst-detail-header h3 {
+  font-size: 18px;
+  color: var(--accent);
+}
+
+.analyst-section {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.analyst-section:last-child {
+  border-bottom: none;
+}
+
+.analyst-section-title {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.analyst-section-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.analyst-section-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.analyst-section-list li {
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-input);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.analyst-generated {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+.loading,
+.error-state {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.error-state {
+  color: var(--danger);
+}

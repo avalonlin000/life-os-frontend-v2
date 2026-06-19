@@ -1,0 +1,16 @@
+{
+  "name": "life-os-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev:xiaoxue": "pnpm --filter xiaoxue-web dev",
+    "dev:jieyi": "pnpm --filter jieyi-web dev",
+    "dev:all": "pnpm run --parallel dev:xiaoxue dev:jieyi",
+    "build:xiaoxue": "pnpm --filter xiaoxue-web build",
+    "build:jieyi": "pnpm --filter jieyi-web build",
+    "build:all": "pnpm run --parallel build:xiaoxue build:jieyi"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
