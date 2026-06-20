@@ -11,16 +11,19 @@ import type { TKOut } from '@shared/types';
 export default function TKSearchPage() {
   const [results, setResults] = useState<TKOut[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
 
   const handleSearch = async (keyword: string) => {
     setLoading(true);
     setSearched(true);
+    setError('');
     try {
       const items = await xiaoxueService.tk.search(keyword);
       setResults(items);
     } catch {
       setResults([]);
+      setError('搜索失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -38,6 +41,7 @@ export default function TKSearchPage() {
       <ModuleSection title="📊 搜索结果">
         <ContentSlot empty={<div className="empty-state">{searched ? '未找到相关 TK 知识' : '输入关键词搜索 TK 知识图谱'}</div>}>
           {loading && <div className="loading">搜索中...</div>}
+          {error && <div className="error-state">{error}</div>}
           <div className="tk-list">
             {results.map((item) => (
               <div key={item.id} className="tk-card">

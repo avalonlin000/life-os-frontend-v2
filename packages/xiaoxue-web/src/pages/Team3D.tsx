@@ -11,11 +11,17 @@ export default function Team3DPage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [data, setData] = useState<Team3D | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [loadingList, setLoadingList] = useState(false);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [errorList, setErrorList] = useState('');
+  const [errorDetail, setErrorDetail] = useState('');
 
   useEffect(() => {
-    xiaoxueService.teams.list().then(setTeams).catch(() => setTeams([]));
+    setLoadingList(true);
+    xiaoxueService.teams.list()
+      .then(setTeams)
+      .catch(() => { setTeams([]); setErrorList('加载队伍列表失败'); })
+      .finally(() => setLoadingList(false));
   }, []);
 
   useEffect(() => {
@@ -23,19 +29,21 @@ export default function Team3DPage() {
       setData(null);
       return;
     }
-    setLoading(true);
-    setError('');
+    setLoadingDetail(true);
+    setErrorDetail('');
     xiaoxueService.teams
       .get3D(selected)
       .then(setData)
-      .catch((e: Error) => setError(e.message || '加载失败'))
-      .finally(() => setLoading(false));
+      .catch((e: Error) => setErrorDetail(e.message || '加载失败'))
+      .finally(() => setLoadingDetail(false));
   }, [selected]);
 
   return (
     <div className="team3d-page">
       <ModuleSection title="🏆 队伍列表">
         <ContentSlot empty={<div className="empty-state">暂无队伍数据</div>}>
+          {loadingList && <div className="loading">加载中...</div>}
+          {errorList && <div className="error-state">{errorList}</div>}
           <div className="team-grid">
             {teams.map((team) => (
               <button
@@ -53,8 +61,8 @@ export default function Team3DPage() {
 
       <ModuleSection title="📊 三维数据">
         <ContentSlot empty={<div className="empty-state">选择一支队伍查看三维</div>}>
-          {loading && <div className="loading">加载中...</div>}
-          {error && <div className="error-state">{error}</div>}
+          {loadingDetail && <div className="loading">加载中...</div>}
+          {errorDetail && <div className="error-state">{errorDetail}</div>}
           {data && (
             <div className="team3d-detail">
               <div className="team3d-header">

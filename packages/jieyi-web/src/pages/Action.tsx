@@ -15,6 +15,7 @@ export default function Action() {
   const [items, setItems] = useState<Schedule[]>([]);
   const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [suggesting, setSuggesting] = useState(false);
   const toast = useToast();
 
@@ -22,6 +23,7 @@ export default function Action() {
 
   const fetchAll = async () => {
     setLoading(true);
+    setError('');
     try {
       const [scheduleData, planRes] = await Promise.all([
         jieyiService.schedule.list(today),
@@ -29,6 +31,8 @@ export default function Action() {
       ]);
       setItems(scheduleData ?? []);
       setDailyPlan(planRes);
+    } catch {
+      setError('加载失败，请刷新重试');
     } finally {
       setLoading(false);
     }
@@ -68,6 +72,7 @@ export default function Action() {
   const aiItems = items.filter(i => i.source === 'ai_suggest');
 
   if (loading) return <div className="placeholder-card">加载中...</div>;
+  if (error) return <div className="error-state">{error}</div>;
 
   return (
     <div className="space-y-6">
@@ -189,6 +194,11 @@ export default function Action() {
             ))}
           </div>
         )}
+
+        {(!dailyPlan?.doTasks || dailyPlan.doTasks.length === 0) && userItems.length === 0 && (
+          <div className="empty-state">还没有今日行动项，从「知」页拆解知识或用下方收集箱添加</div>
+        )}
+
 
         {/* 收集箱 */}
         <div style={{ marginTop: 12 }}>

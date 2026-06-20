@@ -25,6 +25,7 @@ export default function KnowledgePage() {
     learn?: { pillar: string; title: string }[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [splitting, setSplitting] = useState<number | null>(null);
   const toast = useToast();
 
@@ -32,6 +33,7 @@ export default function KnowledgePage() {
 
   const load = async () => {
     setLoading(true);
+    setError('');
     try {
       const [k, w, moodData, planRes] = await Promise.all([
         jieyiService.knowledge.list(),
@@ -45,6 +47,7 @@ export default function KnowledgePage() {
       setDailyPlan(planRes);
     } catch (e) {
       console.error('加载知页失败', e);
+      setError('加载失败，请刷新重试');
     } finally {
       setLoading(false);
     }
@@ -80,6 +83,7 @@ export default function KnowledgePage() {
   };
 
   if (loading) return <div className="placeholder-card">加载中...</div>;
+  if (error) return <div className="error-state">{error}</div>;
 
   return (
     <div className="knowledge-page">

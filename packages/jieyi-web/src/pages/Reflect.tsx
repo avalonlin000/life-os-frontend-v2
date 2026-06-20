@@ -23,6 +23,8 @@ export default function Reflect() {
   const [moodTags, setMoodTags] = useState<string[]>([]);
   const [dailyReview, setDailyReview] = useState<DailyReview | null>(null);
   const [reviewLoading, setReviewLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [pageError, setPageError] = useState('');
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -47,9 +49,11 @@ export default function Reflect() {
   };
 
   useEffect(() => {
-    fetchMood();
-    fetchActivities();
-    fetchDailyReview();
+    setPageLoading(true);
+    setPageError('');
+    Promise.all([fetchMood(), fetchActivities(), fetchDailyReview()])
+      .catch(() => setPageError('加载失败，请刷新重试'))
+      .finally(() => setPageLoading(false));
   }, []);
 
   const fetchDailyReview = async () => {
@@ -106,6 +110,9 @@ export default function Reflect() {
           } as Mood)
     );
   };
+
+  if (pageLoading) return <div className="placeholder-card">加载中...</div>;
+  if (pageError) return <div className="error-state">{pageError}</div>;
 
   return (
     <div className="space-y-6">
@@ -167,7 +174,7 @@ export default function Reflect() {
         />
       </section>
 
-      {activities.length > 0 && (
+      {activities.length > 0 ? (
         <section>
           <h2 className="section-title">今日活动</h2>
           <div className="space-y-2">
@@ -186,6 +193,11 @@ export default function Reflect() {
               </div>
             ))}
           </div>
+        </section>
+      ) : (
+        <section>
+          <h2 className="section-title">今日活动</h2>
+          <div className="empty-state">今天还没有活动记录，用上方计时器开始记录</div>
         </section>
       )}
 

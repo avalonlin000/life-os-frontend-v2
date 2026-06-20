@@ -70,6 +70,22 @@
   font-size: 14px;
 }
 
+/* 加载状态 */
+.loading {
+  text-align: center;
+  padding: 24px;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+/* 错误状态 */
+.error-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
 /* 占位卡片 */
 .placeholder-card {
   background: var(--bg-card);

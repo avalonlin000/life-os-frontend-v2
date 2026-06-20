@@ -12,13 +12,17 @@ const GAME_OPTIONS = [
 export default function Trades() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [game, setGame] = useState('lol');
 
   const fetchTrades = async () => {
     setLoading(true);
+    setError('');
     try {
       const data = await xiaoxueService.trades.list();
       setTrades(data ?? []);
+    } catch {
+      setError('加载交易记录失败');
     } finally {
       setLoading(false);
     }
@@ -80,6 +84,8 @@ export default function Trades() {
 
       {loading && trades.length === 0 ? (
         <div className="placeholder-card">加载中...</div>
+      ) : error ? (
+        <div className="error-state">{error}</div>
       ) : trades.length === 0 ? (
         <div className="placeholder-card">
           <p>还没有交易记录</p>

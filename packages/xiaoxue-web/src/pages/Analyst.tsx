@@ -13,13 +13,15 @@ export default function AnalystPage() {
   const [detail, setDetail] = useState<AnalystReportDetailOut | null>(null);
   const [loadingList, setLoadingList] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [errorList, setErrorList] = useState('');
+  const [errorDetail, setErrorDetail] = useState('');
 
   useEffect(() => {
     setLoadingList(true);
     xiaoxueService.analyst
       .list()
       .then(setReports)
-      .catch(() => setReports([]))
+      .catch(() => { setReports([]); setErrorList('加载报告列表失败'); })
       .finally(() => setLoadingList(false));
   }, []);
 
@@ -29,10 +31,11 @@ export default function AnalystPage() {
       return;
     }
     setLoadingDetail(true);
+    setErrorDetail('');
     xiaoxueService.analyst
       .get(selected)
       .then(setDetail)
-      .catch(() => setDetail(null))
+      .catch(() => { setDetail(null); setErrorDetail('加载报告详情失败'); })
       .finally(() => setLoadingDetail(false));
   }, [selected]);
 
@@ -41,6 +44,7 @@ export default function AnalystPage() {
       <ModuleSection title="📈 分析师报告">
         <ContentSlot empty={<div className="empty-state">暂无可分析的队伍</div>}>
           {loadingList && <div className="loading">加载中...</div>}
+          {errorList && <div className="error-state">{errorList}</div>}
           <div className="analyst-list">
             {reports.map((report) => (
               <button
@@ -64,6 +68,7 @@ export default function AnalystPage() {
         <ModuleSection title="📋 报告详情">
           <ContentSlot empty={<div className="empty-state">选择一支队伍查看报告</div>}>
             {loadingDetail && <div className="loading">生成中...</div>}
+            {errorDetail && <div className="error-state">{errorDetail}</div>}
             {detail && (
               <div className="analyst-detail">
                 <div className="analyst-detail-header">
