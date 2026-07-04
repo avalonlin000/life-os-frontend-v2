@@ -17,16 +17,30 @@
 
 ## 访问入口
 
+公网 IP：`42.193.177.127`
+
 | 系统 | 用途 | 地址 |
 |---|---|---|
-| 结衣前端 | 日常知/行/思/道，移动端优先 | `http://服务器IP:3001/` |
-| 结衣知页 | 知识/学习输入 | `http://服务器IP:3001/know` |
-| 结衣行页 | 今日执行 | `http://服务器IP:3001/act` |
-| 结衣思页 | 复盘/情绪 | `http://服务器IP:3001/reflect` |
-| 结衣道页 | 原则/长期方向 | `http://服务器IP:3001/way` |
-| 结衣道页兼容入口 | `/dao` 历史称呼/兼容 alias，前端重定向到 `/way`；底部导航仍使用 `/way` | `http://服务器IP:3001/dao` |
-| 小雪稳定入口 | 电竞/交易桌面工作台 | `http://服务器IP:8880/` |
-| 小雪开发入口 | Vite 开发调试 | `http://服务器IP:5173/` |
+| 结衣公网入口 | 日常知/行/思/道，Nginx 80 反代到 3001 | `http://42.193.177.127/` |
+| 结衣知页 | 知识/学习输入 | `http://42.193.177.127/know` |
+| 结衣行页 | 今日执行 | `http://42.193.177.127/act` |
+| 结衣思页 | 复盘/情绪 | `http://42.193.177.127/reflect` |
+| 结衣道页 | 原则/长期方向 | `http://42.193.177.127/way` |
+| 结衣道页兼容入口 | `/dao` 历史称呼/兼容 alias，前端重定向到 `/way`；底部导航仍使用 `/way` | `http://42.193.177.127/dao` |
+| 结衣端口直连 | 3001 直连 | `http://42.193.177.127:3001/` |
+| 小雪稳定入口 | 电竞/盘口桌面工作台 | `http://42.193.177.127:8880/` |
+| 小雪开发入口 | Vite 开发调试 | `http://42.193.177.127:5173/` |
+
+## 服务与仓库
+
+| 系统 | 服务 / 仓库 | 当前状态 |
+|---|---|---|
+| 结衣 Web | `jieyi-web.service` | user service，3001，active running |
+| 小雪稳定服务 | `xiaoxue-workbench-api.service` | user service，8880，active running |
+| 小雪 Vite 服务 | `xiaoxue-workbench-vite.service` | user service，5173，active running |
+| Nginx | `nginx.service` | system service，80 反代到 `127.0.0.1:3001` |
+| Life OS GitHub | `https://github.com/avalonlin000/life-os-frontend-v2` | main 已 push |
+| 小雪 GitHub | `https://github.com/avalonlin000/xiaoxue-web` | main 已 push |
 
 ## 代码位置
 

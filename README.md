@@ -25,45 +25,53 @@ Life OS 是钧钧个人项目体系的内部工程母项目，不再作为用户
 
 ## 当前前端入口
 
+公网 IP：`42.193.177.127`
+
 ### 结衣前端：移动端优先
 
 - 位置：`/home/ubuntu/life-os-frontend-v2/packages/jieyi-web/`
+- GitHub：`https://github.com/avalonlin000/life-os-frontend-v2`
+- 服务：`jieyi-web.service`
 - 端口：`3001`
+- Nginx：80 默认入口反代到 `127.0.0.1:3001`
 - 用途：手机/窄屏日常使用，围绕知、行、思、道四页。
 - 路由：
   - `/know`：知识管理、学习输入、知识拆行动
   - `/act`：今日行动、执行队列、完成/重开
   - `/reflect`：活动记录、统一复盘、日终整理
   - `/way`：原则、长期方向、智慧卡片
+  - `/dao`：历史兼容入口，前端重定向到 `/way`
 
-访问：
+公网访问：
 
-```text
-http://服务器IP:3001/
-http://服务器IP:3001/know
-http://服务器IP:3001/act
-http://服务器IP:3001/reflect
-http://服务器IP:3001/way
-```
+http://42.193.177.127/
+http://42.193.177.127/know
+http://42.193.177.127/act
+http://42.193.177.127/reflect
+http://42.193.177.127/way
+http://42.193.177.127/dao
+
+端口直连：
+
+http://42.193.177.127:3001/
 
 ### 小雪工作台：桌面端优先
 
 - 当前主项目位置：`/home/ubuntu/xiaoxue-web/`
+- GitHub：`https://github.com/avalonlin000/xiaoxue-web`
+- 稳定服务：`xiaoxue-workbench-api.service`
+- 开发服务：`xiaoxue-workbench-vite.service`
 - 稳定入口：`8880`
 - 开发入口：`5173`
-- 用途：电脑大屏电竞/交易工作台，选队伍、看三维、搜 TK、读画像、看交易记录。
+- 用途：电脑大屏电竞/盘口工作台，选队伍、看三维、搜 TK、读画像、看盘口记录。
 
 推荐访问：
 
-```text
-http://服务器IP:8880/
-```
+http://42.193.177.127:8880/
 
 开发调试访问：
 
-```text
-http://服务器IP:5173/
-```
+http://42.193.177.127:5173/
 
 注意：`/home/ubuntu/life-os-frontend-v2/packages/xiaoxue-web/` 是 workspace 里的 React 包，不是当前小雪主工作台。当前钧钧实际使用的小雪工作台在 `/home/ubuntu/xiaoxue-web/`。
 

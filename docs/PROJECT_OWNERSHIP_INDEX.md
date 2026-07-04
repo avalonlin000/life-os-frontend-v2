@@ -137,6 +137,31 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 
 不允许把小雪 TS 表、结衣复盘 UI 等具体产品细节塞进共享层正文；只能放链接。
 
+## 3.1 当前部署与外网入口
+
+| 项 | 当前值 |
+|---|---|
+| 公网 IP | `42.193.177.127` |
+| Life OS GitHub | `https://github.com/avalonlin000/life-os-frontend-v2` |
+| 小雪 GitHub | `https://github.com/avalonlin000/xiaoxue-web` |
+| Nginx | `nginx.service`，80 默认入口反代到 `127.0.0.1:3001` |
+| 结衣 Web | `jieyi-web.service`，端口 `3001` |
+| 小雪稳定服务 | `xiaoxue-workbench-api.service`，端口 `8880` |
+| 小雪开发服务 | `xiaoxue-workbench-vite.service`，端口 `5173` |
+
+公网入口：
+
+http://42.193.177.127/
+http://42.193.177.127/know
+http://42.193.177.127/act
+http://42.193.177.127/reflect
+http://42.193.177.127/way
+http://42.193.177.127/dao
+http://42.193.177.127:8880/
+http://42.193.177.127:5173/
+
+最近一次完整部署复验：`.hermes/deliveries/2026-07-04-1945-部署复验收口.md`。
+
 ## 4. 记忆 / MD 文档 / Skill / Delivery 的分类规则
 
 | 类型 | 放什么 | 不放什么 | 例子 |
