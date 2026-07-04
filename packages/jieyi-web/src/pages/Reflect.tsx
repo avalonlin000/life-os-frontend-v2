@@ -49,6 +49,8 @@ export default function Reflect() {
   const [reviewError, setReviewError] = useState('');
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState('');
+  const [sampleDetailsOpen, setSampleDetailsOpen] = useState(false);
+  const [sampleFillNotice, setSampleFillNotice] = useState('');
   const { showToast } = useToast();
 
   const currentDate = today();
@@ -152,6 +154,11 @@ export default function Reflect() {
     } finally {
       setReviewLoading(false);
     }
+  };
+
+  const fillReflectionSample = () => {
+    setReflectionText(reflectionSample.reflectionText || reflectionSample.items.join('\n'));
+    setSampleFillNotice('已填入复盘输入框；这只是填入文本，不自动保存到后端。');
   };
 
   const rhythmRisks = useMemo(
@@ -298,7 +305,7 @@ export default function Reflect() {
         <div className="content-sample-intro">
           <span className="status-pill">内容样例 / 非后端数据</span>
           <h2>{reflectionSample.title}</h2>
-          <p>{reflectionSample.summary}</p>
+          <p>{reflectionSample.summary} 点击按钮只会填入复盘输入框，不自动保存到后端。</p>
         </div>
         <div className="content-sample-list single">
           <article className="content-sample-card">
@@ -306,9 +313,22 @@ export default function Reflect() {
               <strong>可参考的一段式复盘</strong>
               <small>{reflectionSample.source}</small>
             </div>
+            {reflectionSample.reflectionText && <p className="content-sample-preview">{reflectionSample.reflectionText}</p>}
             <ul>
               {reflectionSample.items.map((item) => <li key={item}>{item}</li>)}
             </ul>
+            <div className="content-sample-actions">
+              <button type="button" className="btn-primary" onClick={fillReflectionSample}>填入复盘</button>
+              <button type="button" className="btn-secondary sample-toggle-button" onClick={() => setSampleDetailsOpen((open) => !open)}>
+                {sampleDetailsOpen ? '收起详情' : '展开详情'}
+              </button>
+            </div>
+            {sampleFillNotice && <div className="inline-feedback">{sampleFillNotice}</div>}
+            {sampleDetailsOpen && reflectionSample.details?.length ? (
+              <div className="content-sample-details">
+                {reflectionSample.details.map((detail) => <p key={detail}>{detail}</p>)}
+              </div>
+            ) : null}
           </article>
         </div>
       </section>

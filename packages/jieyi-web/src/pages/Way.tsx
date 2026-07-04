@@ -41,6 +41,7 @@ export default function Way() {
   const [message, setMessage] = useState('原则来自知页学习判断、行页动作练习和思页复盘沉淀。');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sampleDetailsOpen, setSampleDetailsOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -110,6 +111,16 @@ export default function Way() {
             <ul>
               {wayPrincipleCandidateSample.items.map((item) => <li key={item}>{item}</li>)}
             </ul>
+            <div className="content-sample-actions">
+              <button type="button" className="btn-secondary sample-toggle-button" onClick={() => setSampleDetailsOpen((open) => !open)}>
+                {sampleDetailsOpen ? '收起详情' : '展开详情'}
+              </button>
+            </div>
+            {sampleDetailsOpen && wayPrincipleCandidateSample.details?.length ? (
+              <div className="content-sample-details">
+                {wayPrincipleCandidateSample.details.map((detail) => <p key={detail}>{detail}</p>)}
+              </div>
+            ) : null}
           </article>
         </div>
       </section>
