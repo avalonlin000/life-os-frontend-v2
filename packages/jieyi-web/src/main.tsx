@@ -6,9 +6,11 @@ import AppRouter from './AppRouter';
 import '@shared/styles/components.css';
 import './styles/global.css';
 
+const basename = window.location.pathname.startsWith('/jieyi') ? '/jieyi' : undefined;
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <ToastProvider>
         <AppRouter />
       </ToastProvider>

@@ -1,7 +1,7 @@
 // API 基础客户端
-// 后端地址，毛坯阶段 hardcode，后续可改为配置
+// 同域部署时走 /api；开发/静态端口预览时可用 VITE_API_BASE 固定指向后端。
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
 async function request<T>(
   path: string,

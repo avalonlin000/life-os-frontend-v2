@@ -1,18 +1,18 @@
 /* 共享控件样式 — 结衣/小雪两端通用 */
 
 :root {
-  --bg: #1a1510;
-  --bg-card: #1f1a14;
-  --bg-input: #252018;
-  --text: #e8ddd0;
-  --text-muted: #8a7a6a;
-  --accent: #e8c890;
-  --accent-gradient: linear-gradient(135deg, #c48a5a, #e8c890);
-  --success: #7ab87a;
-  --warning: #e8a849;
-  --danger: #c45a5a;
-  --border: #2a2218;
-  --border-focus: #c48a5a;
+  --bg: #080808;
+  --bg-card: #0f0f0f;
+  --bg-input: #151515;
+  --text: #e0e0e0;
+  --text-muted: #888;
+  --accent: #f7e600;
+  --accent-gradient: linear-gradient(135deg, #f7e600, #ffe600);
+  --success: #00ff41;
+  --warning: #f59e0b;
+  --danger: #ff003c;
+  --border: #1a1a1a;
+  --border-focus: #f7e600;
 }
 
 /* Toast */
@@ -49,6 +49,7 @@
 
 .toast-info {
   background: var(--accent);
+  color: #fff;
 }
 
 @keyframes toast-in {
@@ -119,7 +120,7 @@
 
 .btn-placeholder:hover {
   border-color: var(--accent);
-  background: rgba(232, 200, 144, 0.05);
+  background: rgba(247, 230, 0, 0.05);
 }
 
 .btn-save,
@@ -283,7 +284,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(232, 200, 144, 0.12);
+  background: rgba(247, 230, 0, 0.12);
   border: 1px solid var(--border-focus);
   border-radius: 9999px;
   padding: 4px 10px;
@@ -414,7 +415,7 @@
 .star-fill {
   overflow: hidden;
   white-space: nowrap;
-  color: #e8c890;
+  color: var(--accent);
 }
 
 .star-rating-value {
@@ -469,7 +470,7 @@
 
 .quick-input-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(196, 138, 90, 0.4);
+  box-shadow: 0 4px 12px rgba(247, 230, 0, 0.4);
 }
 
 /* ActivityTimer */
@@ -1034,7 +1035,7 @@
   user-select: none;
 }
 
-/* 知页：个人记忆网格 */
+/* 知页：认知资产网格 */
 .memory-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1127,6 +1128,238 @@
   gap: 8px;
 }
 
+/* 知页：深度学习 MVP */
+.deep-learning-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.deep-learning-hero,
+.deep-learning-card,
+.deep-learning-acceptance {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.deep-learning-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.deep-learning-kicker,
+.deep-learning-card-header em,
+.deep-material-meta,
+.five-card small,
+.deep-learning-acceptance p {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.deep-learning-hero h2 {
+  margin: 4px 0 8px;
+  font-size: 20px;
+  color: var(--text);
+}
+
+.deep-learning-hero p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.deep-learning-status {
+  align-self: flex-start;
+  border-radius: 9999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.deep-learning-status.fallback {
+  background: rgba(232, 168, 73, 0.12);
+  border: 1px solid rgba(232, 168, 73, 0.28);
+  color: var(--warning);
+}
+
+.deep-learning-status.live {
+  background: rgba(122, 184, 122, 0.12);
+  border: 1px solid rgba(122, 184, 122, 0.28);
+  color: var(--success);
+}
+
+.deep-learning-entry,
+.deep-learning-acceptance {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.deep-learning-topic-input,
+.deep-learning-scope-select,
+.deep-learning-acceptance select,
+.five-card textarea {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.deep-learning-topic-input {
+  flex: 1;
+  padding: 12px 14px;
+}
+
+.deep-learning-scope-select,
+.deep-learning-acceptance select {
+  padding: 11px 12px;
+}
+
+.deep-learning-topic-input:focus,
+.deep-learning-scope-select:focus,
+.deep-learning-acceptance select:focus,
+.five-card textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.deep-learning-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 12px;
+}
+
+.deep-learning-card.wide {
+  grid-row: span 2;
+}
+
+.deep-learning-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.deep-learning-card-header span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.deep-material-list,
+.deep-question-list,
+.learning-pack-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deep-material-item,
+.deep-question-card,
+.five-card,
+.learning-pack-columns div {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.deep-material-item h3 {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.deep-material-item p,
+.learning-pack-columns p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.deep-material-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.deep-material-role {
+  color: var(--accent);
+}
+
+.deep-question-card {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.deep-question-card strong {
+  color: var(--accent);
+}
+
+.deep-question-card.active {
+  border-color: var(--accent);
+  background: rgba(232, 200, 144, 0.08);
+}
+
+.learning-pack-columns b,
+.five-card b,
+.deep-learning-acceptance b {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.five-card-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.five-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.five-card-index {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(232, 200, 144, 0.12);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.five-card textarea {
+  min-height: 92px;
+  resize: vertical;
+  padding: 10px;
+}
+
+.deep-learning-acceptance {
+  justify-content: space-between;
+}
+
+.deep-learning-acceptance div {
+  flex: 1;
+}
+
+.deep-learning-acceptance p {
+  margin: 4px 0 0;
+}
+
 .daily-learn-chip {
   display: flex;
   align-items: center;
@@ -1211,6 +1444,18 @@
     flex-direction: column;
   }
 
+  .deep-learning-hero,
+  .deep-learning-entry,
+  .deep-learning-acceptance {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .deep-learning-grid,
+  .five-card-grid {
+    grid-template-columns: 1fr;
+  }
+
   .quick-input-btn {
     width: 100%;
   }
@@ -1233,4 +1478,127 @@
     font-size: 26px;
     line-height: 26px;
   }
+}
+
+/* ═══ v1.0 新增：心情快照 + 趋势 + 弹窗 ═══ */
+
+.mood-snapshot {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 16px 8px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+.mood-snapshot:active {
+  transform: scale(0.98);
+}
+
+.mood-popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 4px;
+  z-index: 100;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.daily-quote {
+  background: rgba(247, 230, 0, 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 16px;
+}
+
+.trend-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+/* v1.0 新增按钮变体 */
+.btn-primary {
+  background: var(--accent-gradient);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-primary:active {
+  transform: translateY(1px);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-secondary:active {
+  transform: translateY(1px);
+}
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 知识筛选标签 */
+.knowledge-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.knowledge-tab {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 6px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.knowledge-tab.active {
+  background: rgba(247, 230, 0, 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 思页四步引导 */
+.reflect-steps {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.reflect-step {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  white-space: nowrap;
+}
+.reflect-step.current {
+  background: rgba(247, 230, 0, 0.12);
+  color: var(--accent);
+  border: 1px solid var(--accent);
 }

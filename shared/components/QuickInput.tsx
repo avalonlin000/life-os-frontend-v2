@@ -7,6 +7,7 @@ interface QuickInputProps {
   buttonText?: string;
   toastSuccess?: string;
   toastError?: string;
+  disableSuccessToast?: boolean;
 }
 
 export const QuickInput: React.FC<QuickInputProps> = ({
@@ -15,6 +16,7 @@ export const QuickInput: React.FC<QuickInputProps> = ({
   buttonText = '加入',
   toastSuccess = '已记录',
   toastError = '记录失败，请重试',
+  disableSuccessToast = false,
 }) => {
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -28,7 +30,9 @@ export const QuickInput: React.FC<QuickInputProps> = ({
     try {
       await onSubmit(trimmed);
       setText('');
-      showToast(toastSuccess, 'success');
+      if (!disableSuccessToast) {
+        showToast(toastSuccess, 'success');
+      }
     } catch (e) {
       console.error('QuickInput submit error', e);
       showToast(toastError, 'error');

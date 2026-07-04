@@ -1,4 +1,4 @@
-// 插槽化布局组件 - §12.4
+// 布局组件
 
 import React from 'react';
 import { NavItem } from '../config/navigation';
@@ -102,3 +102,25 @@ export const ContentSlot: React.FC<ContentSlotProps> = ({
     </div>
   );
 };
+
+// ===== BottomNav (结衣用) =====
+interface BottomNavProps {
+  items: NavItem[];
+  currentPath: string;
+  onNavigate: (path: string) => void;
+}
+
+export const BottomNav: React.FC<BottomNavProps> = ({ items, currentPath, onNavigate }) => (
+  <nav className="bottom-nav">
+    {items.map(item => (
+      <button
+        key={item.path}
+        className={`bottom-nav-item ${currentPath === item.path ? 'active' : ''}`}
+        onClick={() => onNavigate(item.path)}
+      >
+        <span className="bottom-nav-icon">{item.icon}</span>
+        <span className="bottom-nav-label">{item.label}</span>
+      </button>
+    ))}
+  </nav>
+);

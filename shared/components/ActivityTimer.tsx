@@ -6,6 +6,7 @@ import { useToast } from './Toast';
 interface ActivityTimerProps {
   activityName?: string;
   editableName?: boolean;
+  simpleReview?: boolean;
   onStart?: (activity: string) => void;
   onStop?: (data: {
     duration: number;
@@ -35,6 +36,7 @@ interface ActivityTimerProps {
 export const ActivityTimer: React.FC<ActivityTimerProps> = ({
   activityName: initialName = '',
   editableName = false,
+  simpleReview = false,
   onStart,
   onStop,
   onActivityStart,
@@ -154,6 +156,15 @@ export const ActivityTimer: React.FC<ActivityTimerProps> = ({
     }
   };
 
+  const cancelReview = () => {
+    setShowReview(false);
+    setRating(0);
+    setTags([]);
+    setNote('');
+    setIsRunning(true);
+    showToast('已返回计时中，活动不会丢失', 'info');
+  };
+
   const resetReview = () => {
     setShowReview(false);
     setRating(0);
@@ -171,45 +182,55 @@ export const ActivityTimer: React.FC<ActivityTimerProps> = ({
   };
 
   return (
-    <div className="activity-timer">
+    <div className={`activity-timer ${isRunning ? 'is-running' : ''}`}>
+      <div className="timer-topline">
+        <div>
+          <span className="timer-kicker">活动计时</span>
+          <strong>{mode === 'timer' ? '记录正在发生的事实' : '补一段刚才做过的事'}</strong>
+        </div>
+        <div className="timer-mode-switch">
+          <button
+            className={`timer-mode-btn ${mode === 'timer' ? 'active' : ''}`}
+            onClick={() => setMode('timer')}
+          >
+            计时
+          </button>
+          <button
+            className={`timer-mode-btn ${mode === 'manual' ? 'active' : ''}`}
+            onClick={() => setMode('manual')}
+          >
+            补记
+          </button>
+        </div>
+      </div>
+
       {editableName && (
         <input
           className="timer-name-input"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="活动名称..."
+          placeholder="现在在做什么..."
           disabled={isRunning}
         />
       )}
 
-      <div className="timer-mode-switch">
-        <button
-          className={`timer-mode-btn ${mode === 'timer' ? 'active' : ''}`}
-          onClick={() => setMode('timer')}
-        >
-          计时
-        </button>
-        <button
-          className={`timer-mode-btn ${mode === 'manual' ? 'active' : ''}`}
-          onClick={() => setMode('manual')}
-        >
-          补记
-        </button>
-      </div>
-
       {mode === 'timer' ? (
-        <>
-          <div className="timer-display">{formatTime(seconds)}</div>
+        <div className="timer-main-panel">
+          <div className="timer-display-wrap">
+            <span className="timer-live-dot" aria-hidden="true" />
+            <div className="timer-display">{formatTime(seconds)}</div>
+            <small>{isRunning ? '计时中，结束后补一句事实' : '开始后会生成一条真实活动记录'}</small>
+          </div>
           {!isRunning ? (
             <button className="timer-btn start" onClick={handleStart} disabled={submitting}>
-              开始
+              开始记录
             </button>
           ) : (
             <button className="timer-btn stop" onClick={handleStop} disabled={submitting}>
-              结束
+              结束并整理
             </button>
           )}
-        </>
+        </div>
       ) : (
         <div className="timer-manual-form">
           <input
@@ -221,7 +242,7 @@ export const ActivityTimer: React.FC<ActivityTimerProps> = ({
             min={1}
           />
           <button className="timer-btn start" onClick={submitManual} disabled={submitting}>
-            补记时长
+            保存补记
           </button>
         </div>
       )}
@@ -234,19 +255,23 @@ export const ActivityTimer: React.FC<ActivityTimerProps> = ({
               <span className="timer-review-label">时长</span>
               <span className="timer-review-value">{formatTime(seconds)}</span>
             </div>
-            <div className="timer-review-row">
-              <span className="timer-review-label">星级</span>
-              <StarRating value={rating} onChange={setRating} maxStars={5} />
-            </div>
-            <div className="timer-review-row">
-              <span className="timer-review-label">标签</span>
-              <TagPicker
-                options={PRESET_TAGS}
-                selected={tags}
-                onChange={setTags}
-                placeholder="选择状态/情绪"
-              />
-            </div>
+            {!simpleReview && (
+              <div className="timer-review-row">
+                <span className="timer-review-label">星级</span>
+                <StarRating value={rating} onChange={setRating} maxStars={5} />
+              </div>
+            )}
+            {!simpleReview && (
+              <div className="timer-review-row">
+                <span className="timer-review-label">标签</span>
+                <TagPicker
+                  options={PRESET_TAGS}
+                  selected={tags}
+                  onChange={setTags}
+                  placeholder="选择状态/情绪"
+                />
+              </div>
+            )}
             <div className="timer-review-row">
               <span className="timer-review-label">备注</span>
               <input
@@ -260,8 +285,8 @@ export const ActivityTimer: React.FC<ActivityTimerProps> = ({
               <button className="btn-save" onClick={submitReview} disabled={submitting}>
                 {submitting ? '保存中...' : '保存记录'}
               </button>
-              <button className="btn-cancel" onClick={resetReview} disabled={submitting}>
-                取消
+              <button className="btn-cancel" onClick={cancelReview} disabled={submitting}>
+                继续计时
               </button>
             </div>
           </div>

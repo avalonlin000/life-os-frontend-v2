@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { PageShell, SideNav } from '@shared/layouts';
+import { BottomNav, PageShell } from '@shared/layouts';
 import { JIEYI_NAV } from '@shared/config/navigation';
 
 export default function App() {
@@ -7,15 +7,7 @@ export default function App() {
   const location = useLocation();
 
   return (
-    <PageShell
-      sidebar={
-        <SideNav
-          items={JIEYI_NAV}
-          currentPath={location.pathname}
-          onNavigate={navigate}
-        />
-      }
-    >
+    <PageShell footer={<BottomNav items={JIEYI_NAV} currentPath={location.pathname} onNavigate={navigate} />}>
       <Outlet />
     </PageShell>
   );

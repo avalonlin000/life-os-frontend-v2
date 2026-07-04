@@ -8,9 +8,24 @@
     "dev:all": "pnpm run --parallel dev:xiaoxue dev:jieyi",
     "build:xiaoxue": "pnpm --filter xiaoxue-web build",
     "build:jieyi": "pnpm --filter jieyi-web build",
-    "build:all": "pnpm run --parallel build:xiaoxue build:jieyi"
+    "build:all": "pnpm run --parallel build:xiaoxue build:jieyi",
+    "guard:lark:snapshot": "node scripts/lark-config-guard.mjs snapshot",
+    "guard:lark:check": "node scripts/lark-config-guard.mjs check",
+    "guard:lark:restore": "node scripts/lark-config-guard.mjs restore",
+    "guard:lark:health": "pnpm guard:lark:check && pnpm build:xiaoxue && pnpm build:jieyi",
+    "guard:lark": "pnpm guard:lark:check",
+    "guard:hermes:context": "node scripts/hermes-context-maintenance.mjs",
+    "hermes:summary": "node scripts/hermes-delivery-summary.mjs",
+    "hermes:sync": "node scripts/hermes-sync-delivery.mjs",
+    "hermes:sync:dry": "node scripts/hermes-sync-delivery.mjs --dry-run",
+    "revive:xiaobai": "pnpm guard:lark:restore",
+    "revive:xiaoxue": "pnpm guard:lark:restore && pnpm build:xiaoxue",
+    "revive:jieyi": "node scripts/revive-jieyi-session.mjs",
+    "revive:all": "pnpm guard:lark:restore && pnpm revive:jieyi && pnpm build:xiaoxue && pnpm build:jieyi"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.1",
+    "tailwindcss": "^4.3.1",
     "typescript": "^5.3.3"
   }
 }

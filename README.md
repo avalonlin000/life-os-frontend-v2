@@ -1,0 +1,129 @@
+# Life OS · 内部工程母项目
+
+> 小白主责的内部工程母项目；用户侧产品拆分为「结衣知行合一」和「小雪电竞人生」。
+
+## 一句话
+
+Life OS 是钧钧个人项目体系的内部工程母项目，不再作为用户侧单一产品名。当前项目主负责人是小白：需求理解、方案判断、数据排查、代码实现、构建部署、服务运维、文档沉淀和验收闭环都由小白负责。结衣和小雪是日常低模型辅助，主要用于陪伴、整理、简单查询、日报/数据初筛，不作为项目主责方。
+
+## 当前产品拆分
+
+| 用户侧产品 | 定位 | 文档入口 |
+|---|---|---|
+| 结衣知行合一 | 个人反馈调整系统：知、行、思、道闭环 | `docs/products/jieyi-zhixing-heyi/PROJECT_INDEX.md` |
+| 小雪电竞人生 | 电竞判断工作台：赛程背景、队伍画像、TK、TS 表、盘口、日报沉淀 | `docs/products/xiaoxue-esports-life/PROJECT_INDEX.md` |
+
+## 当前机器人定位
+
+| 角色 | 定位 | Hermes profile | 主要用途 |
+|---|---|---|---|
+| 小白 | 项目主负责人 | `xiaobai` | 全部项目内容：需求、方案、数据、代码、部署、文档、验收 |
+| 结衣 | 日常低模型辅助 | `jieyi` | 陪伴、日常整理、复盘辅助、移动端日常入口 |
+| 小雪 | 日常低模型辅助 | `default`（身份是小雪） | 简单数据查询、日报辅助、小雪工作台日常使用 |
+
+没有小天。delivery 文件是小雪/结衣获取项目上下文的主机制，读取 `/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/latest.md`；`pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，默认不 @ 结衣/小雪、不发飞书。只有钧钧明确要求“叫她们/让她们接手”时才使用结构化 @。
+
+## 当前前端入口
+
+### 结衣前端：移动端优先
+
+- 位置：`/home/ubuntu/life-os-frontend-v2/packages/jieyi-web/`
+- 端口：`3001`
+- 用途：手机/窄屏日常使用，围绕知、行、思、道四页。
+- 路由：
+  - `/know`：知识管理、学习输入、知识拆行动
+  - `/act`：今日行动、执行队列、完成/重开
+  - `/reflect`：活动记录、统一复盘、日终整理
+  - `/way`：原则、长期方向、智慧卡片
+
+访问：
+
+```text
+http://服务器IP:3001/
+http://服务器IP:3001/know
+http://服务器IP:3001/act
+http://服务器IP:3001/reflect
+http://服务器IP:3001/way
+```
+
+### 小雪工作台：桌面端优先
+
+- 当前主项目位置：`/home/ubuntu/xiaoxue-web/`
+- 稳定入口：`8880`
+- 开发入口：`5173`
+- 用途：电脑大屏电竞/交易工作台，选队伍、看三维、搜 TK、读画像、看交易记录。
+
+推荐访问：
+
+```text
+http://服务器IP:8880/
+```
+
+开发调试访问：
+
+```text
+http://服务器IP:5173/
+```
+
+注意：`/home/ubuntu/life-os-frontend-v2/packages/xiaoxue-web/` 是 workspace 里的 React 包，不是当前小雪主工作台。当前钧钧实际使用的小雪工作台在 `/home/ubuntu/xiaoxue-web/`。
+
+## 快速开始
+
+### 结衣前端
+
+```bash
+cd /home/ubuntu/life-os-frontend-v2
+pnpm install
+pnpm dev:jieyi
+pnpm build:jieyi
+```
+
+### 小雪工作台
+
+```bash
+cd /home/ubuntu/xiaoxue-web
+npm install
+npm run dev -- --host 0.0.0.0
+npm run build
+python3 -m py_compile main.py
+```
+
+稳定入口后端：
+
+```bash
+cd /home/ubuntu/xiaoxue-web
+python -m uvicorn main:app --host 0.0.0.0 --port 8880
+```
+
+## 重要文档
+
+- 项目归属总索引：`docs/PROJECT_OWNERSHIP_INDEX.md`
+- 产品文档总览：`docs/products/README.md`
+- 结衣知行合一：`docs/products/jieyi-zhixing-heyi/PROJECT_INDEX.md`
+- 小雪电竞人生：`docs/products/xiaoxue-esports-life/PROJECT_INDEX.md`
+- 新手说明书：`docs/PROJECT_USER_GUIDE.md`
+- 当前版本机器人说明：`docs/CURRENT_VERSION_FOR_BOTS.md`
+- 小白工程规则：`AGENTS.md`
+- 工程上下文：`CLAUDE.md`
+- 小雪来源规格：`/home/ubuntu/xiaoxue-web/SPEC.md`
+- 小雪项目记忆：`/home/ubuntu/xiaoxue-web/memory-bank/`
+
+## 验证方式
+
+```bash
+# 结衣
+curl http://127.0.0.1:3001/
+curl http://127.0.0.1:3001/know
+curl http://127.0.0.1:3001/act
+curl http://127.0.0.1:3001/reflect
+curl http://127.0.0.1:3001/way
+pnpm build:jieyi
+
+# 小雪
+curl http://127.0.0.1:8880/
+curl http://127.0.0.1:8880/api/teams
+curl http://127.0.0.1:5173/
+cd /home/ubuntu/xiaoxue-web && npm run build
+```
+
+小雪 `8880` 对 `HEAD` 请求可能返回 405；判断是否正常请用浏览器或普通 GET，不要只看 `curl -I`。

@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+packages/*/node_modules/
+
+# build outputs
+packages/*/dist/
+dist/
+
+# Python caches
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# local env/logs
+.env
+.env.*
+*.log
+
+# local caches
+.vite/
+**/.vite/
+coverage/

@@ -1,213 +1,413 @@
-import { useEffect, useState } from 'react';
+import { type CSSProperties, useEffect, useMemo, useState } from 'react';
 import { QuickInput, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
-import type { Schedule } from '@shared/types';
+import type { DailyPlan, JieyiPracticeItem, JieyiTodayAggregate, Schedule } from '@shared/types';
 
-/** 课程表 JSON 结构 */
-interface DailyPlan {
-  date: string;
-  learn?: { pillar: string; title: string; content: string; questions: string[]; source?: string }[];
-  review?: { pillar: string; fromDate: string; title: string; snippet: string; question: string }[];
-  doTasks?: string[];
-}
+type ActionQueueItem = {
+  kind: 'schedule';
+  id: number;
+  content: string;
+  source: string;
+  category?: string | null;
+  priority?: number | null;
+  isDone: boolean;
+  reason: string;
+  sourceHint: string;
+  resistanceEvidence: string[];
+};
+
+type PlanQueueItem = {
+  kind: 'daily_plan';
+  id: string;
+  content: string;
+  source: 'daily_plan';
+  category: '课程表';
+  priority: null;
+  isDone: false;
+  reason: string;
+  sourceHint: string;
+};
+
+type QueueItem = ActionQueueItem | PlanQueueItem;
+
+const sourceLabels: Record<string, string> = {
+  ai_suggest: 'AI 建议',
+  user_add: '手动补充',
+  daily_plan: '今日计划',
+  knowledge_split: '知页拆解',
+};
+
+const getSourceLabel = (source: string) => sourceLabels[source] ?? source;
+
+const todayDate = () => new Date().toISOString().slice(0, 10);
+
+const actionReason = (item: Schedule) => {
+  const reason = (item as Schedule & { reason?: unknown }).reason;
+  if (typeof reason === 'string' && reason.trim()) return reason;
+  if (item.source === 'knowledge_split' || item.source === 'knowledge_suggest') return '来自知页学习拆解：把今天的新理解落成一个真实动作。';
+  if (item.source === 'ai_suggest') return '来自 AI 今日建议：根据今日状态挑一个最能推进改变的动作。';
+  if (item.source === 'user_add') return '来自你手动补充：这是今天主动认领的改命动作。';
+  return '来自今日执行队列：先完成一个小动作，让系统获得反馈。';
+};
+
+const planReason = (dailyPlan: DailyPlan | null) =>
+  dailyPlan?.suggestion || '来自 dailyPlan.doTasks：后端暂未给任务 id，因此先作为只读降级动作展示。';
+
+type ScheduleEvidenceShape = Schedule & {
+  reopen_count?: unknown;
+  retry_count?: unknown;
+  resistance?: unknown;
+  blocker?: unknown;
+  friction?: unknown;
+};
+
+const formatEvidenceValue = (label: string, value: unknown) => {
+  if (typeof value === 'number' && Number.isFinite(value) && value > 0) return `${label}：${value}`;
+  if (typeof value === 'string' && value.trim()) return `${label}：${value.trim()}`;
+  if (Array.isArray(value) && value.length > 0) return `${label}：${value.map(String).filter(Boolean).join('、')}`;
+  return null;
+};
+
+const getResistanceEvidence = (item: Schedule): string[] => {
+  const evidence = item as ScheduleEvidenceShape;
+  return [
+    formatEvidenceValue('重开次数', evidence.reopen_count),
+    formatEvidenceValue('重试次数', evidence.retry_count),
+    formatEvidenceValue('阻力', evidence.resistance),
+    formatEvidenceValue('阻塞', evidence.blocker),
+    formatEvidenceValue('摩擦', evidence.friction),
+  ].filter((value): value is string => Boolean(value));
+};
 
 export default function Action() {
   const [items, setItems] = useState<Schedule[]>([]);
   const [dailyPlan, setDailyPlan] = useState<DailyPlan | null>(null);
+  const [aggregate, setAggregate] = useState<JieyiTodayAggregate | null>(null);
+  const [practices, setPractices] = useState<JieyiPracticeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [suggestError, setSuggestError] = useState('');
   const [suggesting, setSuggesting] = useState(false);
+  const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [updatingPracticeId, setUpdatingPracticeId] = useState<string | null>(null);
   const toast = useToast();
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayDate();
 
   const fetchAll = async () => {
     setLoading(true);
     setError('');
     try {
-      const [scheduleData, planRes] = await Promise.all([
+      const [aggregateResult, scheduleResult, planResult, practiceResult] = await Promise.allSettled([
+        jieyiService.today.aggregate(today),
         jieyiService.schedule.list(today),
-        fetch('/api/daily-plan').then(r => r.ok ? r.json() : null),
+        jieyiService.dailyPlan.get(),
+        jieyiService.practices.today(today),
       ]);
-      setItems(scheduleData ?? []);
-      setDailyPlan(planRes);
+
+      const liveAggregate = aggregateResult.status === 'fulfilled' ? aggregateResult.value : null;
+      const liveSchedule = scheduleResult.status === 'fulfilled' && Array.isArray(scheduleResult.value) ? scheduleResult.value : [];
+      const livePlan = planResult.status === 'fulfilled' ? planResult.value : null;
+      const practicePayload = practiceResult.status === 'fulfilled' ? practiceResult.value : null;
+      const livePractices = Array.isArray(practicePayload?.practices)
+        ? practicePayload.practices
+        : Array.isArray(practicePayload?.today_practices)
+          ? practicePayload.today_practices
+          : Array.isArray(practicePayload)
+            ? practicePayload
+            : [];
+
+      setAggregate(liveAggregate);
+      setItems(liveAggregate?.act.today_actions?.length ? liveAggregate.act.today_actions : liveSchedule);
+      setDailyPlan(livePlan);
+      setPractices(liveAggregate?.act.today_practices?.length ? liveAggregate.act.today_practices : livePractices);
+
+      if (aggregateResult.status === 'rejected' && scheduleResult.status === 'rejected' && planResult.status === 'rejected') {
+        setError('今日行动接口未连接：不生成假动作，只展示可解释空态。');
+      }
     } catch {
-      setError('加载失败，请刷新重试');
+      setItems([]);
+      setDailyPlan(null);
+      setAggregate(null);
+      setPractices([]);
+      setError('今日行动接口未连接：不生成假动作，只展示可解释空态。');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  useEffect(() => { fetchAll(); }, []);
+
+  const actionItems = useMemo<QueueItem[]>(() => {
+    const scheduleItems: QueueItem[] = items
+      .filter((item) => item.source === 'ai_suggest' || item.source === 'user_add' || item.source === 'knowledge_split' || item.source === 'knowledge_suggest')
+      .map((item) => ({
+        kind: 'schedule',
+        id: item.id,
+        content: item.content,
+        source: item.source,
+        category: item.category,
+        priority: item.priority,
+        isDone: item.is_done,
+        reason: actionReason(item),
+        sourceHint: item.knowledge_id ? `关联知识 #${item.knowledge_id}` : getSourceLabel(item.source),
+        resistanceEvidence: getResistanceEvidence(item),
+      }));
+
+    const planItems: QueueItem[] = (dailyPlan?.doTasks ?? []).map((task, index) => ({
+      kind: 'daily_plan',
+      id: `daily-plan-${index}`,
+      content: task,
+      source: 'daily_plan',
+      category: '课程表',
+      priority: null,
+      isDone: false,
+      reason: planReason(dailyPlan),
+      sourceHint: 'dailyPlan.doTasks 只读降级',
+    }));
+
+    return [...scheduleItems, ...planItems];
+  }, [items, dailyPlan]);
+
+  const dailyLearnItems = dailyPlan?.learn ?? [];
+  const dailyReviewItems = dailyPlan?.review ?? [];
+  const primaryAction = actionItems.find((item) => !item.isDone) ?? actionItems[0] ?? null;
+  const completedCount = actionItems.filter((item) => item.isDone).length;
+  const totalCount = actionItems.length;
+  const pendingCount = Math.max(totalCount - completedCount, 0);
+  const practiceDone = practices.filter((item) => item.is_done).length;
+  const completionMessage = aggregate?.act.completion_status.message || `修炼 ${practiceDone}/${practices.length} · 行动 ${completedCount}/${totalCount}`;
+  const suggestionLabel = aggregate?.act.ai_suggestion_entry.label || '请结衣给一个行动建议';
 
   const handleAdd = async (content: string) => {
     await jieyiService.schedule.create({ date: today, content, source: 'user_add' });
     await fetchAll();
   };
 
-  const toggleDone = async (id: number, done: boolean) => {
-    await jieyiService.schedule.update(id, { is_done: !done });
-    await fetchAll();
+  const updateDone = async (item: QueueItem, isDone: boolean) => {
+    if (item.kind !== 'schedule' || updatingId) return;
+    setUpdatingId(item.id);
+    try {
+      await jieyiService.schedule.update(item.id, { is_done: isDone });
+      await fetchAll();
+      toast?.showToast(isDone ? '已完成，反馈已写入后端' : '已取消完成，后端已重开', 'success');
+    } catch {
+      toast?.showToast(isDone ? '完成失败：后端未写入' : '取消失败：后端未写入', 'error');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const updatePractice = async (practice: JieyiPracticeItem, isDone: boolean) => {
+    if (updatingPracticeId) return;
+    setUpdatingPracticeId(practice.method_id);
+    try {
+      await jieyiService.practices.check(practice.method_id, { date: today, is_done: isDone });
+      await fetchAll();
+      toast?.showToast(isDone ? '修炼已完成' : '修炼已取消完成', 'success');
+    } catch {
+      toast?.showToast('修炼反馈写入失败', 'error');
+    } finally {
+      setUpdatingPracticeId(null);
+    }
   };
 
   const handleSuggest = async () => {
     setSuggesting(true);
+    setSuggestError('');
     try {
-      const res = await fetch('/api/schedule/suggest', { method: 'POST' });
-      if (res.ok) {
-        await fetchAll();
-        toast?.showToast('AI 建议已加入日程', 'success');
-      }
+      await jieyiService.schedule.suggest();
+      await fetchAll();
+      toast?.showToast('AI 建议已加入今日行动', 'success');
     } catch {
-      toast?.showToast('生成失败', 'error');
+      setSuggestError('AI 建议接口暂时失败：没有写入假建议，请稍后重试。');
+      toast?.showToast('AI 建议接口暂时失败', 'error');
     } finally {
       setSuggesting(false);
     }
   };
 
-  // 区分用户自增 vs AI建议
-  const userItems = items.filter(i => i.source === 'user_add');
-  const aiItems = items.filter(i => i.source === 'ai_suggest');
-
   if (loading) return <div className="placeholder-card">加载中...</div>;
-  if (error) return <div className="error-state">{error}</div>;
 
   return (
-    <div className="space-y-6">
-      {/* ── 📖 今日学：只读，不勾 ── */}
-      <section>
-        <h2 className="section-title">📖 今日学</h2>
-        {dailyPlan?.learn && dailyPlan.learn.length > 0 ? (
-          <div className="learn-list">
-            {dailyPlan.learn.map((item, i) => (
-              <div key={i} className="learn-card">
-                <div className="learn-card-header">
-                  <span className="learn-pillar">{item.pillar}</span>
-                  <span className="learn-title">{item.title}</span>
+    <div className="action-page page-enter">
+      {error && <div className="api-warning">{error}</div>}
+
+      <section className="action-focus-card">
+        <div className="action-focus-copy">
+          <span className="action-kicker">今日最该做</span>
+          {primaryAction ? (
+            <>
+              <h1>{primaryAction.content}</h1>
+              <p>{primaryAction.reason}</p>
+              <div className="action-queue-meta">
+                <span className={`schedule-badge meta-pill badge-${primaryAction.source}`}>{getSourceLabel(primaryAction.source)}</span>
+                <span className="schedule-badge">{primaryAction.sourceHint}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <h1>今天先生成一个可执行动作</h1>
+              <p>后端没有返回今日行动。可以从知页拆解，或请求 AI 建议；页面不会伪造任务。</p>
+            </>
+          )}
+        </div>
+        <div className="action-focus-buttons">
+          {primaryAction?.kind === 'schedule' && (
+            <button className="btn-primary action-big-button" onClick={() => updateDone(primaryAction, !primaryAction.isDone)} disabled={updatingId === primaryAction.id}>
+              {primaryAction.isDone ? '取消完成' : '完成今天这个'}
+            </button>
+          )}
+          <button className="btn-suggest action-big-button secondary" onClick={handleSuggest} disabled={suggesting}>
+            {suggesting ? '请求中...' : suggestionLabel}
+          </button>
+        </div>
+        <span className="inline-feedback">{completionMessage}</span>
+        {suggestError && <div className="api-warning action-inline-warning">{suggestError}</div>}
+      </section>
+
+      <section className="action-daily-plan-section">
+        <div className="action-section-heading">
+          <h2 className="section-title">今日学</h2>
+          <span className="action-queue-count">{dailyLearnItems.length} 项</span>
+        </div>
+        {dailyLearnItems.length > 0 ? (
+          <div className="daily-plan-stack">
+            {dailyLearnItems.map((item, index) => (
+              <article key={`${item.title}-${index}`} className="daily-plan-card learn-card" style={{ '--i': index } as CSSProperties}>
+                <div className="daily-plan-card-topline">
+                  <span className="learn-pillar">{item.pillar || '学习'}</span>
+                  {item.source && <span className="learn-source">{item.source}</span>}
                 </div>
-                <p className="learn-content">{item.content}</p>
+                <h3>{item.title}</h3>
+                <p>{item.content}</p>
                 {item.questions.length > 0 && (
-                  <div className="learn-questions">
-                    {item.questions.map((q, qi) => (
-                      <p key={qi} className="learn-question">❓ {q}</p>
+                  <div className="daily-plan-question-list">
+                    {item.questions.map((question, questionIndex) => (
+                      <span key={`${question}-${questionIndex}`}>{question}</span>
                     ))}
                   </div>
                 )}
-                {item.source && <span className="learn-source">—— {item.source}</span>}
-              </div>
+              </article>
             ))}
           </div>
         ) : (
-          <div className="empty-state">今日学习内容尚未生成（凌晨4:05自动生成）</div>
-        )}
-
-        {dailyPlan?.review && dailyPlan.review.length > 0 && (
-          <div className="review-list" style={{ marginTop: 12 }}>
-            <h3 className="subsection-title">🔄 遗忘曲线复习</h3>
-            {dailyPlan.review.map((item, i) => (
-              <div key={i} className="review-card">
-                <span className="review-date">{item.fromDate}</span>
-                <strong>{item.title}</strong>
-                <p className="review-snippet">{item.snippet}</p>
-                <p className="review-question">❓ {item.question}</p>
-              </div>
-            ))}
-          </div>
+          <div className="empty-state">今日学还没有内容。等待 dailyPlan.learn 返回后，这里只读展示，不补假学习项。</div>
         )}
       </section>
 
-      {/* ── ✅ 知识→行动：已拆解的可执行项 ── */}
-      {aiItems.length > 0 && (
-        <section>
-          <h2 className="section-title">🧠 知识拆解</h2>
-          <div className="space-y-2">
-            {aiItems.map((item) => (
-              <div
-                key={item.id}
-                className={`card flex items-center justify-between ${item.is_done ? 'opacity-60' : ''}`}
-              >
-                <div className="flex-1">
-                  <span className={item.is_done ? 'line-through text-[#8a7a6a]' : ''}>
-                    {item.content}
-                  </span>
-                  {item.category && (
-                    <span className="text-xs text-[#c48a5a] ml-2">{item.category}</span>
-                  )}
-                </div>
-                <button
-                  className={`btn-edit ${item.is_done ? 'opacity-60' : ''}`}
-                  onClick={() => toggleDone(item.id, item.is_done)}
-                >
-                  {item.is_done ? '已完成' : '完成'}
-                </button>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── ✅ 今日做：日常执行项 ── */}
-      <section>
-        <h2 className="section-title">
-          ✅ 今日做
-          <button
-            className="btn-suggest"
-            onClick={handleSuggest}
-            disabled={suggesting}
-          >
-            {suggesting ? '⏳' : '🤖 AI建议'}
-          </button>
-        </h2>
-
-        {/* 来自每日课程表的执行项 */}
-        {dailyPlan?.doTasks && dailyPlan.doTasks.length > 0 && (
-          <div className="space-y-2 mb-4">
-            {dailyPlan.doTasks.map((task, i) => (
-              <div key={`do-${i}`} className="card do-task-card">
-                <span className="do-task-icon">□</span>
-                <span>{task}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* 用户自己加的行动项 */}
-        {userItems.length > 0 && (
-          <div className="space-y-2">
-            {userItems.map((item) => (
-              <div
-                key={item.id}
-                className={`card flex items-center justify-between ${item.is_done ? 'opacity-60' : ''}`}
-              >
-                <span className={item.is_done ? 'line-through text-[#8a7a6a]' : ''}>
-                  {item.content}
-                </span>
-                <button
-                  className={`btn-edit ${item.is_done ? 'opacity-60' : ''}`}
-                  onClick={() => toggleDone(item.id, item.is_done)}
-                >
-                  {item.is_done ? '已完成' : '完成'}
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {(!dailyPlan?.doTasks || dailyPlan.doTasks.length === 0) && userItems.length === 0 && (
-          <div className="empty-state">还没有今日行动项，从「知」页拆解知识或用下方收集箱添加</div>
-        )}
-
-
-        {/* 收集箱 */}
-        <div style={{ marginTop: 12 }}>
-          <QuickInput
-            placeholder="添加一个行动项，回车..."
-            buttonText="添加"
-            onSubmit={handleAdd}
-          />
+      <section className="action-daily-plan-section">
+        <div className="action-section-heading">
+          <h2 className="section-title">今日复习</h2>
+          <span className="action-queue-count">{dailyReviewItems.length} 项</span>
         </div>
+        {dailyReviewItems.length > 0 ? (
+          <div className="daily-plan-stack">
+            {dailyReviewItems.map((item, index) => (
+              <article key={`${item.fromDate}-${item.title}-${index}`} className="daily-plan-card review-card" style={{ '--i': index } as CSSProperties}>
+                <div className="daily-plan-card-topline">
+                  <span className="learn-pillar">{item.pillar || '复习'}</span>
+                  <span className="learn-source">{item.fromDate}</span>
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.snippet}</p>
+                {item.question && <div className="daily-plan-review-question">{item.question}</div>}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">今日复习还没有内容。等待 dailyPlan.review 返回后，这里只读展示，不补假复习项。</div>
+        )}
+      </section>
+
+      <section className="action-practice-section">
+        <div className="action-section-heading">
+          <h2 className="section-title">今日修炼</h2>
+          <span className="action-queue-count">{practiceDone}/{practices.length} 完成</span>
+        </div>
+        {practices.length > 0 ? (
+          <div className="practice-stack">
+            {practices.map((practice, index) => (
+              <article key={practice.method_id} className={`practice-card ${practice.is_done ? 'done' : ''}`} style={{ '--i': index } as CSSProperties}>
+                <div>
+                  <span className="learn-pillar">{practice.pillar || '修炼'}</span>
+                  <h3>{practice.name}</h3>
+                  <p>{practice.reason || practice.statement || '来自知行思道验证过的方法，今天用一个小动作练一次。'}</p>
+                  <small>来源：{practice.source || practice.statement || '今日聚合'}</small>
+                </div>
+                <button className="btn-primary action-mini-button" onClick={() => updatePractice(practice, !practice.is_done)} disabled={updatingPracticeId === practice.method_id}>
+                  {practice.is_done ? '取消' : '完成'}
+                </button>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">今天暂无修炼项。等知页沉淀方法后，会通过 /jieyi/practices/today 出现在这里。</div>
+        )}
+      </section>
+
+      <section>
+        <div className="action-section-heading">
+          <h2 className="section-title">今日行动</h2>
+          <span className="action-queue-count">{completedCount}/{totalCount} 完成 · {pendingCount} 待执行</span>
+        </div>
+        {actionItems.length > 0 ? (
+          <ul className="schedule-list action-queue-list">
+            {actionItems.map((item, index) => (
+              <li key={`${item.kind}-${item.id}`} className={`schedule-item action-queue-item ${item.isDone ? 'done' : ''} ${item.kind === 'daily_plan' ? 'readonly-plan' : ''}`} style={{ '--i': index } as CSSProperties}>
+                <button
+                  className={`schedule-check tactile-check ${item.isDone ? 'checked' : ''}`}
+                  onClick={() => updateDone(item, !item.isDone)}
+                  disabled={item.kind !== 'schedule' || updatingId === item.id}
+                  title={item.kind === 'daily_plan' ? 'dailyPlan doTasks 暂无后端任务 id，不能直接完成' : item.isDone ? '取消完成' : '完成'}
+                >
+                  {item.isDone ? '✓' : item.kind === 'daily_plan' ? '□' : ''}
+                </button>
+                <div className="action-queue-content">
+                  <div className="schedule-title">{item.content}</div>
+                  <p className="action-reason">{item.reason}</p>
+                  {item.kind === 'schedule' && (
+                    item.resistanceEvidence.length > 0 ? (
+                      <div className="action-resistance-evidence" aria-label="行动阻力证据">
+                        {item.resistanceEvidence.map((evidence) => (
+                          <span key={evidence}>{evidence}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="action-resistance-empty">暂无阻力证据</div>
+                    )
+                  )}
+                  <div className="action-queue-meta">
+                    <span className={`schedule-badge meta-pill badge-${item.source}`}>{getSourceLabel(item.source)}</span>
+                    {item.category && <span className="schedule-badge">{item.category}</span>}
+                    {item.kind === 'schedule' && item.priority != null && <span className="schedule-badge">P{item.priority}</span>}
+                    <span className="schedule-badge">{item.sourceHint}</span>
+                  </div>
+                </div>
+                {item.kind === 'schedule' ? (
+                  <button className="btn-edit tactile-button" onClick={() => updateDone(item, !item.isDone)} disabled={updatingId === item.id}>
+                    {item.isDone ? '取消' : '完成'}
+                  </button>
+                ) : (
+                  <span className="action-readonly-note status-pill">只读降级</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="empty-state">还没有今日行动项。从「知」页拆解知识，或请求 AI 建议；如果 dailyPlan.doTasks 没有后端 id，会在这里显示只读降级说明。</div>
+        )}
+      </section>
+
+      <section>
+        <h2 className="section-title">补一个今天能做的动作</h2>
+        <QuickInput
+          placeholder="一句话，今天能做完..."
+          buttonText="加入"
+          toastSuccess="行动项已写入后端"
+          toastError="添加失败，请重试"
+          onSubmit={handleAdd}
+        />
       </section>
     </div>
   );
