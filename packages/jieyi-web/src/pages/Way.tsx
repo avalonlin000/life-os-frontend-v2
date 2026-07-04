@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { jieyiService } from '@shared/api/services';
 import type { JieyiPrincipleItem } from '@shared/types';
+import { wayPrincipleCandidateSample } from '../contentSamples';
 
 type PrinciplesResponse = {
   direction?: string;
@@ -92,6 +93,25 @@ export default function Way() {
             <li key={source}>{source}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="content-sample-entry compact" aria-label="道页原则候选样例入口">
+        <div className="content-sample-intro">
+          <span className="status-pill">内容样例 / 非后端数据</span>
+          <h2>{wayPrincipleCandidateSample.title}</h2>
+          <p>{wayPrincipleCandidateSample.summary}</p>
+        </div>
+        <div className="content-sample-list single">
+          <article className="content-sample-card">
+            <div className="content-sample-card-topline">
+              <strong>候选示例</strong>
+              <small>{wayPrincipleCandidateSample.source}</small>
+            </div>
+            <ul>
+              {wayPrincipleCandidateSample.items.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </article>
+        </div>
       </section>
 
       <section className="way-list" aria-label="原则列表">

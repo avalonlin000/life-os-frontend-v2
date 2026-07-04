@@ -3,6 +3,7 @@ import { ModuleSection } from '@shared/layouts';
 import { QuickInput, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
 import type { DeepLearningSession, JieyiThinkingCard, JieyiTodayAggregate, Knowledge, Schedule } from '@shared/types';
+import { jieyiContentSamples } from '../contentSamples';
 
 type TodayFlow = {
   date: string;
@@ -313,6 +314,30 @@ export default function KnowledgePage() {
           </span>
         </div>
       </section>
+
+      <ModuleSection title="内容样例入口">
+        <section className="content-sample-entry" aria-label="结衣内容样例入口">
+          <div className="content-sample-intro">
+            <span className="status-pill">内容样例 / 非后端数据</span>
+            <h2>先看样例，再把今天一条输入走完知行思道</h2>
+            <p>这些摘要来自结衣内容文档，用来校准页面承载什么；不是数据库记录，也没有写入生产后端。</p>
+          </div>
+          <div className="content-sample-list">
+            {jieyiContentSamples.map((sample) => (
+              <article className="content-sample-card" key={sample.title}>
+                <div className="content-sample-card-topline">
+                  <strong>{sample.title}</strong>
+                  <small>{sample.source}</small>
+                </div>
+                <p>{sample.summary}</p>
+                <ul>
+                  {sample.items.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </section>
+      </ModuleSection>
 
       {deepSession && (
         <ModuleSection title="已准备的学习包">

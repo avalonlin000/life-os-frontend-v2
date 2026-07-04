@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { ActivityTimer, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
 import type { Activity, DailyReviewOut, JieyiTodayAggregate, Mood } from '@shared/types';
+import { reflectionSample } from '../contentSamples';
 
 type ReflectionToday = JieyiTodayAggregate['reflect']['reconciliation'];
 
@@ -291,6 +292,25 @@ export default function Reflect() {
         ) : (
           <div className="empty-state">今天还没有活动记录，用上方计时或补记开始沉淀事实</div>
         )}
+      </section>
+
+      <section className="glass-section content-sample-entry compact" aria-label="统一复盘样例入口">
+        <div className="content-sample-intro">
+          <span className="status-pill">内容样例 / 非后端数据</span>
+          <h2>{reflectionSample.title}</h2>
+          <p>{reflectionSample.summary}</p>
+        </div>
+        <div className="content-sample-list single">
+          <article className="content-sample-card">
+            <div className="content-sample-card-topline">
+              <strong>可参考的一段式复盘</strong>
+              <small>{reflectionSample.source}</small>
+            </div>
+            <ul>
+              {reflectionSample.items.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </article>
+        </div>
       </section>
 
       <section className="glass-section reflect-note-section">
