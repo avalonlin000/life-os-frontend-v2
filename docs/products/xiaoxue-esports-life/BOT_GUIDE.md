@@ -32,7 +32,7 @@
 | MSI 国际赛环境 | 看跨赛区强弱和外卡未知量 | 不是赛程表，是国际赛基本面研究入口 |
 | 队伍三维 | 查看和维护队伍状态 | 从优势局、劣势局、胜负手等维度辅助判断 |
 | 队伍/选手画像 | 看风格和风险点 | 辅助理解队伍长期结构，不直接替钧钧下结论 |
-| TK / 概念图 | 查战术、版本、历史沉淀 | 把已有电竞知识翻出来支持基本面判断 |
+| TK / 概念图 | 查战术、版本、历史沉淀 | 把已有电竞知识翻出来支持基本面判断；涉及旧 tk_library、非 git deprecated 留痕、SQLite TK 表兼容风险时，先读 `TK-LIBRARY-COMPAT-AUDIT.md` |
 | 盘口分析页 | 给钧钧自己写盘口想法 | 只留输入和可选保存，不强制结算、不展示命中率主面板 |
 | 日报辅助 | 汇总当天电竞相关内容 | 每天比赛和赛程重点主要由日报承接 |
 
@@ -116,6 +116,7 @@
 
 ```text
 /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/PROJECT_INDEX.md
+/home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/TK-LIBRARY-COMPAT-AUDIT.md
 /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/RESTART-AUDIT-PLAN.md
 /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/BOT_GUIDE.md
 /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/README.md
