@@ -46,6 +46,19 @@
 - `get_tk_groups_for_report()`：`tk_library` 不存在时返回 `{"general": [], "teams": {}}`。
 - 未改动主链路：`query_tk_by_team()` 仍走 `embedding_engine.search_tk()` / knowledge-rag；`get_tk_by_content_for_report()` 仍读取 Wiki markdown；未改 `search_tk` / Wiki / knowledge-rag。
 
+### 3.0.1 非 git 目录 deprecated 留痕（2026-07-05）
+
+补充留痕：`/home/ubuntu/lol_data` 是非 git 目录（`git rev-parse` 返回 not a git repository），因此 2026-07-05 对旧 `tk_library` 兼容代码补充 deprecated 注释前，已先在非 git 目录内落地备份：`/home/ubuntu/lol_data/.xiaobai-backups/20260705_0310`。
+
+备份文件名：
+
+- `db_util.py.bak`
+- `embedding_engine.py.bak`
+- `init_changelog.py.bak`
+- `insert_kurongsi_11_21.py.bak`
+
+本记录只用于产品文档留痕：确认 deprecated 注释已落地且有备份基线；不恢复 SQLite `tk_library`，不写 DB，不运行旧导入脚本，不改 `/home/ubuntu/lol_data` 当前代码或数据。
+
 验收命令：
 
 ```bash
