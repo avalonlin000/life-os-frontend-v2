@@ -172,6 +172,7 @@ export default function Action() {
   const dailyLearnItems = dailyPlan?.learn ?? [];
   const dailyReviewItems = dailyPlan?.review ?? [];
   const primaryAction = actionItems.find((item) => !item.isDone) ?? actionItems[0] ?? null;
+  const primaryPractice = practices.find((item) => !item.is_done) ?? practices[0] ?? null;
   const completedCount = actionItems.filter((item) => item.isDone).length;
   const totalCount = actionItems.length;
   const pendingCount = Math.max(totalCount - completedCount, 0);
@@ -245,6 +246,16 @@ export default function Action() {
                 <span className="schedule-badge">{primaryAction.sourceHint}</span>
               </div>
             </>
+          ) : primaryPractice ? (
+            <>
+              <h1>{primaryPractice.name}</h1>
+              <p>{primaryPractice.reason || primaryPractice.statement || '后端暂未返回具体行动，先完成一个今日修炼，让系统获得真实反馈。'}</p>
+              <div className="action-queue-meta">
+                <span className="schedule-badge meta-pill badge-daily_practice">今日修炼</span>
+                <span className="schedule-badge">{primaryPractice.pillar || '修炼'}</span>
+                <span className="schedule-badge">{primaryPractice.source || '今日聚合'}</span>
+              </div>
+            </>
           ) : (
             <>
               <h1>今天先生成一个可执行动作</h1>
@@ -256,6 +267,11 @@ export default function Action() {
           {primaryAction?.kind === 'schedule' && (
             <button className="btn-primary action-big-button" onClick={() => updateDone(primaryAction, !primaryAction.isDone)} disabled={updatingId === primaryAction.id}>
               {primaryAction.isDone ? '取消完成' : '完成今天这个'}
+            </button>
+          )}
+          {!primaryAction && primaryPractice && (
+            <button className="btn-primary action-big-button" onClick={() => updatePractice(primaryPractice, !primaryPractice.is_done)} disabled={updatingPracticeId === primaryPractice.method_id}>
+              {primaryPractice.is_done ? '取消修炼' : '完成这个修炼'}
             </button>
           )}
           <button className="btn-suggest action-big-button secondary" onClick={handleSuggest} disabled={suggesting}>
