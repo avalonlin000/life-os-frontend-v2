@@ -36,6 +36,7 @@
 | 系统 | 服务 / 仓库 | 当前状态 |
 |---|---|---|
 | 结衣 Web | `jieyi-web.service` | user service，3001，active running |
+| 结衣 Backend | `jieyi-backend.service` | user service，127.0.0.1:8881，active running，供 3001 /api proxy 与 daily-review/reflection 使用 |
 | 小雪稳定服务 | `xiaoxue-workbench-api.service` | user service，8880，active running |
 | 小雪 Vite 服务 | `xiaoxue-workbench-vite.service` | user service，5173，active running |
 | Nginx | `nginx.service` | system service，80 反代到 `127.0.0.1:3001` |
@@ -84,6 +85,12 @@ curl http://127.0.0.1:3001/act
 curl http://127.0.0.1:3001/reflect
 curl http://127.0.0.1:3001/way
 curl -I http://127.0.0.1:3001/dao
+curl http://127.0.0.1:8881/api/health
+curl 'http://127.0.0.1:8881/api/health/daily-review/reflection?date=today'
+curl http://127.0.0.1:3001/api/health
+curl 'http://127.0.0.1:3001/api/health/daily-review/reflection?date=today'
+curl --noproxy '*' http://42.193.177.127/api/health
+curl --noproxy '*' 'http://42.193.177.127/api/health/daily-review/reflection?date=today'
 
 # 小雪
 cd /home/ubuntu/xiaoxue-web
@@ -96,7 +103,8 @@ curl http://127.0.0.1:5173/
 
 ## 排障注意
 
-- 结衣打不开：先看 `3001` 有没有监听。
+- 结衣页面打不开：先看 `jieyi-web.service` 和 `3001`。
+- 结衣 API / 今日复盘 / reflection 异常：看 `jieyi-backend.service` 和 `8881`，并验证 3001 `/api` proxy。
 - 小雪打不开：优先看 `8880`，再看 `5173`。
 - 小雪 `8880` 用 `curl -I` 可能 405，因为 HEAD 没实现；必须用普通 GET 或浏览器判断。
 - 不要把“桌面端”自动理解成结衣前端。钧钧说过结衣主要移动端用。

@@ -146,6 +146,7 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 | 小雪 GitHub | `https://github.com/avalonlin000/xiaoxue-web` |
 | Nginx | `nginx.service`，80 默认入口反代到 `127.0.0.1:3001` |
 | 结衣 Web | `jieyi-web.service`，端口 `3001` |
+| 结衣 Backend | `jieyi-backend.service`，端口 `127.0.0.1:8881`，供 3001 `/api` proxy、daily-review/reflection API 使用 |
 | 小雪稳定服务 | `xiaoxue-workbench-api.service`，端口 `8880` |
 | 小雪开发服务 | `xiaoxue-workbench-vite.service`，端口 `5173` |
 
@@ -157,8 +158,12 @@ http://42.193.177.127/act
 http://42.193.177.127/reflect
 http://42.193.177.127/way
 http://42.193.177.127/dao
+http://42.193.177.127/api/health
+http://42.193.177.127/api/health/daily-review/reflection?date=today
 http://42.193.177.127:8880/
 http://42.193.177.127:5173/
+
+说明：`8881` 是本机后端端口，不要求公网直开；公网 API 通过 Nginx -> 3001 -> 8881 proxy 验证。
 
 最近一次完整部署复验：`.hermes/deliveries/2026-07-04-1945-部署复验收口.md`。
 
