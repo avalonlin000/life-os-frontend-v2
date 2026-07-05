@@ -58,6 +58,10 @@ export default function KnowledgePage() {
   const [knowledgeContent, setKnowledgeContent] = useState('');
   const [knowledgeSource, setKnowledgeSource] = useState('');
   const [savingKnowledge, setSavingKnowledge] = useState(false);
+  const [lastSavedKnowledge, setLastSavedKnowledge] = useState<Knowledge | null>(null);
+  const [splitFeedback, setSplitFeedback] = useState('');
+  const [splitFeedbackType, setSplitFeedbackType] = useState<'success' | 'error'>('success');
+  const [splitFeedbackKnowledgeId, setSplitFeedbackKnowledgeId] = useState<number | string | null>(null);
   const [splittingKnowledgeId, setSplittingKnowledgeId] = useState<number | string | null>(null);
   const [error, setError] = useState('');
   const [lastThoughtStatus, setLastThoughtStatus] = useState('');
@@ -116,6 +120,25 @@ export default function KnowledgePage() {
     if (deepTopic.trim()) return deepTopic.trim();
     return card.practice || card.pillar || card.question || '行动力';
   }, [deepTopic, card]);
+
+  const summarizeKnowledge = (content: string, limit = 120) => {
+    const compact = content.replace(/\s+/g, ' ').trim();
+    return compact.length > limit ? `${compact.slice(0, limit)}…` : compact;
+  };
+
+  const formatKnowledgeTime = (createdAt?: string) => {
+    if (!createdAt) return '刚保存';
+    const parsed = new Date(createdAt);
+    if (Number.isNaN(parsed.getTime())) return createdAt.slice(0, 16);
+    return parsed.toLocaleString('zh-CN', {
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const actionPageHref = `${import.meta.env.BASE_URL}act`;
 
   const handleThought = async (text: string) => {
     setSavingThought(true);
@@ -218,13 +241,17 @@ export default function KnowledgePage() {
     setSavingKnowledge(true);
     try {
       const title = knowledgeTitle.trim() || content.split('\n').find(Boolean)?.slice(0, 36) || '未命名材料';
-      await jieyiService.knowledge.create({
+      const saved = await jieyiService.knowledge.create({
         title,
         content,
         source_type: 'manual',
         source_url: knowledgeSource.trim() || undefined,
         tags: ['知', '外部材料'],
       });
+      setLastSavedKnowledge(saved);
+      setSplitFeedback('');
+      setSplitFeedbackType('success');
+      setSplitFeedbackKnowledgeId(null);
       setKnowledgeTitle('');
       setKnowledgeContent('');
       setKnowledgeSource('');
@@ -240,12 +267,21 @@ export default function KnowledgePage() {
 
   const splitKnowledge = async (item: Knowledge) => {
     setSplittingKnowledgeId(item.id);
+    setSplitFeedback('');
+    setSplitFeedbackType('success');
     try {
       const actions = await jieyiService.knowledge.split(item.id) as Schedule[];
       const count = Array.isArray(actions) ? actions.length : 0;
-      toast?.showToast(count ? `已拆出 ${count} 个行动，去行页看。` : '已请求拆行动，去行页看。', 'success');
+      const message = count ? `已拆出 ${count} 个行动，去行页看。` : '已请求拆行动，去行页看。';
+      setSplitFeedback(message);
+      setSplitFeedbackType('success');
+      setSplitFeedbackKnowledgeId(item.id);
+      toast?.showToast(message, 'success');
     } catch (e) {
       console.error('knowledge split failed', e);
+      setSplitFeedback('拆行动失败，接口未返回可用结果。');
+      setSplitFeedbackType('error');
+      setSplitFeedbackKnowledgeId(item.id);
       toast?.showToast('拆行动失败，接口未返回可用结果', 'error');
     } finally {
       setSplittingKnowledgeId(null);
@@ -453,6 +489,36 @@ export default function KnowledgePage() {
           </button>
         </div>
 
+        {lastSavedKnowledge && (
+          <article className="knowledge-card knowledge-just-saved-card" aria-label="刚保存的材料">
+            <div className="knowledge-card-header">
+              <div>
+                <span className="status-pill live">刚保存</span>
+                <div className="knowledge-card-title">{lastSavedKnowledge.title}</div>
+              </div>
+              <span className="mono-badge">ID {lastSavedKnowledge.id}</span>
+            </div>
+            <p>{summarizeKnowledge(lastSavedKnowledge.content)}</p>
+            <div className="knowledge-card-meta">
+              <span>{lastSavedKnowledge.source_type || 'manual'}</span>
+              {lastSavedKnowledge.source_url && <span>{lastSavedKnowledge.source_url}</span>}
+              <span>{formatKnowledgeTime(lastSavedKnowledge.created_at)}</span>
+            </div>
+            <button
+              className="btn-secondary"
+              onClick={() => splitKnowledge(lastSavedKnowledge)}
+              disabled={splittingKnowledgeId === lastSavedKnowledge.id}
+            >
+              {splittingKnowledgeId === lastSavedKnowledge.id ? '拆解中' : '拆成行动'}
+            </button>
+            {splitFeedback && splitFeedbackKnowledgeId === lastSavedKnowledge.id && (
+              <div className={`inline-feedback ${splitFeedbackType}`}>
+                {splitFeedback} <a href={actionPageHref}>去行页</a>
+              </div>
+            )}
+          </article>
+        )}
+
         <div className="knowledge-list recent-knowledge-list">
           {knowledgeItems.length === 0 && <div className="empty-state">暂无外部知识。先粘贴一段真实材料。</div>}
           {knowledgeItems.map((item) => (
@@ -466,6 +532,11 @@ export default function KnowledgePage() {
               <button className="btn-secondary" onClick={() => splitKnowledge(item)} disabled={splittingKnowledgeId === item.id}>
                 {splittingKnowledgeId === item.id ? '拆解中' : '拆成行动'}
               </button>
+              {splitFeedback && splitFeedbackKnowledgeId === item.id && (
+                <div className={`inline-feedback ${splitFeedbackType}`}>
+                  {splitFeedback} <a href={actionPageHref}>去行页</a>
+                </div>
+              )}
             </article>
           ))}
         </div>
