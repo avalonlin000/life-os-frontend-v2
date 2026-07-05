@@ -5,7 +5,7 @@ import type { DailyPlan, DailyReviewOut, JieyiDailyContext } from '../../types';
 
 export const toJsonField = (value?: string[] | null): string | undefined => {
   if (!value || value.length === 0) return undefined;
-  return JSON.stringify(value);
+  return value.join(',');
 };
 
 export const parseJsonField = (value: unknown): string[] | null => {
