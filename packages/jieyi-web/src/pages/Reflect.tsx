@@ -55,7 +55,11 @@ export default function Reflect() {
 
   const currentDate = today();
   const activityCount = activities.length;
-  const hasReview = Boolean(dailyReview || reflectionToday?.summary);
+  const reflectionSummary = reflectionToday?.summary?.trim() ?? '';
+  const dailyReviewSummary = dailyReview?.summary?.trim() ?? '';
+  const reviewSummary = dailyReviewSummary || reflectionSummary;
+  const hasReflectionContent = Boolean(reflectionSummary || reflectionToday?.question || reflectionToday?.tomorrow_adjustment);
+  const hasReview = Boolean(dailyReview || hasReflectionContent);
 
   const fetchMood = async () => {
     try {
@@ -168,6 +172,15 @@ export default function Reflect() {
       dailyReview?.concerns,
     ),
     [dailyReview]
+  );
+
+  const reviewHighlights = useMemo(
+    () => parseList(
+      dailyReview?.highlights,
+      dailyReview?.insights,
+      reflectionToday?.question,
+    ).slice(0, 4),
+    [dailyReview, reflectionToday]
   );
 
   const followUpAdjustments = useMemo(
@@ -363,16 +376,20 @@ export default function Reflect() {
 
         {reviewError && <div className="error-state reflect-review-error">{reviewError}</div>}
 
-        {dailyReview ? (
+        {hasReview ? (
           <div className="daily-review-card reflect-review-card achievement-card">
-            {dailyReview.summary && <span className="status-pill reflect-review-badge">今日整理已生成</span>}
-            {dailyReview.summary && <p className="daily-review-summary">{dailyReview.summary}</p>}
+            {dailyReviewSummary ? (
+              <span className="status-pill reflect-review-badge">今日整理已生成</span>
+            ) : hasReflectionContent ? (
+              <span className="status-pill reflect-review-badge">已读取 reflection 对账</span>
+            ) : null}
+            {reviewSummary && <p className="daily-review-summary">{reviewSummary}</p>}
 
-            {dailyReview.highlights?.length ? (
+            {reviewHighlights.length ? (
               <div className="daily-review-section">
                 <span className="daily-review-label">整理洞察</span>
                 <ul>
-                  {dailyReview.highlights.map((item, index) => <li key={index}>{item}</li>)}
+                  {reviewHighlights.map((item, index) => <li key={index}>{item}</li>)}
                 </ul>
               </div>
             ) : null}
