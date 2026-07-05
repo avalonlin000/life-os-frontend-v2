@@ -37,7 +37,13 @@ export const jieyiService = {
   thinkingCards: {
     today: async (date?: string): Promise<any> => {
       const url = date ? `/jieyi/thinking-cards/today?date=${encodeURIComponent(date)}` : '/jieyi/thinking-cards/today';
-      return api.get<any>(url);
+      const result = await api.get<any>(url);
+      const firstCard = result?.question_card || result?.today_question || (Array.isArray(result?.cards) ? result.cards[0] : null);
+      return {
+        ...result,
+        question_card: firstCard || null,
+        today_question: firstCard || null,
+      };
     },
     answer: async (cardId: string, answer: string): Promise<any> =>
       api.post<any>(`/jieyi/thinking-cards/${encodeURIComponent(cardId)}/answer`, { answer }),
