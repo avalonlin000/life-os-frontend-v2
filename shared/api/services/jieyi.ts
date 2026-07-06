@@ -9,11 +9,46 @@ import type {
   Mood, MoodCreate,
   Wisdom,
   MoodTrendItem, GoalCreate, GoalOut, NoteOut,
-  DailyPlan, DailyReviewOut,
+  CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiPrincipleItem,
   JieyiDailyContext, JieyiTodayAggregate, JieyiWriteNextPlanInput, JieyiWriteNextPlanResult,
   DeepLearningPrepareInput, DeepLearningSession, DeepLearningAcceptanceInput, DeepLearningAcceptanceResult,
 } from '../../types';
 import { normalizeDailyContext, normalizeDailyPlan, normalizeDailyReview, parseJsonField, toJsonField } from './normalizers';
+
+const normalizeCandidateArray = (value: Array<string | CognitiveAssetCandidate> | undefined): CognitiveAssetCandidate[] => {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is CognitiveAssetCandidate => Boolean(item) && typeof item === 'object' && 'content' in item);
+};
+
+const buildCognitiveCandidatePrinciples = (review: DailyReviewOut | null): JieyiPrincipleItem[] => {
+  const candidates = normalizeCandidateArray(review?.cognitive_asset_candidates)
+    .concat(normalizeCandidateArray(review?.cognitive_candidates))
+    .concat(normalizeCandidateArray(review?.wisdom_candidates));
+  const seen = new Set<string>();
+  return candidates.filter((candidate) => {
+    const key = `${candidate.source_date}:${candidate.content}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map((candidate, index) => ({
+    id: `cognitive-candidate:${candidate.source_date}:${index}`,
+    content: candidate.content,
+    source: `认知资产候选 · ${candidate.source_date}`,
+    source_type: 'cognitive_asset_candidate',
+    pillar: '认知资产候选',
+    evidence: candidate.source_reflection || candidate.evidence_texts?.[0] || '来自今日整理候选，确认前不写入长期原则。',
+    related_practice: candidate.related_actions.length ? String(candidate.related_actions[0]) : null,
+    verification_status: 'pending',
+    verification_label: '候选池 · 待确认',
+    last_verified_at: null,
+    candidate_status: candidate.status || 'candidate',
+    source_date: candidate.source_date,
+    source_reflection: candidate.source_reflection,
+    related_actions: candidate.related_actions,
+    related_knowledge: candidate.related_knowledge,
+    evidence_texts: candidate.evidence_texts,
+  }));
+};
 
 export const jieyiService = {
   knowledge: {
@@ -72,6 +107,29 @@ export const jieyiService = {
   },
   principles: {
     list: async (): Promise<any> => api.get<any>('/jieyi/principles'),
+    listWithCandidates: async (date?: string): Promise<any> => {
+      const [principles, review] = await Promise.all([
+        api.get<any>('/jieyi/principles'),
+        api.get<any>(JIEYI_API.DAILY_REVIEW(date)).then(normalizeDailyReview).catch(() => null),
+      ]);
+      const way = principles?.way;
+      const items = Array.isArray(principles?.principles)
+        ? principles.principles
+        : Array.isArray(way?.principles)
+          ? way.principles
+          : [];
+      const cognitiveCandidates = buildCognitiveCandidatePrinciples(review);
+      return {
+        ...principles,
+        principles: [...items, ...cognitiveCandidates],
+        cognitive_asset_candidates: cognitiveCandidates,
+        way: {
+          ...(way || {}),
+          principles: [...items, ...cognitiveCandidates],
+          cognitive_asset_candidates: cognitiveCandidates,
+        },
+      };
+    },
   },
   dailyPlan: {
     get: async (): Promise<DailyPlan | null> => {

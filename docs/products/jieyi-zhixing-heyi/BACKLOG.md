@@ -66,7 +66,7 @@
 |----|------|------|------|----------|------|------|
 | JY-P2-1 | 定义认知资产候选结构 | COG1 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/COGNITIVE-ASSET-CANDIDATE-SCHEMA.md` | 已在 `shared/types/jieyi.ts` 定义 `CognitiveAssetCandidate`，字段覆盖标题、内容、来源日期、原始复盘引用、关联行动/知识、状态。 |
 | JY-P2-2 | 从 daily-review / reflection 生成候选 | COG2-COG3 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/COGNITIVE-ASSET-CANDIDATE-GENERATION.md` | service 归一化会把真实 daily-review/reflection 来源转成候选；无 summary/suggestion/insights/highlights/显式候选时返回空数组，不生成假候选。 |
-| JY-P2-3 | 写入 Wiki 或原则候选池 | COG4 通过 | Planned | - | - | 写入前需要明确确认/状态机制，不静默污染长期原则。 |
+| JY-P2-3 | 写入 Wiki 或原则候选池 | COG4 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/COGNITIVE-ASSET-CANDIDATE-POOL.md` | 已采用原则候选池写入边界：候选以 `cognitive_asset_candidate` + `pending` 展示，不直接写 Wiki、不污染长期原则。 |
 | JY-P2-4 | /way 展示认知资产候选与来源 | COG5 通过 | Planned | - | - | /way 展示候选、来源和空状态，长期原则与候选态区分。 |
 
 ---

@@ -160,13 +160,19 @@ export interface JieyiPrincipleItem {
   id: string;
   content: string;
   source: string;
-  source_type?: 'reflection_wisdom' | 'method_library' | string;
+  source_type?: 'reflection_wisdom' | 'method_library' | 'cognitive_asset_candidate' | string;
   pillar: string;
   evidence: string;
   related_practice: string | null;
   verification_status?: 'verified' | 'checked_today' | 'pending' | string;
   verification_label?: string;
   last_verified_at?: string | null;
+  candidate_status?: CognitiveAssetCandidateStatus;
+  source_date?: string;
+  source_reflection?: string;
+  related_actions?: Array<number | string>;
+  related_knowledge?: Array<number | string>;
+  evidence_texts?: string[];
 }
 
 export interface JieyiTodayAggregate {

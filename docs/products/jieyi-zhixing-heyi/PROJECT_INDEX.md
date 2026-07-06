@@ -58,6 +58,7 @@
 | `STATUS.md` | 当前阶段状态与完成度口径 |
 | `COGNITIVE-ASSET-CANDIDATE-SCHEMA.md` | P2 认知资产候选结构与写入边界 |
 | `COGNITIVE-ASSET-CANDIDATE-GENERATION.md` | P2 认知资产候选生成与归一化规则 |
+| `COGNITIVE-ASSET-CANDIDATE-POOL.md` | P2 认知资产候选池状态机制，不静默污染长期原则 |
 | `ACCEPTANCE.md` | 验收清单 |
 | `BACKLOG.md` | 可执行任务 |
 

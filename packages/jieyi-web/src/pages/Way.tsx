@@ -31,6 +31,7 @@ const statusClass = (item: JieyiPrincipleItem) => {
 const sourceLabel = (item: JieyiPrincipleItem) => {
   if (item.source_type === 'reflection_wisdom') return '来自思页复盘';
   if (item.source_type === 'method_library') return '来自知页学习判断';
+  if (item.source_type === 'cognitive_asset_candidate') return '来自今日整理候选池';
   return item.source || '来源未标注';
 };
 
@@ -45,7 +46,7 @@ export default function Way() {
 
   useEffect(() => {
     setLoading(true);
-    jieyiService.principles.list()
+    jieyiService.principles.listWithCandidates()
       .then((data: PrinciplesResponse) => {
         const way = data?.way;
         const items = Array.isArray(data?.principles) ? data.principles : (Array.isArray(way?.principles) ? way.principles : []);
