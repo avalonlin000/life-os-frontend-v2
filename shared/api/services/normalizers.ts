@@ -1,7 +1,7 @@
 // Service 层通用序列化/反序列化与结衣数据归一化
 // 后端某些字段存为 JSON 字符串，这里统一做序列化/反序列化
 
-import type { DailyPlan, DailyReviewOut, JieyiDailyContext } from '../../types';
+import type { CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiDailyContext } from '../../types';
 
 export const toJsonField = (value?: string[] | null): string | undefined => {
   if (!value || value.length === 0) return undefined;
@@ -62,6 +62,83 @@ const normalizeReviewList = (...values: unknown[]): string[] => {
   return [];
 };
 
+const normalizeCognitiveAssetCandidates = (review: any): CognitiveAssetCandidate[] => {
+  const rawValues = [
+    review?.cognitive_asset_candidates,
+    review?.cognitiveAssetCandidates,
+    review?.cognitive_candidates,
+    review?.cognitiveCandidates,
+    review?.wisdom_candidates,
+    review?.wisdomCandidates,
+  ];
+  const sourceDate = String(review?.date || new Date().toISOString().slice(0, 10));
+  const sourceReflection = String(review?.summary || review?.suggestion || '').trim();
+  const candidates: CognitiveAssetCandidate[] = [];
+
+  for (const value of rawValues) {
+    const items = Array.isArray(value) ? value : typeof value === 'string' && value.trim() ? [value] : [];
+    for (const item of items) {
+      if (typeof item === 'string' && item.trim()) {
+        const content = item.trim();
+        candidates.push({
+          title: content.slice(0, 48),
+          content,
+          source_date: sourceDate,
+          source_reflection: sourceReflection || content,
+          related_actions: [],
+          related_knowledge: [],
+          status: 'candidate',
+          evidence_texts: sourceReflection ? [sourceReflection] : [content],
+        });
+      } else if (item && typeof item === 'object') {
+        const obj = item as Record<string, unknown>;
+        const content = String(obj.content || obj.text || obj.summary || obj.title || '').trim();
+        if (!content) continue;
+        candidates.push({
+          title: String(obj.title || content.slice(0, 48)).trim(),
+          content,
+          source_date: String(obj.source_date || obj.sourceDate || sourceDate),
+          source_reflection: String(obj.source_reflection || obj.sourceReflection || sourceReflection || content),
+          related_actions: Array.isArray(obj.related_actions)
+            ? obj.related_actions as Array<number | string>
+            : Array.isArray(obj.relatedActions)
+              ? obj.relatedActions as Array<number | string>
+              : [],
+          related_knowledge: Array.isArray(obj.related_knowledge)
+            ? obj.related_knowledge as Array<number | string>
+            : Array.isArray(obj.relatedKnowledge)
+              ? obj.relatedKnowledge as Array<number | string>
+              : [],
+          status: String(obj.status || 'candidate'),
+          evidence_texts: Array.isArray(obj.evidence_texts)
+            ? obj.evidence_texts.filter((text): text is string => typeof text === 'string' && text.trim().length > 0)
+            : Array.isArray(obj.evidenceTexts)
+              ? obj.evidenceTexts.filter((text): text is string => typeof text === 'string' && text.trim().length > 0)
+              : sourceReflection
+                ? [sourceReflection]
+                : [content],
+          created_at: typeof obj.created_at === 'string' ? obj.created_at : typeof obj.createdAt === 'string' ? obj.createdAt : undefined,
+          updated_at: typeof obj.updated_at === 'string' ? obj.updated_at : typeof obj.updatedAt === 'string' ? obj.updatedAt : undefined,
+        });
+      }
+    }
+    if (candidates.length) return candidates;
+  }
+
+  const derivedSource = sourceReflection || normalizeReviewList(review?.insights, review?.highlights)[0] || '';
+  if (!derivedSource) return [];
+  return [{
+    title: derivedSource.slice(0, 48),
+    content: derivedSource,
+    source_date: sourceDate,
+    source_reflection: derivedSource,
+    related_actions: [],
+    related_knowledge: [],
+    status: 'candidate',
+    evidence_texts: [derivedSource],
+  }];
+};
+
 export const normalizeDailyReview = (value: any): DailyReviewOut | null => {
   if (!value || typeof value !== 'object') return null;
   const review: DailyReviewOut = {
@@ -78,12 +155,12 @@ export const normalizeDailyReview = (value: any): DailyReviewOut | null => {
     nextDayFocus: normalizeReviewList(value.nextDayFocus, value.next_day_focus),
     rhythm_suggestion: value.rhythm_suggestion,
     rhythmSuggestion: value.rhythmSuggestion,
-    cognitive_asset_candidates: normalizeReviewList(value.cognitive_asset_candidates, value.cognitiveAssetCandidates),
-    cognitiveAssetCandidates: normalizeReviewList(value.cognitiveAssetCandidates, value.cognitive_asset_candidates),
-    cognitive_candidates: normalizeReviewList(value.cognitive_candidates, value.cognitiveCandidates),
-    cognitiveCandidates: normalizeReviewList(value.cognitiveCandidates, value.cognitive_candidates),
-    wisdom_candidates: normalizeReviewList(value.wisdom_candidates, value.wisdomCandidates),
-    wisdomCandidates: normalizeReviewList(value.wisdomCandidates, value.wisdom_candidates),
+    cognitive_asset_candidates: normalizeCognitiveAssetCandidates(value),
+    cognitiveAssetCandidates: normalizeCognitiveAssetCandidates(value),
+    cognitive_candidates: normalizeCognitiveAssetCandidates(value),
+    cognitiveCandidates: normalizeCognitiveAssetCandidates(value),
+    wisdom_candidates: normalizeCognitiveAssetCandidates(value),
+    wisdomCandidates: normalizeCognitiveAssetCandidates(value),
     insights: normalizeReviewList(value.insights),
     created_at: value.created_at,
     updated_at: value.updated_at,

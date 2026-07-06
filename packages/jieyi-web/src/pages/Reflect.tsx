@@ -11,7 +11,18 @@ const today = () => new Date().toISOString().split('T')[0];
 
 const parseList = (...values: unknown[]): string[] => {
   for (const value of values) {
-    if (Array.isArray(value)) return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => {
+          if (typeof item === 'string') return item.trim();
+          if (item && typeof item === 'object') {
+            const record = item as Record<string, unknown>;
+            return String(record.content || record.title || '').trim();
+          }
+          return '';
+        })
+        .filter((item) => item.length > 0);
+    }
     if (typeof value === 'string' && value.trim()) return [value.trim()];
   }
   return [];
