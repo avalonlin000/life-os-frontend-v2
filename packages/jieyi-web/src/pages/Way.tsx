@@ -6,10 +6,12 @@ import { wayPrincipleCandidateSample } from '../contentSamples';
 type PrinciplesResponse = {
   direction?: string;
   principles?: JieyiPrincipleItem[];
+  cognitive_asset_candidates?: JieyiPrincipleItem[];
   data_sources?: string[];
   way?: {
     direction?: string;
     principles?: JieyiPrincipleItem[];
+    cognitive_asset_candidates?: JieyiPrincipleItem[];
     data_sources?: string[];
     message?: string;
   };
@@ -38,6 +40,7 @@ const sourceLabel = (item: JieyiPrincipleItem) => {
 export default function Way() {
   const [direction, setDirection] = useState('成为一个能持续积累资产和判断力的人。');
   const [principles, setPrinciples] = useState<JieyiPrincipleItem[]>([]);
+  const [cognitiveCandidates, setCognitiveCandidates] = useState<JieyiPrincipleItem[]>([]);
   const [dataSources, setDataSources] = useState<string[]>([]);
   const [message, setMessage] = useState('原则来自知页学习判断、行页动作练习和思页复盘沉淀。');
   const [loading, setLoading] = useState(true);
@@ -50,8 +53,14 @@ export default function Way() {
       .then((data: PrinciplesResponse) => {
         const way = data?.way;
         const items = Array.isArray(data?.principles) ? data.principles : (Array.isArray(way?.principles) ? way.principles : []);
+        const candidates = Array.isArray(data?.cognitive_asset_candidates)
+          ? data.cognitive_asset_candidates
+          : Array.isArray(way?.cognitive_asset_candidates)
+            ? way.cognitive_asset_candidates
+            : items.filter((item) => item.source_type === 'cognitive_asset_candidate');
         setDirection(data?.direction || way?.direction || '成为一个能持续积累资产和判断力的人。');
         setPrinciples(items);
+        setCognitiveCandidates(candidates);
         setDataSources(Array.isArray(data?.data_sources) ? data.data_sources : (Array.isArray(way?.data_sources) ? way.data_sources : []));
         setMessage(way?.message || '原则来自知页学习判断、行页动作练习和思页复盘沉淀。');
         setError('');
@@ -59,6 +68,7 @@ export default function Way() {
       .catch(() => {
         setError('原则 API 暂时不可用；不会用假数据冒充已验证原则。');
         setPrinciples([]);
+        setCognitiveCandidates([]);
         setDataSources([]);
       })
       .finally(() => setLoading(false));
@@ -143,6 +153,31 @@ export default function Way() {
           </article>
         )) : (
           <div className="empty-state">还没有可展示的长期原则。请先从知页学习判断、行页行动、思页复盘沉淀。</div>
+        )}
+      </section>
+
+      <section className="way-list" aria-label="认知资产候选池">
+        <div className="section-header compact">
+          <span className="status-pill">认知资产候选池</span>
+          <p>这里只展示来自 daily-review / reflection 的候选。它们有来源、状态和证据，但确认前不会进入长期原则。</p>
+        </div>
+        {cognitiveCandidates.length > 0 ? cognitiveCandidates.map((item) => (
+          <article className="way-item pending" key={`candidate-${item.id}`}>
+            <div className="way-item-meta">
+              <span>{item.source_date ? `来源日期：${item.source_date}` : '来源日期：待确认'}</span>
+              <span className="way-status pending">{statusText(item)}</span>
+            </div>
+            <h3>{item.content}</h3>
+            <p>{item.source_reflection || item.evidence || '暂无原始复盘片段。'}</p>
+            <div className="way-evidence-grid">
+              <small>来源：{sourceLabel(item)} · {item.source || '未标注'}</small>
+              <small>{item.related_actions?.length ? `关联行动：${item.related_actions.join('、')}` : '关联行动：暂无'}</small>
+              <small>{item.related_knowledge?.length ? `关联知识：${item.related_knowledge.join('、')}` : '关联知识：暂无'}</small>
+              <small>{item.evidence_texts?.length ? `证据：${item.evidence_texts.join(' / ')}` : '证据：等待后续复盘补充'}</small>
+            </div>
+          </article>
+        )) : (
+          <div className="empty-state compact">暂无认知资产候选。先在思页生成今日整理；没有真实复盘来源时不会生成假候选。</div>
         )}
       </section>
     </div>
