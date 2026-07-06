@@ -19,6 +19,7 @@
 | BP-DONE-9 | `life-os-frontend-workflow` 主 skill 太杂 | 已重写为纯共享工程层 skill，产品细节降级为 legacy references | profile skill 更新 |
 | BP-DONE-10 | `life-os-frontend-workflow` references 无索引 | 已新增 references/README.md 分类索引，覆盖 55/55 个 reference | profile skill 更新 |
 | BP-DONE-11 | BP-4 指导文件漂移复查 | 已搜索 active docs/skills 旧口径残留，无需继续 patch；详见 BP-4 审计报告 | `docs/GUIDANCE_SKILL_DRIFT_AUDIT_BP4.md` |
+| BP-DONE-12 | BP-5 完成度口径 | 已新增结衣 STATUS，区分 BACKLOG 已验收项、P0/P1 阶段、P2/P3 产品化、后续候选 | `docs/products/jieyi-zhixing-heyi/STATUS.md` |
 
 ## 2. 剩余统一项：放入本蓝图批量收口
 
@@ -75,7 +76,7 @@
 - grep 旧口径残留为 0，或残留均在明确 legacy 文档中。
 - 当前结论：已完成，详见 `docs/GUIDANCE_SKILL_DRIFT_AUDIT_BP4.md`。
 
-### BP-5：统一完成度口径
+### BP-5：统一完成度口径（Done）
 
 问题：当前存在三种完成度：BACKLOG 完成、Roadmap 阶段完成、产品化完成。
 
@@ -87,13 +88,13 @@
 
 验收：
 - 后续 agent 能一眼判断“已完成什么 / 下一步是什么 / 哪些只是计划”。
+- 当前结论：已完成，详见 `docs/products/jieyi-zhixing-heyi/STATUS.md`。
 
 ## 3. 后续执行顺序
 
-1. BP-5 完成度口径：让目标文件显示真实阶段。
-2. BP-1 skill references 迁移清单：作为技能资产整理，不再逐条展开讨论。
-3. BP-3 backend repo 独立收口：只做 scoped patch，不混提交。
-4. BP-2 结衣 P2/P3 产品化：进入下一阶段功能执行。
+1. BP-1 skill references 迁移清单：作为技能资产整理，不再逐条展开讨论。
+2. BP-3 backend repo 独立收口：只做 scoped patch，不混提交。
+3. BP-2 结衣 P2/P3 产品化：进入下一阶段功能执行。
 
 ## 4. 执行规则
 
