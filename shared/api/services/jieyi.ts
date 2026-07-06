@@ -9,7 +9,7 @@ import type {
   Mood, MoodCreate,
   Wisdom,
   MoodTrendItem, GoalCreate, GoalOut, NoteOut,
-  CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiPatternWindow, JieyiPatternWindowDay, JieyiPrincipleItem,
+  CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiPatternCandidate, JieyiPatternDetectionResult, JieyiPatternWindow, JieyiPatternWindowDay, JieyiPrincipleItem,
   JieyiDailyContext, JieyiTodayAggregate, JieyiWriteNextPlanInput, JieyiWriteNextPlanResult,
   DeepLearningPrepareInput, DeepLearningSession, DeepLearningAcceptanceInput, DeepLearningAcceptanceResult,
 } from '../../types';
@@ -79,6 +79,195 @@ const buildPatternWindowDates = (days: number, endDate?: string | Date): string[
 
 const buildPatternWindowInsufficientReason = (windowDays: number, evidenceDays: number): string =>
   `最近${windowDays}天只有${evidenceDays}天存在 mood / activities / schedules / daily-review 数据，不足以识别。`;
+
+type KnownPatternType = 'rhythm_overload' | 'input_without_action' | 'task_resistance' | 'recovery_debt';
+
+const PATTERN_META: Record<KnownPatternType, { label: string; suggestion: string }> = {
+  rhythm_overload: {
+    label: '节奏过载',
+    suggestion: '明日减少并行任务，只保留一个可验证动作。',
+  },
+  input_without_action: {
+    label: '输入多行动少',
+    suggestion: '明日优先把一个输入拆成行动，不继续加材料。',
+  },
+  task_resistance: {
+    label: '任务阻力',
+    suggestion: '把任务拆成 10 分钟以内的第一步，只调整一个条件。',
+  },
+  recovery_debt: {
+    label: '恢复不足',
+    suggestion: '明日偏恢复，先保护睡眠/身体，再推进复杂判断。',
+  },
+};
+
+const INPUT_KEYWORDS = ['学习', '资料', '文章', '视频', '输入', '收藏', '研究', '阅读', 'deep learning', 'Deep Learning'];
+const RESISTANCE_KEYWORDS = ['卡住', '拖延', '没开始', '反复', '范围不清', '太大', '推迟', '阻力', '不想', '焦虑'];
+const RECOVERY_KEYWORDS = ['睡眠', '休息', '恢复', '散步', '冥想', '放松', '运动', '休整'];
+
+const uniqueStrings = (items: string[]): string[] => Array.from(new Set(items.filter((item) => item.trim().length > 0)));
+
+const collectPatternDayTexts = (day: JieyiPatternWindowDay): string[] => uniqueStrings([
+  day.mood?.note ?? '',
+  day.daily_review?.summary ?? '',
+  day.daily_review?.suggestion ?? '',
+  ...(day.daily_review?.highlights ?? []),
+  ...(day.daily_review?.concerns ?? []),
+  ...(day.daily_review?.insights ?? []),
+  ...day.activities.flatMap((activity) => [activity.name, activity.note ?? '', ...(activity.tags ?? [])]),
+  ...day.schedules.map((schedule) => schedule.content),
+]);
+
+const hasKeyword = (texts: string[], keywords: string[]): boolean =>
+  texts.some((text) => keywords.some((keyword) => text.toLowerCase().includes(keyword.toLowerCase())));
+
+const findConsecutiveDays = (
+  days: JieyiPatternWindowDay[],
+  predicate: (day: JieyiPatternWindowDay) => boolean,
+  minLength: number,
+): JieyiPatternWindowDay[] => {
+  let current: JieyiPatternWindowDay[] = [];
+  let best: JieyiPatternWindowDay[] = [];
+  for (const day of days) {
+    if (predicate(day)) {
+      current = [...current, day];
+      if (current.length > best.length) best = current;
+    } else {
+      current = [];
+    }
+  }
+  return best.length >= minLength ? best : [];
+};
+
+const relatedScheduleRefs = (days: JieyiPatternWindowDay[]): Array<number | string> =>
+  uniqueStrings(days.flatMap((day) => day.schedules.filter((schedule) => !schedule.is_done).map((schedule) => String(schedule.id || schedule.content)))).slice(0, 6);
+
+const evidenceFromDays = (days: JieyiPatternWindowDay[], fallback: string): string[] => {
+  const texts = days.flatMap((day) => collectPatternDayTexts(day).map((text) => `${day.date}: ${text}`));
+  return uniqueStrings(texts).slice(0, 4).length ? uniqueStrings(texts).slice(0, 4) : [fallback];
+};
+
+const makePatternCandidate = (
+  window: JieyiPatternWindow,
+  patternType: KnownPatternType,
+  evidenceDays: JieyiPatternWindowDay[],
+  evidenceTexts: string[],
+  relatedActions: Array<number | string>,
+  severity: 'low' | 'medium' | 'high' = 'medium',
+): JieyiPatternCandidate => ({
+  id: `pattern:${patternType}:${window.end_date}`,
+  pattern_type: patternType,
+  label: PATTERN_META[patternType].label,
+  severity,
+  status: 'candidate',
+  date_range: {
+    start: window.start_date,
+    end: window.end_date,
+    days: window.window_days,
+    evidence_days: evidenceDays.length,
+  },
+  evidence_dates: evidenceDays.map((day) => day.date),
+  evidence_texts: evidenceTexts,
+  related_actions: relatedActions,
+  suggested_adjustment: PATTERN_META[patternType].suggestion,
+  generated_at: window.generated_at,
+});
+
+const detectPatternCandidates = (window: JieyiPatternWindow): JieyiPatternCandidate[] => {
+  if (!window.has_enough_data) return [];
+  const candidates: JieyiPatternCandidate[] = [];
+  const pushCandidate = (candidate: JieyiPatternCandidate) => {
+    if (!candidates.some((item) => item.pattern_type === candidate.pattern_type)) candidates.push(candidate);
+  };
+
+  const stressRun = findConsecutiveDays(window.days, (day) => (day.mood?.stress ?? 0) >= 7, 3);
+  const lowEnergyRun = findConsecutiveDays(window.days, (day) => day.mood?.energy != null && day.mood.energy <= 4, 3);
+  const overloadDays = stressRun.length >= lowEnergyRun.length ? stressRun : lowEnergyRun;
+  if (overloadDays.length) {
+    pushCandidate(makePatternCandidate(
+      window,
+      'rhythm_overload',
+      overloadDays,
+      overloadDays.map((day) => `${day.date}: 压力 ${day.mood?.stress ?? '-'} / 精力 ${day.mood?.energy ?? '-'}`),
+      relatedScheduleRefs(overloadDays),
+      overloadDays.length >= 4 ? 'high' : 'medium',
+    ));
+  }
+
+  const recentDays = window.days.slice(-7);
+  const inputDays = recentDays.filter((day) =>
+    day.schedules.some((schedule) => ['knowledge_split', 'ai_suggest', 'daily_plan'].includes(String(schedule.source))) ||
+    hasKeyword(collectPatternDayTexts(day), INPUT_KEYWORDS)
+  );
+  const recentSchedules = recentDays.flatMap((day) => day.schedules);
+  const completedRecentSchedules = recentSchedules.filter((schedule) => schedule.is_done).length;
+  if (inputDays.length >= 3 && completedRecentSchedules <= Math.max(1, Math.floor(recentSchedules.length * 0.4))) {
+    pushCandidate(makePatternCandidate(
+      window,
+      'input_without_action',
+      inputDays,
+      evidenceFromDays(inputDays, `最近 7 天有 ${inputDays.length} 天出现输入信号，但完成行动 ${completedRecentSchedules} 项。`),
+      relatedScheduleRefs(recentDays),
+    ));
+  }
+
+  const unfinishedByContent = new Map<string, JieyiPatternWindowDay[]>();
+  window.days.forEach((day) => {
+    day.schedules.filter((schedule) => !schedule.is_done).forEach((schedule) => {
+      const key = schedule.content.replace(/\s+/g, '').slice(0, 18);
+      unfinishedByContent.set(key, [...(unfinishedByContent.get(key) ?? []), day]);
+    });
+  });
+  const repeatedUnfinishedDays = Array.from(unfinishedByContent.values()).find((days) => days.length >= 2) ?? [];
+  const resistanceKeywordDays = window.days.filter((day) => hasKeyword(collectPatternDayTexts(day), RESISTANCE_KEYWORDS));
+  const resistanceDays = repeatedUnfinishedDays.length >= resistanceKeywordDays.length ? repeatedUnfinishedDays : resistanceKeywordDays;
+  if (resistanceDays.length >= 2) {
+    pushCandidate(makePatternCandidate(
+      window,
+      'task_resistance',
+      resistanceDays,
+      evidenceFromDays(resistanceDays, '未完成行动或复盘文本反复出现卡住/拖延/范围不清等阻力信号。'),
+      relatedScheduleRefs(resistanceDays),
+    ));
+  }
+
+  const recoveryMoodRun = findConsecutiveDays(window.days, (day) =>
+    day.mood?.energy != null && day.mood.energy <= 4 && (day.mood?.stress ?? 0) >= 6,
+  2);
+  const recoveryActivityDays = window.days.filter((day) => hasKeyword(day.activities.flatMap((activity) => [activity.name, activity.note ?? '', ...(activity.tags ?? [])]), RECOVERY_KEYWORDS));
+  if (recoveryMoodRun.length >= 2 && recoveryActivityDays.length <= 1) {
+    pushCandidate(makePatternCandidate(
+      window,
+      'recovery_debt',
+      recoveryMoodRun,
+      recoveryMoodRun.map((day) => `${day.date}: 精力 ${day.mood?.energy ?? '-'} / 压力 ${day.mood?.stress ?? '-'}，恢复类活动记录偏少。`),
+      relatedScheduleRefs(recoveryMoodRun),
+      recoveryMoodRun.length >= 3 ? 'high' : 'medium',
+    ));
+  }
+
+  return candidates;
+};
+
+const buildPatternDetectionResult = (window: JieyiPatternWindow): JieyiPatternDetectionResult => {
+  const candidates = detectPatternCandidates(window);
+  const message = !window.has_enough_data
+    ? window.insufficient_reason
+    : candidates.length
+      ? `识别到 ${candidates.length} 个反复模式候选。`
+      : `最近${window.window_days}天暂未识别到足够重复的模式候选。`;
+
+  return {
+    status: window.status,
+    window,
+    candidates,
+    message,
+    writeback_target: `docs/products/jieyi-zhixing-heyi/pattern-candidates/${window.end_date || 'latest'}.md`,
+    rhythm_risks: candidates.map((candidate) => `${candidate.label}: ${candidate.evidence_dates.join('、')}`),
+    rhythm_suggestion: candidates[0]?.suggested_adjustment ?? '暂未识别到需要写入 rhythm_suggestion 的重复模式。',
+  };
+};
+
 
 export const jieyiService = {
   knowledge: {
@@ -346,6 +535,10 @@ export const jieyiService = {
         insufficient_reason: insufficientReason,
         days,
       };
+    },
+    detect: async (options: { days?: number; endDate?: string | Date; minEvidenceDays?: number } = {}): Promise<JieyiPatternDetectionResult> => {
+      const window = await jieyiService.patternRecognition.dataWindow(options);
+      return buildPatternDetectionResult(window);
     },
   },
   wisdom: {

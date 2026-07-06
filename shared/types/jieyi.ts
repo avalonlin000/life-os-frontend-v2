@@ -392,6 +392,11 @@ export interface DailyReviewOut {
   nextDayFocus?: string[];
   rhythm_suggestion?: string;
   rhythmSuggestion?: string;
+  /** PRD: 反复模式候选；后端未统一时可由前端 detector 或候选文件承载。 */
+  repeated_patterns?: JieyiPatternCandidate[];
+  repeatedPatterns?: JieyiPatternCandidate[];
+  pattern_candidates?: JieyiPatternCandidate[];
+  patternCandidates?: JieyiPatternCandidate[];
   /** PRD: 认知资产候选；可选兼容字段，不强制后端返回。 */
   cognitive_asset_candidates?: Array<string | CognitiveAssetCandidate>;
   cognitiveAssetCandidates?: Array<string | CognitiveAssetCandidate>;
@@ -402,6 +407,35 @@ export interface DailyReviewOut {
   insights?: string[];
   created_at?: string;
   updated_at?: string;
+}
+
+export type JieyiPatternType =
+  | 'rhythm_overload'
+  | 'input_without_action'
+  | 'task_resistance'
+  | 'recovery_debt'
+  | (string & {});
+
+export type JieyiPatternCandidateStatus = 'candidate' | 'verifying' | 'promoted_to_principle' | 'rejected' | string;
+export type JieyiPatternSeverity = 'low' | 'medium' | 'high';
+
+export interface JieyiPatternCandidate {
+  id: string;
+  pattern_type: JieyiPatternType;
+  label: string;
+  severity: JieyiPatternSeverity;
+  status: JieyiPatternCandidateStatus;
+  date_range: {
+    start: string;
+    end: string;
+    days: number;
+    evidence_days: number;
+  };
+  evidence_dates: string[];
+  evidence_texts: string[];
+  related_actions: Array<number | string>;
+  suggested_adjustment: string;
+  generated_at: string;
 }
 
 export type JieyiPatternWindowStatus = 'ready' | 'insufficient';
@@ -427,6 +461,16 @@ export interface JieyiPatternWindow {
   has_enough_data: boolean;
   insufficient_reason: string;
   days: JieyiPatternWindowDay[];
+}
+
+export interface JieyiPatternDetectionResult {
+  status: JieyiPatternWindowStatus;
+  window: JieyiPatternWindow;
+  candidates: JieyiPatternCandidate[];
+  message: string;
+  writeback_target: string;
+  rhythm_risks: string[];
+  rhythm_suggestion: string;
 }
 
 export interface WisdomOut {

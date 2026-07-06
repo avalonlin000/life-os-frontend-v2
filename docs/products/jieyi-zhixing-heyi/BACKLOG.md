@@ -76,9 +76,9 @@
 | ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
 |----|------|------|------|----------|------|------|
 | JY-P3-1 | 实现 10-14 天模式识别数据窗口 | PAT1 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/PATTERN-DETECTION-DATA-WINDOW.md` | 已在 shared/types/jieyi.ts 和 jieyiService.patternRecognition.dataWindow() 实现 10-14 天只读窗口；不足时返回明确原因，不产出模式。 |
-| JY-P3-2 | 实现 deterministic pattern detector | PAT2 通过 | Planned | - | - | 至少支持节奏过载、输入多行动少、任务阻力、恢复不足四类候选。 |
-| JY-P3-3 | 写回 repeated_patterns / rhythm 字段 | PAT3-PAT4 通过 | Planned | - | - | 写回 daily-review JSON 扩展字段或 PatternCandidateModel / Wiki 模式候选文件，必须带证据。 |
-| JY-P3-4 | /reflect 或 /way 展示模式候选 | PAT5 通过 | Planned | - | - | 展示候选、证据、建议调整和状态；无候选时清楚空态。 |
+| JY-P3-2 | 实现 deterministic pattern detector | PAT2 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/PATTERN-DETECTION-DETERMINISTIC-RULES.md` | 已支持 rhythm_overload / input_without_action / task_resistance / recovery_debt 四类候选；输出证据日期、证据文本、关联行动和建议调整。 |
+| JY-P3-3 | 写入 repeated_patterns / rhythm 字段 | PAT3-PAT4 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/PATTERN-CANDIDATE-WRITEBACK.md` | 后端当前无安全更新接口且工作区脏，采用模式候选 Markdown 快照写回路径；保留 future daily-review JSON 扩展字段口径。 |
+| JY-P3-4 | /reflect 和 /way 展示模式候选 | PAT5 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/PATTERN-CANDIDATE-DISPLAY.md` | /reflect 展示候选、证据、建议和写回目标；/way 展示候选池且不伪装成长期原则。 |
 
 ---
 

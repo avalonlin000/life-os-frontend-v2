@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { jieyiService } from '@shared/api/services';
-import type { JieyiPrincipleItem } from '@shared/types';
+import type { JieyiPatternCandidate, JieyiPrincipleItem } from '@shared/types';
 import { wayPrincipleCandidateSample } from '../contentSamples';
 
 type PrinciplesResponse = {
@@ -41,6 +41,8 @@ export default function Way() {
   const [direction, setDirection] = useState('成为一个能持续积累资产和判断力的人。');
   const [principles, setPrinciples] = useState<JieyiPrincipleItem[]>([]);
   const [cognitiveCandidates, setCognitiveCandidates] = useState<JieyiPrincipleItem[]>([]);
+  const [patternCandidates, setPatternCandidates] = useState<JieyiPatternCandidate[]>([]);
+  const [patternMessage, setPatternMessage] = useState('模式候选来自最近 10-14 天真实复盘和行动数据。');
   const [dataSources, setDataSources] = useState<string[]>([]);
   const [message, setMessage] = useState('原则来自知页学习判断、行页动作练习和思页复盘沉淀。');
   const [loading, setLoading] = useState(true);
@@ -49,8 +51,11 @@ export default function Way() {
 
   useEffect(() => {
     setLoading(true);
-    jieyiService.principles.listWithCandidates()
-      .then((data: PrinciplesResponse) => {
+    Promise.all([
+      jieyiService.principles.listWithCandidates(),
+      jieyiService.patternRecognition.detect({ days: 14 }).catch(() => null),
+    ])
+      .then(([data, patternData]: [PrinciplesResponse, Awaited<ReturnType<typeof jieyiService.patternRecognition.detect>> | null]) => {
         const way = data?.way;
         const items = Array.isArray(data?.principles) ? data.principles : (Array.isArray(way?.principles) ? way.principles : []);
         const candidates = Array.isArray(data?.cognitive_asset_candidates)
@@ -61,6 +66,8 @@ export default function Way() {
         setDirection(data?.direction || way?.direction || '成为一个能持续积累资产和判断力的人。');
         setPrinciples(items);
         setCognitiveCandidates(candidates);
+        setPatternCandidates(patternData?.candidates ?? []);
+        setPatternMessage(patternData?.message || '模式识别暂不可用；不会用假模式补位。');
         setDataSources(Array.isArray(data?.data_sources) ? data.data_sources : (Array.isArray(way?.data_sources) ? way.data_sources : []));
         setMessage(way?.message || '原则来自知页学习判断、行页动作练习和思页复盘沉淀。');
         setError('');
@@ -69,6 +76,7 @@ export default function Way() {
         setError('原则 API 暂时不可用；不会用假数据冒充已验证原则。');
         setPrinciples([]);
         setCognitiveCandidates([]);
+        setPatternCandidates([]);
         setDataSources([]);
       })
       .finally(() => setLoading(false));
@@ -153,6 +161,31 @@ export default function Way() {
           </article>
         )) : (
           <div className="empty-state">还没有可展示的长期原则。请先从知页学习判断、行页行动、思页复盘沉淀。</div>
+        )}
+      </section>
+
+      <section className="way-list" aria-label="反复模式候选池">
+        <div className="section-header compact">
+          <span className="status-pill">反复模式候选池</span>
+          <p>{patternMessage}</p>
+        </div>
+        {patternCandidates.length > 0 ? patternCandidates.map((item) => (
+          <article className={`way-item pending pattern-candidate-card ${item.severity}`} key={`pattern-${item.id}`}>
+            <div className="way-item-meta">
+              <span>{item.date_range.start} - {item.date_range.end}</span>
+              <span className="way-status pending">{item.status}</span>
+            </div>
+            <h3>{item.label}</h3>
+            <p>{item.suggested_adjustment}</p>
+            <div className="way-evidence-grid">
+              <small>模式类型：{item.pattern_type}</small>
+              <small>证据日期：{item.evidence_dates.join('、')}</small>
+              <small>{item.related_actions.length ? `关联行动：${item.related_actions.join('、')}` : '关联行动：暂无'}</small>
+              <small>{item.evidence_texts.length ? `证据：${item.evidence_texts.slice(0, 2).join(' / ')}` : '证据：等待后续复盘补充'}</small>
+            </div>
+          </article>
+        )) : (
+          <div className="empty-state compact">{patternMessage}</div>
         )}
       </section>
 

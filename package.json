@@ -21,7 +21,8 @@
     "revive:xiaobai": "pnpm guard:lark:restore",
     "revive:xiaoxue": "pnpm guard:lark:restore && pnpm build:xiaoxue",
     "revive:jieyi": "node scripts/revive-jieyi-session.mjs",
-    "revive:all": "pnpm guard:lark:restore && pnpm revive:jieyi && pnpm build:xiaoxue && pnpm build:jieyi"
+    "revive:all": "pnpm guard:lark:restore && pnpm revive:jieyi && pnpm build:xiaoxue && pnpm build:jieyi",
+    "jieyi:pattern:snapshot": "node scripts/jieyi-pattern-snapshot.mjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.1",

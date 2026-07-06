@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { ActivityTimer, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
-import type { Activity, DailyReviewOut, JieyiTodayAggregate, Mood } from '@shared/types';
+import type { Activity, DailyReviewOut, JieyiPatternCandidate, JieyiPatternDetectionResult, JieyiTodayAggregate, Mood } from '@shared/types';
 import { reflectionSample } from '../contentSamples';
 
 type ReflectionToday = JieyiTodayAggregate['reflect']['reconciliation'];
@@ -52,6 +52,9 @@ export default function Reflect() {
   const [mood, setMood] = useState<Mood | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [dailyReview, setDailyReview] = useState<DailyReviewOut | null>(null);
+  const [patternResult, setPatternResult] = useState<JieyiPatternDetectionResult | null>(null);
+  const [patternLoading, setPatternLoading] = useState(false);
+  const [patternError, setPatternError] = useState('');
   const [reflectionToday, setReflectionToday] = useState<ReflectionToday | null>(null);
   const [reflectionText, setReflectionText] = useState('');
   const [reflectionSaving, setReflectionSaving] = useState(false);
@@ -113,10 +116,24 @@ export default function Reflect() {
     }
   };
 
+  const fetchPatternDetection = async () => {
+    setPatternLoading(true);
+    setPatternError('');
+    try {
+      const data = await jieyiService.patternRecognition.detect({ days: 14 });
+      setPatternResult(data);
+    } catch {
+      setPatternResult(null);
+      setPatternError('模式识别暂不可用；不会用假模式补位。');
+    } finally {
+      setPatternLoading(false);
+    }
+  };
+
   useEffect(() => {
     setPageLoading(true);
     setPageError('');
-    Promise.all([fetchMood(), fetchActivities(), fetchReflectionToday(), fetchDailyReview()])
+    Promise.all([fetchMood(), fetchActivities(), fetchReflectionToday(), fetchDailyReview(), fetchPatternDetection()])
       .catch(() => setPageError('加载失败，请刷新重试'))
       .finally(() => setPageLoading(false));
   }, []);
@@ -140,6 +157,7 @@ export default function Reflect() {
       setNote(text);
       await fetchMood();
       await fetchReflectionToday();
+      await fetchPatternDetection();
       showToast('复盘已保存，今日整理会自动读取', 'success');
     } catch (error) {
       console.error('保存复盘失败', error);
@@ -161,6 +179,7 @@ export default function Reflect() {
       }
       setDailyReview(data);
       await fetchReflectionToday();
+      await fetchPatternDetection();
       showToast('今日整理已生成', 'success');
     } catch (error) {
       console.error('生成今日整理失败', error);
@@ -219,6 +238,11 @@ export default function Reflect() {
       dailyReview?.insights,
     ).slice(0, 4),
     [dailyReview]
+  );
+
+  const patternCandidates = useMemo<JieyiPatternCandidate[]>(
+    () => patternResult?.candidates ?? [],
+    [patternResult]
   );
 
   if (pageLoading) return <div className="placeholder-card">加载中...</div>;
@@ -435,6 +459,42 @@ export default function Reflect() {
         ) : (
           <div className="empty-state">还没有今日整理。点击生成后会调用 API；接口不可用时会明确显示生成失败。</div>
         )}
+      </section>
+
+      <section className="glass-section pattern-section" aria-label="反复模式候选">
+        <div className="module-section-header">
+          <h2 className="section-title">反复模式候选</h2>
+          <span className={`status-pill ${patternCandidates.length ? 'is-ready' : 'is-muted'}`}>
+            {patternLoading ? '识别中' : patternCandidates.length ? `${patternCandidates.length} 个候选` : '暂无候选'}
+          </span>
+        </div>
+        {patternError && <div className="error-state reflect-review-error">{patternError}</div>}
+        {!patternLoading && patternResult && !patternResult.window.has_enough_data ? (
+          <div className="empty-state compact">{patternResult.message}</div>
+        ) : null}
+        {patternCandidates.length > 0 ? (
+          <div className="pattern-candidate-list">
+            {patternCandidates.map((candidate, index) => (
+              <article className={`pattern-candidate-card ${candidate.severity}`} key={candidate.id}>
+                <div className="pattern-card-topline">
+                  <span className="daily-review-label">{candidate.label}</span>
+                  <span className="pattern-status">{candidate.status}</span>
+                </div>
+                <p>{candidate.suggested_adjustment}</p>
+                <div className="pattern-evidence-grid">
+                  <small>证据日期：{candidate.evidence_dates.join('、')}</small>
+                  <small>写回目标：{patternResult?.writeback_target}</small>
+                </div>
+                <ul className="pattern-evidence-list">
+                  {candidate.evidence_texts.slice(0, 3).map((item) => <li key={`${candidate.id}-${item}`}>{item}</li>)}
+                </ul>
+                <span className="pattern-index" aria-hidden="true">{index + 1}</span>
+              </article>
+            ))}
+          </div>
+        ) : !patternLoading && patternResult?.window.has_enough_data ? (
+          <div className="empty-state compact">{patternResult.message}</div>
+        ) : null}
       </section>
 
       <section className="reflect-grid">

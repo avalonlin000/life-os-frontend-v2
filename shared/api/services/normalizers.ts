@@ -1,7 +1,7 @@
 // Service 层通用序列化/反序列化与结衣数据归一化
 // 后端某些字段存为 JSON 字符串，这里统一做序列化/反序列化
 
-import type { CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiDailyContext } from '../../types';
+import type { CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiDailyContext, JieyiPatternCandidate } from '../../types';
 
 export const toJsonField = (value?: string[] | null): string | undefined => {
   if (!value || value.length === 0) return undefined;
@@ -139,6 +139,66 @@ const normalizeCognitiveAssetCandidates = (review: any): CognitiveAssetCandidate
   }];
 };
 
+
+const normalizePatternCandidates = (review: any): JieyiPatternCandidate[] => {
+  const rawValues = [
+    review?.repeated_patterns,
+    review?.repeatedPatterns,
+    review?.pattern_candidates,
+    review?.patternCandidates,
+  ];
+  const sourceDate = String(review?.date || new Date().toISOString().slice(0, 10));
+
+  for (const value of rawValues) {
+    const items = Array.isArray(value) ? value : [];
+    const candidates = items
+      .map((item: unknown, index: number): JieyiPatternCandidate | null => {
+        if (!item || typeof item !== 'object') return null;
+        const obj = item as Record<string, unknown>;
+        const label = String(obj.label || obj.pattern_type || obj.patternType || '').trim();
+        if (!label) return null;
+        const evidenceDates = Array.isArray(obj.evidence_dates)
+          ? obj.evidence_dates.filter((date): date is string => typeof date === 'string' && date.trim().length > 0)
+          : Array.isArray(obj.evidenceDates)
+            ? obj.evidenceDates.filter((date): date is string => typeof date === 'string' && date.trim().length > 0)
+            : [sourceDate];
+        const evidenceTexts = Array.isArray(obj.evidence_texts)
+          ? obj.evidence_texts.filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0)
+          : Array.isArray(obj.evidenceTexts)
+            ? obj.evidenceTexts.filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0)
+            : [];
+        const relatedActions = Array.isArray(obj.related_actions)
+          ? obj.related_actions as Array<number | string>
+          : Array.isArray(obj.relatedActions)
+            ? obj.relatedActions as Array<number | string>
+            : [];
+        return {
+          id: String(obj.id || `daily-review-pattern:${sourceDate}:${index}`),
+          pattern_type: String(obj.pattern_type || obj.patternType || 'manual_pattern'),
+          label,
+          severity: obj.severity === 'high' || obj.severity === 'low' ? obj.severity : 'medium',
+          status: String(obj.status || 'candidate'),
+          date_range: {
+            start: String((obj.date_range as any)?.start || (obj.dateRange as any)?.start || evidenceDates[0] || sourceDate),
+            end: String((obj.date_range as any)?.end || (obj.dateRange as any)?.end || evidenceDates[evidenceDates.length - 1] || sourceDate),
+            days: Number((obj.date_range as any)?.days || (obj.dateRange as any)?.days || evidenceDates.length || 1),
+            evidence_days: Number((obj.date_range as any)?.evidence_days || (obj.dateRange as any)?.evidenceDays || evidenceDates.length || 1),
+          },
+          evidence_dates: evidenceDates,
+          evidence_texts: evidenceTexts,
+          related_actions: relatedActions,
+          suggested_adjustment: String(obj.suggested_adjustment || obj.suggestedAdjustment || ''),
+          generated_at: String(obj.generated_at || obj.generatedAt || new Date().toISOString()),
+        };
+      })
+      .filter((item): item is JieyiPatternCandidate => Boolean(item));
+
+    if (candidates.length) return candidates;
+  }
+
+  return [];
+};
+
 export const normalizeDailyReview = (value: any): DailyReviewOut | null => {
   if (!value || typeof value !== 'object') return null;
   const review: DailyReviewOut = {
@@ -155,6 +215,10 @@ export const normalizeDailyReview = (value: any): DailyReviewOut | null => {
     nextDayFocus: normalizeReviewList(value.nextDayFocus, value.next_day_focus),
     rhythm_suggestion: value.rhythm_suggestion,
     rhythmSuggestion: value.rhythmSuggestion,
+    repeated_patterns: normalizePatternCandidates(value),
+    repeatedPatterns: normalizePatternCandidates(value),
+    pattern_candidates: normalizePatternCandidates(value),
+    patternCandidates: normalizePatternCandidates(value),
     cognitive_asset_candidates: normalizeCognitiveAssetCandidates(value),
     cognitiveAssetCandidates: normalizeCognitiveAssetCandidates(value),
     cognitive_candidates: normalizeCognitiveAssetCandidates(value),
@@ -175,6 +239,8 @@ export const normalizeDailyReview = (value: any): DailyReviewOut | null => {
     review.follow_up_adjustments?.length ||
     review.next_day_focus?.length ||
     review.rhythm_suggestion ||
+    review.repeated_patterns?.length ||
+    review.pattern_candidates?.length ||
     review.cognitive_asset_candidates?.length ||
     review.cognitive_candidates?.length ||
     review.wisdom_candidates?.length ||
