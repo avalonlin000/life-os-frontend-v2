@@ -56,6 +56,7 @@
 | `CRON-DAILY-REVIEW.md` | Hermes cron 每日整理脚本与 job 运维说明 |
 | `BACKEND-DEEP-LEARNING-FALLBACK-PATCH.md` | backend deep-learning fallback 最小修复 hunk 与收口说明 |
 | `STATUS.md` | 当前阶段状态与完成度口径 |
+| `COGNITIVE-ASSET-CANDIDATE-SCHEMA.md` | P2 认知资产候选结构与写入边界 |
 | `ACCEPTANCE.md` | 验收清单 |
 | `BACKLOG.md` | 可执行任务 |
 

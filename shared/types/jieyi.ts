@@ -340,6 +340,28 @@ export interface MoodOut {
   created_at: string;
 }
 
+export type CognitiveAssetCandidateStatus = 'candidate' | 'confirmed' | 'promoted' | 'rejected' | string;
+
+export interface CognitiveAssetCandidate {
+  /** 认知资产候选标题，来自 daily-review/reflection 的可读摘要。 */
+  title: string;
+  /** 候选内容正文，不直接等同长期原则；进入 /way 前仍需确认或状态流转。 */
+  content: string;
+  /** 来源日期，通常是复盘或 daily-review 的日期。 */
+  source_date: string;
+  /** 原始复盘引用；可存原文片段、note id、daily-review id 或可追溯路径。 */
+  source_reflection: string;
+  /** 关联行动/日程 id 或文本，允许空数组但字段必须存在。 */
+  related_actions: Array<number | string>;
+  /** 关联知识 id、标题或 Wiki 路径，允许空数组但字段必须存在。 */
+  related_knowledge: Array<number | string>;
+  /** 候选状态：candidate 默认；确认后才能进入原则/长期资产。 */
+  status: CognitiveAssetCandidateStatus;
+  evidence_texts?: string[];
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface DailyReviewCreate {
   date: string;
   mood_score: number;
@@ -365,12 +387,12 @@ export interface DailyReviewOut {
   rhythm_suggestion?: string;
   rhythmSuggestion?: string;
   /** PRD: 认知资产候选；可选兼容字段，不强制后端返回。 */
-  cognitive_asset_candidates?: string[];
-  cognitiveAssetCandidates?: string[];
-  cognitive_candidates?: string[];
-  cognitiveCandidates?: string[];
-  wisdom_candidates?: string[];
-  wisdomCandidates?: string[];
+  cognitive_asset_candidates?: Array<string | CognitiveAssetCandidate>;
+  cognitiveAssetCandidates?: Array<string | CognitiveAssetCandidate>;
+  cognitive_candidates?: Array<string | CognitiveAssetCandidate>;
+  cognitiveCandidates?: Array<string | CognitiveAssetCandidate>;
+  wisdom_candidates?: Array<string | CognitiveAssetCandidate>;
+  wisdomCandidates?: Array<string | CognitiveAssetCandidate>;
   insights?: string[];
   created_at?: string;
   updated_at?: string;
