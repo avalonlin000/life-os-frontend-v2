@@ -169,13 +169,65 @@ export default function Action() {
     return [...scheduleItems, ...planItems];
   }, [items, dailyPlan]);
 
+  const splitActionItems = actionItems.filter((item) => item.source === 'knowledge_split' || item.source === 'knowledge_suggest');
+  const userActionItems = actionItems.filter((item) => item.source === 'user_add');
+  const otherActionItems = actionItems.filter((item) => item.source !== 'knowledge_split' && item.source !== 'knowledge_suggest' && item.source !== 'user_add');
+
+  const renderActionList = (itemsToRender: QueueItem[], emptyText: string) => (
+    itemsToRender.length > 0 ? (
+      <ul className="schedule-list action-queue-list">
+        {itemsToRender.map((item, index) => (
+          <li key={`${item.kind}-${item.id}`} className={`schedule-item action-queue-item ${item.isDone ? 'done' : ''} ${item.kind === 'daily_plan' ? 'readonly-plan' : ''}`} style={{ '--i': index } as CSSProperties}>
+            <button
+              className={`schedule-check tactile-check ${item.isDone ? 'checked' : ''}`}
+              onClick={() => updateDone(item, !item.isDone)}
+              disabled={item.kind !== 'schedule' || updatingId === item.id}
+              title={item.kind === 'daily_plan' ? 'dailyPlan doTasks 暂无后端任务 id，不能直接完成' : item.isDone ? '取消完成' : '完成'}
+            >
+              {item.isDone ? '✓' : item.kind === 'daily_plan' ? '□' : ''}
+            </button>
+            <div className="action-queue-content">
+              <div className="schedule-title">{item.content}</div>
+              <p className="action-reason">{item.reason}</p>
+              {item.kind === 'schedule' && (
+                item.resistanceEvidence.length > 0 ? (
+                  <div className="action-resistance-evidence" aria-label="行动阻力证据">
+                    {item.resistanceEvidence.map((evidence) => (
+                      <span key={evidence}>{evidence}</span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="action-resistance-empty">暂无阻力证据</div>
+                )
+              )}
+              <div className="action-queue-meta">
+                <span className={`schedule-badge meta-pill badge-${item.source}`}>{getSourceLabel(item.source)}</span>
+                {item.category && <span className="schedule-badge">{item.category}</span>}
+                {item.kind === 'schedule' && item.priority != null && <span className="schedule-badge">P{item.priority}</span>}
+                <span className="schedule-badge">{item.sourceHint}</span>
+              </div>
+            </div>
+            {item.kind === 'schedule' ? (
+              <button className="btn-edit tactile-button" onClick={() => updateDone(item, !item.isDone)} disabled={updatingId === item.id}>
+                {item.isDone ? '取消' : '完成'}
+              </button>
+            ) : (
+              <span className="action-readonly-note status-pill">只读降级</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div className="empty-state">{emptyText}</div>
+    )
+  );
+
   const dailyLearnItems = dailyPlan?.learn ?? [];
   const dailyReviewItems = dailyPlan?.review ?? [];
   const primaryAction = actionItems.find((item) => !item.isDone) ?? actionItems[0] ?? null;
   const primaryPractice = practices.find((item) => !item.is_done) ?? practices[0] ?? null;
   const completedCount = actionItems.filter((item) => item.isDone).length;
   const totalCount = actionItems.length;
-  const pendingCount = Math.max(totalCount - completedCount, 0);
   const practiceDone = practices.filter((item) => item.is_done).length;
   const completionMessage = aggregate?.act.completion_status.message || `修炼 ${practiceDone}/${practices.length} · 行动 ${completedCount}/${totalCount}`;
   const suggestionLabel = aggregate?.act.ai_suggestion_entry.label || '请结衣给一个行动建议';
@@ -364,55 +416,26 @@ export default function Action() {
 
       <section>
         <div className="action-section-heading">
-          <h2 className="section-title">今日行动</h2>
-          <span className="action-queue-count">{completedCount}/{totalCount} 完成 · {pendingCount} 待执行</span>
+          <h2 className="section-title">知页拆解行动</h2>
+          <span className="action-queue-count">{splitActionItems.length} 项</span>
         </div>
-        {actionItems.length > 0 ? (
-          <ul className="schedule-list action-queue-list">
-            {actionItems.map((item, index) => (
-              <li key={`${item.kind}-${item.id}`} className={`schedule-item action-queue-item ${item.isDone ? 'done' : ''} ${item.kind === 'daily_plan' ? 'readonly-plan' : ''}`} style={{ '--i': index } as CSSProperties}>
-                <button
-                  className={`schedule-check tactile-check ${item.isDone ? 'checked' : ''}`}
-                  onClick={() => updateDone(item, !item.isDone)}
-                  disabled={item.kind !== 'schedule' || updatingId === item.id}
-                  title={item.kind === 'daily_plan' ? 'dailyPlan doTasks 暂无后端任务 id，不能直接完成' : item.isDone ? '取消完成' : '完成'}
-                >
-                  {item.isDone ? '✓' : item.kind === 'daily_plan' ? '□' : ''}
-                </button>
-                <div className="action-queue-content">
-                  <div className="schedule-title">{item.content}</div>
-                  <p className="action-reason">{item.reason}</p>
-                  {item.kind === 'schedule' && (
-                    item.resistanceEvidence.length > 0 ? (
-                      <div className="action-resistance-evidence" aria-label="行动阻力证据">
-                        {item.resistanceEvidence.map((evidence) => (
-                          <span key={evidence}>{evidence}</span>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="action-resistance-empty">暂无阻力证据</div>
-                    )
-                  )}
-                  <div className="action-queue-meta">
-                    <span className={`schedule-badge meta-pill badge-${item.source}`}>{getSourceLabel(item.source)}</span>
-                    {item.category && <span className="schedule-badge">{item.category}</span>}
-                    {item.kind === 'schedule' && item.priority != null && <span className="schedule-badge">P{item.priority}</span>}
-                    <span className="schedule-badge">{item.sourceHint}</span>
-                  </div>
-                </div>
-                {item.kind === 'schedule' ? (
-                  <button className="btn-edit tactile-button" onClick={() => updateDone(item, !item.isDone)} disabled={updatingId === item.id}>
-                    {item.isDone ? '取消' : '完成'}
-                  </button>
-                ) : (
-                  <span className="action-readonly-note status-pill">只读降级</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="empty-state">还没有今日行动项。从「知」页拆解知识，或请求 AI 建议；如果 dailyPlan.doTasks 没有后端 id，会在这里显示只读降级说明。</div>
-        )}
+        {renderActionList(splitActionItems, '还没有来自知页拆解的行动。从「知」页保存材料后点“拆成行动”，会单独出现在这里。')}
+      </section>
+
+      <section>
+        <div className="action-section-heading">
+          <h2 className="section-title">今日做</h2>
+          <span className="action-queue-count">{userActionItems.length} 项</span>
+        </div>
+        {renderActionList(userActionItems, '还没有手动补充的今日做。可以在下方补一个今天能完成的动作。')}
+      </section>
+
+      <section>
+        <div className="action-section-heading">
+          <h2 className="section-title">其他行动</h2>
+          <span className="action-queue-count">{otherActionItems.length} 项</span>
+        </div>
+        {renderActionList(otherActionItems, 'AI 建议或 dailyPlan doTasks 暂无可展示行动；页面不补假任务。')}
       </section>
 
       <section>
