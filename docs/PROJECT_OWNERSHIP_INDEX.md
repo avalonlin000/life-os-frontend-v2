@@ -6,6 +6,14 @@
 
 Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单一产品名。具体项目只有两个：
 
+执行优先级统一为：指导文件/产品文档定目标，skill 定方法，delivery/D 报告只作状态证据。
+
+- 仓库总指导文件：`AGENTS.md`、`CLAUDE.md`、`docs/CURRENT_VERSION_FOR_BOTS.md`、本文件。
+- 具体产品目标：对应产品 `BOT_GUIDE.md`、`PRD/02-roadmap.md`、`BACKLOG.md`、`ACCEPTANCE.md`。
+- skill 只规定推进方法、验证方式和坑；不能覆盖目标文件，也不能自己决定产品方向。
+- 普通代码、接口、构建、只读数据排查、文档、delivery、低风险前后端适配默认自动推进；内容方向/产品定位/语义/用户体验主路径大改、非测试业务数据写入、破坏性动作、系统级网络/密钥/模型/账号配置需要钧钧确认。
+- 完成一个可验证切片后，如果目标文件里还有明确下一能力且未到确认边界，应继续推进下一切片，不停在“下一步建议”。
+
 | 项目 | 归属 | 详细上下文入口 | 专用 skill |
 |---|---|---|---|
 | 小雪电竞人生 | 电竞判断工作台 | `docs/products/xiaoxue-esports-life/PROJECT_INDEX.md` | `xiaoxue-esports-workflow` |
