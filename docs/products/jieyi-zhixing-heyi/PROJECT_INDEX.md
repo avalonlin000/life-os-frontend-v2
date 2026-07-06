@@ -54,6 +54,7 @@
 | `SSD/05-frontend-design-direction.md` | 前端设计方向 |
 | `API_AND_EXTENSION.md` | API 与扩展说明 |
 | `CRON-DAILY-REVIEW.md` | Hermes cron 每日整理脚本与 job 运维说明 |
+| `BACKEND-DEEP-LEARNING-FALLBACK-PATCH.md` | backend deep-learning fallback 最小修复 hunk 与收口说明 |
 | `ACCEPTANCE.md` | 验收清单 |
 | `BACKLOG.md` | 可执行任务 |
 
