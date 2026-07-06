@@ -127,6 +127,7 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 | `scripts/hermes-sync-delivery.mjs` | 可选广播/通知 delivery 文件位置；不是小雪/结衣获取上下文的必要机制 |
 | `shared/types/index.ts`、`shared/api/routes.ts`、`shared/api/services.ts` | shared/types、shared/api/routes、shared/api/services 分文件后的兼容聚合出口；保留旧 import 入口 |
 | `scripts/hermes-context-maintenance.mjs` | 上下文维护脚本 |
+| `docs/GUIDANCE_SKILL_UNIFICATION_BLUEPRINT.md` | 指导文件、目标文档、skill、delivery 口径统一收口蓝图 |
 
 共享工程层相关 npm scripts：
 
