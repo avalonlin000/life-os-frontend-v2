@@ -31,8 +31,12 @@ export const jieyiService = {
       const item = await api.post<Knowledge>('/knowledge', payload);
       return { ...item, tags: parseJsonField(item.tags) };
     },
-    split: async (id: number | string): Promise<Schedule[]> =>
-      api.post<Schedule[]>(`/knowledge/${id}/split`),
+    split: async (id: number | string): Promise<Schedule[]> => {
+      const result = await api.post<Schedule[] | { created_schedules?: Schedule[]; items?: unknown[]; created_count?: number }>(`/knowledge/${id}/split`);
+      if (Array.isArray(result)) return result;
+      if (Array.isArray(result?.created_schedules)) return result.created_schedules;
+      return [];
+    },
   },
   thinkingCards: {
     today: async (date?: string): Promise<any> => {
