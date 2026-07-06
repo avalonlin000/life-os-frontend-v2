@@ -24,6 +24,8 @@
 0.6. `DATA-COVERAGE-AUDIT.md` — 小雪 Wiki 数据资产覆盖、旧恢复区、迁移冲突备份风险
 0.6.1. `MIGRATION-CONFLICT-REVIEW.md` — `missing.txt` 5 个同名不同 hash 冲突备份逐项抽读复核
 0.7. `RESTART-COMPLETION-REPORT.md` — 重启整理最终收口报告、最终验证输出和剩余风险
+0.8. `STATUS.md` — 当前阶段状态与 P0/P1 完成度口径
+0.9. `RUNTIME-CLOSURE-20260706.md` — runtime 收口验证记录
 1. `PRD/00-overview.md` — 产品定位、目标、场景、边界
 2. `SSD/00-system-semantics.md` — 电竞判断系统语义
 3. `PRD/01-features.md` — P0/P1 功能和 AC
@@ -73,3 +75,5 @@
 | `DATA-COVERAGE-AUDIT.md` | Wiki 数据资产覆盖审计，确认旧恢复区覆盖度和剩余 hash 差异风险 |
 | `TK-LIBRARY-COMPAT-AUDIT.md` | tk_library 兼容代码审计，区分历史兼容、废弃无害、误导风险和谨慎处理入口 |
 | `RESTART-COMPLETION-REPORT.md` | 本轮重启整理最终收口、验证输出、已完成闭环和剩余风险 |
+| `STATUS.md` | 当前阶段状态与完成度口径 |
+| `RUNTIME-CLOSURE-20260706.md` | runtime 收口验证记录 |

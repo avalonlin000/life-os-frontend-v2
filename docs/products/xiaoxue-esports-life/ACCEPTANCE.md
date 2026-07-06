@@ -130,3 +130,14 @@ curl http://127.0.0.1:8880/api/fundamentals/msi
 | R6 | 不改 cron 业务逻辑 | 已遵守 | 本轮只做文档收口和最终验证，不新增大功能，不改 cron 业务逻辑 |
 
 仍需后续小切片验收的项目：日报内容深度、分析师前端入口、旧 `tk_library` 兼容代码、迁移冲突备份抽读、下一次 cron 真实运行复查。
+
+---
+
+## 11. 2026-07-06 当前收口验收
+
+| # | 验收点 | 当前状态 | 证据 |
+|---|--------|----------|------|
+| CLOSURE-1 | P0/P1 状态明确 | 已完成 | `STATUS.md`、`BACKLOG.md` |
+| CLOSURE-2 | runtime 构建与 API | 已完成 | `RUNTIME-CLOSURE-20260706.md` |
+| CLOSURE-3 | 盘口语义收敛 | 已完成 | 盘口页手写判断工作区、`/api/market-notes` |
+| CLOSURE-4 | 小白后续执行规则 | 已完成 | `xiaoxue-esports-workflow` skill 已更新 |

@@ -66,6 +66,8 @@
 | `MSI-INTL-TEAM-CONFIRMATION.md` | MSI 外赛区队伍确认 |
 | `ACCEPTANCE.md` | 验收清单 |
 | `BACKLOG.md` | 可执行任务 |
+| `STATUS.md` | 当前阶段状态与完成度口径 |
+| `RUNTIME-CLOSURE-20260706.md` | runtime 收口验证记录：构建、API、market-notes、vibe-status |
 
 ## 5. 沉淀规则
 
