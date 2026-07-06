@@ -126,3 +126,15 @@ curl -I http://127.0.0.1:3001/dao  # 兼容 alias，前端路由重定向到 /wa
 | COG3 | 来源记录 | 每条候选能追溯到日期、复盘原文或生成该候选的上下文 |
 | COG4 | 写入边界 | 写入 Wiki 或原则候选池前有明确确认/状态机制，不静默污染长期原则 |
 | COG5 | /way 展示 | /way 可展示候选及来源信息；空状态清楚说明暂无沉淀 |
+
+---
+
+## 9. P3 反复模式识别产品化
+
+| # | 验收点 | 通过条件 |
+|---|--------|----------|
+| PAT1 | 数据窗口 | 后台读取最近 10-14 天 mood / activities / schedules / daily-review，数据不足时显式返回“不足以识别” |
+| PAT2 | 识别输出 | 至少支持 rhythm_overload / input_without_action / task_resistance / recovery_debt 四类候选 |
+| PAT3 | 写回路径 | repeated_patterns / rhythm_risks / rhythm_suggestion 可写回 daily-review JSON 扩展字段或 PatternCandidateModel / Wiki 模式候选文件 |
+| PAT4 | 证据追溯 | 每个模式候选包含 evidence_dates、evidence_texts 或对应活动/行动引用 |
+| PAT5 | 前端展示 | /reflect 或 /way 可展示模式候选、证据、建议调整和候选状态；无候选时显示空状态 |

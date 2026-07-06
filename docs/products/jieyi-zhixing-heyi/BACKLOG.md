@@ -71,10 +71,20 @@
 
 ---
 
-## 后续候选（待展开为 P3+）
+## P3：反复模式识别产品化
+
+| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
+|----|------|------|------|----------|------|------|
+| JY-P3-1 | 实现 10-14 天模式识别数据窗口 | PAT1 通过 | Planned | - | - | 数据不足时显式返回“不足以识别”，不伪造模式。 |
+| JY-P3-2 | 实现 deterministic pattern detector | PAT2 通过 | Planned | - | - | 至少支持节奏过载、输入多行动少、任务阻力、恢复不足四类候选。 |
+| JY-P3-3 | 写回 repeated_patterns / rhythm 字段 | PAT3-PAT4 通过 | Planned | - | - | 写回 daily-review JSON 扩展字段或 PatternCandidateModel / Wiki 模式候选文件，必须带证据。 |
+| JY-P3-4 | /reflect 或 /way 展示模式候选 | PAT5 通过 | Planned | - | - | 展示候选、证据、建议调整和状态；无候选时清楚空态。 |
+
+---
+
+## 后续候选（待展开为 P4+）
 
 | 方向 | 状态 | 说明 |
 |------|------|------|
-| repeated_patterns 产品化 | Planned | P1-3 已完成方案；下一步是 daily-review JSON 扩展、cron 接入、/reflect 或 /way 展示。 |
-| 行动阻力信号 | Planned | 当前无 reopen_count；可从 is_done 反复切换、延迟完成、复盘文本中推导。 |
-| 10 天复盘趋势 | Planned | TBD-2 明确先积累约 10 天原文后再拆思想/节奏/模式。 |
+| 行动阻力信号增强 | Planned | 当前无 reopen_count；可先从 is_done 反复切换、延迟完成、复盘文本中推导，后续再考虑 schema 扩展。 |
+| 10 天复盘趋势总结 | Planned | TBD-2 明确先积累约 10 天原文后再拆思想/节奏/模式，可接在 P3 detector 之后做趋势摘要。 |

@@ -19,7 +19,7 @@
 1. /act 展示 daily_plan.review 复习卡片。
 2. /way 展示长期目标；/dao 仅保留为兼容 alias/历史称呼。
 3. /way 展示智慧卡片；底部导航和当前主入口仍使用 /way。
-4. 后台识别反复模式。
+4. 反复模式识别后台方案：明确真实数据源、写入路径和约 10 天原文约束。
 5. Hermes cron 接管每日整理生成。
 
 ---
@@ -30,6 +30,15 @@
 2. 从 daily-review / reflection 中生成认知资产候选，不直接伪造长期原则。
 3. 写入 Wiki 或原则候选池前保留来源记录和确认边界。
 4. /way 展示来源可追溯的原则/认知资产候选。
+
+---
+
+## P3：反复模式识别产品化
+
+1. cron 或后台任务读取最近 10-14 天 mood / activities / schedules / daily-review。
+2. 运行 deterministic pattern detector，产出 `repeated_patterns`、`rhythm_risks`、`rhythm_suggestion`。
+3. 写回 daily-review JSON 扩展字段或 `PatternCandidateModel` / Wiki 模式候选文件。
+4. /reflect 或 /way 展示模式候选、证据日期、建议调整和候选状态。
 
 ---
 
