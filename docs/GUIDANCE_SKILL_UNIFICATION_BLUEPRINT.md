@@ -18,6 +18,7 @@
 | BP-DONE-8 | backend deep-learning fallback 修复在脏仓库里，不能混提交 | 已抽出最小 patch 和收口说明，记录 API smoke 结果 | `d409219` |
 | BP-DONE-9 | `life-os-frontend-workflow` 主 skill 太杂 | 已重写为纯共享工程层 skill，产品细节降级为 legacy references | profile skill 更新 |
 | BP-DONE-10 | `life-os-frontend-workflow` references 无索引 | 已新增 references/README.md 分类索引，覆盖 55/55 个 reference | profile skill 更新 |
+| BP-DONE-11 | BP-4 指导文件漂移复查 | 已搜索 active docs/skills 旧口径残留，无需继续 patch；详见 BP-4 审计报告 | `docs/GUIDANCE_SKILL_DRIFT_AUDIT_BP4.md` |
 
 ## 2. 剩余统一项：放入本蓝图批量收口
 
@@ -62,7 +63,7 @@
 - 有匹配 topic：`mode=live`、`materials>0`。
 - backend commit 独立可追溯。
 
-### BP-4：指导文件漂移复查
+### BP-4：指导文件漂移复查（Done）
 
 问题：当前已改 AGENTS/CLAUDE/CURRENT_VERSION/PROJECT_INDEX/BOT_GUIDE，但后续可能仍有旧词或旧流程散在 docs 中。
 
@@ -72,6 +73,7 @@
 
 验收：
 - grep 旧口径残留为 0，或残留均在明确 legacy 文档中。
+- 当前结论：已完成，详见 `docs/GUIDANCE_SKILL_DRIFT_AUDIT_BP4.md`。
 
 ### BP-5：统一完成度口径
 
@@ -88,11 +90,10 @@
 
 ## 3. 后续执行顺序
 
-1. BP-4 指导文件漂移复查：先保证规则不会继续误导。
-2. BP-5 完成度口径：让目标文件显示真实阶段。
-3. BP-1 skill references 迁移清单：作为技能资产整理，不再逐条展开讨论。
-4. BP-3 backend repo 独立收口：只做 scoped patch，不混提交。
-5. BP-2 结衣 P2/P3 产品化：进入下一阶段功能执行。
+1. BP-5 完成度口径：让目标文件显示真实阶段。
+2. BP-1 skill references 迁移清单：作为技能资产整理，不再逐条展开讨论。
+3. BP-3 backend repo 独立收口：只做 scoped patch，不混提交。
+4. BP-2 结衣 P2/P3 产品化：进入下一阶段功能执行。
 
 ## 4. 执行规则
 
