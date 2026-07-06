@@ -130,6 +130,7 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 | `docs/GUIDANCE_SKILL_UNIFICATION_BLUEPRINT.md` | 指导文件、目标文档、skill、delivery 口径统一收口蓝图 |
 | `docs/GUIDANCE_SKILL_DRIFT_AUDIT_BP4.md` | BP-4 指导文件漂移复查报告 |
 | `docs/GUIDANCE_SKILL_REFERENCE_MIGRATION_BP1.md` | BP-1 skill references 迁移清单 |
+| `docs/GUIDANCE_BACKEND_BP3_BLOCKER.md` | BP-3 backend 独立收口阻塞记录 |
 
 共享工程层相关 npm scripts：
 

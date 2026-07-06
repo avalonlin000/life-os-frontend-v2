@@ -21,6 +21,7 @@
 | BP-DONE-11 | BP-4 指导文件漂移复查 | 已搜索 active docs/skills 旧口径残留，无需继续 patch；详见 BP-4 审计报告 | `docs/GUIDANCE_SKILL_DRIFT_AUDIT_BP4.md` |
 | BP-DONE-12 | BP-5 完成度口径 | 已新增结衣 STATUS，区分 BACKLOG 已验收项、P0/P1 阶段、P2/P3 产品化、后续候选 | `docs/products/jieyi-zhixing-heyi/STATUS.md` |
 | BP-DONE-13 | BP-1 skill references 迁移清单 | 已生成 life-os references → product skill 对照矩阵，并在结衣/小雪 product skill 补 legacy 索引入口 | `docs/GUIDANCE_SKILL_REFERENCE_MIGRATION_BP1.md` |
+| BP-BLOCKED-1 | BP-3 backend repo 独立收口 | 干净 backend main 缺 `prepare_deep_learning()` 基础功能，scoped fallback patch 不能单独应用 | `docs/GUIDANCE_BACKEND_BP3_BLOCKER.md` |
 
 ## 2. 剩余统一项：放入本蓝图批量收口
 
@@ -52,7 +53,7 @@
 - COG1-COG5、PAT1-PAT5 按 BACKLOG 小切片推进。
 - 每个切片都要有 API/写回/读回/页面或文档证据。
 
-### BP-3：backend repo 独立干净收口
+### BP-3：backend repo 独立干净收口（Blocked）
 
 问题：backend repo 当前大量脏改，life-os repo 已保存 scoped patch，但 backend 真实 repo 还没单独提交。
 
@@ -65,6 +66,7 @@
 - 无匹配 topic：`mode=fallback`、`materials=[]`。
 - 有匹配 topic：`mode=live`、`materials>0`。
 - backend commit 独立可追溯。
+- 当前结论：Blocked。干净 backend main 缺 deep-learning prepare 基础功能，不能只应用 fallback hunk；详见 `docs/GUIDANCE_BACKEND_BP3_BLOCKER.md`。
 
 ### BP-4：指导文件漂移复查（Done）
 
@@ -94,8 +96,7 @@
 
 ## 3. 后续执行顺序
 
-1. BP-3 backend repo 独立收口：只做 scoped patch，不混提交。
-2. BP-2 结衣 P2/P3 产品化：进入下一阶段功能执行。
+1. BP-2 结衣 P2/P3 产品化：进入下一阶段功能执行。
 
 ## 4. 执行规则
 
