@@ -1,7 +1,7 @@
 import { type CSSProperties, useEffect, useMemo, useState } from 'react';
 import { QuickInput, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
-import type { DailyPlan, JieyiPracticeItem, JieyiTodayAggregate, Schedule } from '@shared/types';
+import type { DailyPlan, JieyiActionResistanceResult, JieyiPracticeItem, JieyiTodayAggregate, Schedule } from '@shared/types';
 
 type ActionQueueItem = {
   kind: 'schedule';
@@ -90,6 +90,8 @@ export default function Action() {
   const [suggesting, setSuggesting] = useState(false);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [updatingPracticeId, setUpdatingPracticeId] = useState<string | null>(null);
+  const [resistanceResult, setResistanceResult] = useState<JieyiActionResistanceResult | null>(null);
+  const [resistanceError, setResistanceError] = useState('');
   const toast = useToast();
 
   const today = todayDate();
@@ -98,11 +100,12 @@ export default function Action() {
     setLoading(true);
     setError('');
     try {
-      const [aggregateResult, scheduleResult, planResult, practiceResult] = await Promise.allSettled([
+      const [aggregateResult, scheduleResult, planResult, practiceResult, resistanceResult] = await Promise.allSettled([
         jieyiService.today.aggregate(today),
         jieyiService.schedule.list(today),
         jieyiService.dailyPlan.get(),
         jieyiService.practices.today(today),
+        jieyiService.patternRecognition.resistanceSignals({ days: 14 }),
       ]);
 
       const liveAggregate = aggregateResult.status === 'fulfilled' ? aggregateResult.value : null;
@@ -116,11 +119,14 @@ export default function Action() {
           : Array.isArray(practicePayload)
             ? practicePayload
             : [];
+      const resistancePayload = resistanceResult.status === 'fulfilled' ? resistanceResult.value : null;
 
       setAggregate(liveAggregate);
       setItems(liveAggregate?.act.today_actions?.length ? liveAggregate.act.today_actions : liveSchedule);
       setDailyPlan(livePlan);
       setPractices(liveAggregate?.act.today_practices?.length ? liveAggregate.act.today_practices : livePractices);
+      setResistanceResult(resistancePayload);
+      setResistanceError(resistanceResult.status === 'rejected' ? '行动阻力信号暂不可用；不会用假信号补位。' : '');
 
       if (aggregateResult.status === 'rejected' && scheduleResult.status === 'rejected' && planResult.status === 'rejected') {
         setError('今日行动接口未连接：不生成假动作，只展示可解释空态。');
@@ -130,6 +136,8 @@ export default function Action() {
       setDailyPlan(null);
       setAggregate(null);
       setPractices([]);
+      setResistanceResult(null);
+      setResistanceError('行动阻力信号暂不可用；不会用假信号补位。');
       setError('今日行动接口未连接：不生成假动作，只展示可解释空态。');
     } finally {
       setLoading(false);
@@ -231,6 +239,7 @@ export default function Action() {
   const practiceDone = practices.filter((item) => item.is_done).length;
   const completionMessage = aggregate?.act.completion_status.message || `修炼 ${practiceDone}/${practices.length} · 行动 ${completedCount}/${totalCount}`;
   const suggestionLabel = aggregate?.act.ai_suggestion_entry.label || '请结衣给一个行动建议';
+  const resistanceSignals = resistanceResult?.signals ?? [];
 
   const handleAdd = async (content: string) => {
     await jieyiService.schedule.create({ date: today, content, source: 'user_add' });
@@ -332,6 +341,42 @@ export default function Action() {
         </div>
         <span className="inline-feedback">{completionMessage}</span>
         {suggestError && <div className="api-warning action-inline-warning">{suggestError}</div>}
+      </section>
+
+      <section className="glass-section action-resistance-section" aria-label="行动阻力信号">
+        <div className="module-section-header">
+          <h2 className="section-title">行动阻力信号</h2>
+          <span className={`status-pill ${resistanceSignals.length ? 'is-ready' : 'is-muted'}`}>
+            {resistanceSignals.length ? `${resistanceSignals.length} 个信号` : '暂无信号'}
+          </span>
+        </div>
+        {resistanceError && <div className="error-state reflect-review-error">{resistanceError}</div>}
+        {resistanceResult && !resistanceResult.window.has_enough_data ? (
+          <div className="empty-state compact">{resistanceResult.message}</div>
+        ) : null}
+        {resistanceSignals.length > 0 ? (
+          <div className="resistance-signal-list">
+            {resistanceSignals.map((signal, index) => (
+              <article className={`resistance-signal-card ${signal.level}`} key={signal.id} style={{ '--i': index } as CSSProperties}>
+                <div className="pattern-card-topline">
+                  <span className="daily-review-label">{signal.content}</span>
+                  <span className="pattern-status">{signal.level}</span>
+                </div>
+                <p>{signal.reason}</p>
+                <div className="pattern-evidence-grid">
+                  <small>证据日期：{signal.evidence_dates.join('、')}</small>
+                  <small>写回目标：{resistanceResult?.writeback_target}</small>
+                </div>
+                <ul className="pattern-evidence-list">
+                  <li>{signal.suggested_adjustment}</li>
+                  {signal.evidence_texts.slice(0, 3).map((item) => <li key={`${signal.id}-${item}`}>{item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        ) : resistanceResult?.window.has_enough_data ? (
+          <div className="empty-state compact">{resistanceResult.message}</div>
+        ) : null}
       </section>
 
       <section className="action-daily-plan-section">

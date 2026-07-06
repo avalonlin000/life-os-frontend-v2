@@ -82,9 +82,9 @@
 
 ---
 
-## 后续候选（待展开为 P4+）
+## P4：项目收口增强
 
-| 方向 | 状态 | 说明 |
-|------|------|------|
-| 行动阻力信号增强 | Planned | 当前无 reopen_count；可先从 is_done 反复切换、延迟完成、复盘文本中推导，后续再考虑 schema 扩展。 |
-| 10 天复盘趋势总结 | Planned | TBD-2 明确先积累约 10 天原文后再拆思想/节奏/模式，可接在 P3 detector 之后做趋势摘要。 |
+| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
+|----|------|------|------|----------|------|------|
+| JY-P4-1 | 行动阻力信号增强 | P4-1 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/ACTION-RESISTANCE-SIGNALS.md` | 已从最近 10-14 天真实 schedule / mood.note / daily-review / activities 推导阻力信号；`/act` 展示证据与调整建议，不改后端 schema、不伪造信号。 |
+| JY-P4-2 | 10 天复盘趋势总结 | P4-2 通过 | Done | 2026-07-06 | `docs/products/jieyi-zhixing-heyi/TEN-DAY-REVIEW-TREND-SUMMARY.md` | 已基于同一数据窗口整理心情、行动、节奏、模式趋势；`/reflect` 展示趋势，快照写入 trend-summaries。 |

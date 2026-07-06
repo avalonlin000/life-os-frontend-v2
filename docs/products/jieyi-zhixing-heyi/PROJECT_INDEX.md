@@ -64,6 +64,8 @@
 | `PATTERN-CANDIDATE-WRITEBACK.md` | P3 模式候选写回路径：Markdown 快照与 future daily-review JSON 字段口径 |
 | `PATTERN-CANDIDATE-DISPLAY.md` | P3 `/reflect` 和 `/way` 模式候选展示验收说明 |
 | `PATTERN-DETECTION-DATA-WINDOW.md` | P3 反复模式识别数据窗口：10-14 天只读聚合、数据不足口径、不伪造模式 |
+| `ACTION-RESISTANCE-SIGNALS.md` | P4 行动阻力信号：从真实窗口推导阻力、展示证据、写入快照 |
+| `TEN-DAY-REVIEW-TREND-SUMMARY.md` | P4 10 天复盘趋势：心情/行动/节奏/模式趋势总结与快照 |
 | `ACCEPTANCE.md` | 验收清单 |
 | `BACKLOG.md` | 可执行任务 |
 

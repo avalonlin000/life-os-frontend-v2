@@ -473,6 +473,41 @@ export interface JieyiPatternDetectionResult {
   rhythm_suggestion: string;
 }
 
+export type JieyiActionResistanceSignalLevel = 'none' | 'low' | 'medium' | 'high';
+
+export interface JieyiActionResistanceSignal {
+  id: string;
+  content: string;
+  level: JieyiActionResistanceSignalLevel;
+  reason: string;
+  evidence_dates: string[];
+  evidence_texts: string[];
+  related_actions: Array<number | string>;
+  suggested_adjustment: string;
+}
+
+export interface JieyiActionResistanceResult {
+  status: JieyiPatternWindowStatus;
+  window: JieyiPatternWindow;
+  signals: JieyiActionResistanceSignal[];
+  message: string;
+  writeback_target: string;
+}
+
+export interface JieyiReviewTrendSummary {
+  status: JieyiPatternWindowStatus;
+  window: JieyiPatternWindow;
+  summary: string;
+  mood_trend: string;
+  action_trend: string;
+  rhythm_trend: string;
+  pattern_trend: string;
+  evidence_dates: string[];
+  evidence_texts: string[];
+  next_adjustments: string[];
+  writeback_target: string;
+}
+
 export interface WisdomOut {
   id: number;
   content: string;

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { ActivityTimer, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
-import type { Activity, DailyReviewOut, JieyiPatternCandidate, JieyiPatternDetectionResult, JieyiTodayAggregate, Mood } from '@shared/types';
+import type { Activity, DailyReviewOut, JieyiPatternCandidate, JieyiPatternDetectionResult, JieyiReviewTrendSummary, JieyiTodayAggregate, Mood } from '@shared/types';
 import { reflectionSample } from '../contentSamples';
 
 type ReflectionToday = JieyiTodayAggregate['reflect']['reconciliation'];
@@ -55,6 +55,9 @@ export default function Reflect() {
   const [patternResult, setPatternResult] = useState<JieyiPatternDetectionResult | null>(null);
   const [patternLoading, setPatternLoading] = useState(false);
   const [patternError, setPatternError] = useState('');
+  const [trendSummary, setTrendSummary] = useState<JieyiReviewTrendSummary | null>(null);
+  const [trendLoading, setTrendLoading] = useState(false);
+  const [trendError, setTrendError] = useState('');
   const [reflectionToday, setReflectionToday] = useState<ReflectionToday | null>(null);
   const [reflectionText, setReflectionText] = useState('');
   const [reflectionSaving, setReflectionSaving] = useState(false);
@@ -130,10 +133,24 @@ export default function Reflect() {
     }
   };
 
+  const fetchTrendSummary = async () => {
+    setTrendLoading(true);
+    setTrendError('');
+    try {
+      const data = await jieyiService.patternRecognition.trendSummary({ days: 14, minEvidenceDays: 7 });
+      setTrendSummary(data);
+    } catch {
+      setTrendSummary(null);
+      setTrendError('10 天趋势暂不可用；不会用假趋势补位。');
+    } finally {
+      setTrendLoading(false);
+    }
+  };
+
   useEffect(() => {
     setPageLoading(true);
     setPageError('');
-    Promise.all([fetchMood(), fetchActivities(), fetchReflectionToday(), fetchDailyReview(), fetchPatternDetection()])
+    Promise.all([fetchMood(), fetchActivities(), fetchReflectionToday(), fetchDailyReview(), fetchPatternDetection(), fetchTrendSummary()])
       .catch(() => setPageError('加载失败，请刷新重试'))
       .finally(() => setPageLoading(false));
   }, []);
@@ -158,6 +175,7 @@ export default function Reflect() {
       await fetchMood();
       await fetchReflectionToday();
       await fetchPatternDetection();
+      await fetchTrendSummary();
       showToast('复盘已保存，今日整理会自动读取', 'success');
     } catch (error) {
       console.error('保存复盘失败', error);
@@ -180,6 +198,7 @@ export default function Reflect() {
       setDailyReview(data);
       await fetchReflectionToday();
       await fetchPatternDetection();
+      await fetchTrendSummary();
       showToast('今日整理已生成', 'success');
     } catch (error) {
       console.error('生成今日整理失败', error);
@@ -494,6 +513,40 @@ export default function Reflect() {
           </div>
         ) : !patternLoading && patternResult?.window.has_enough_data ? (
           <div className="empty-state compact">{patternResult.message}</div>
+        ) : null}
+      </section>
+
+      <section className="glass-section trend-section" aria-label="10 天复盘趋势">
+        <div className="module-section-header">
+          <h2 className="section-title">10 天复盘趋势</h2>
+          <span className={`status-pill ${trendSummary?.window.has_enough_data ? 'is-ready' : 'is-muted'}`}>
+            {trendLoading ? '整理中' : trendSummary?.window.has_enough_data ? `${trendSummary.window.evidence_days} 天证据` : '数据不足'}
+          </span>
+        </div>
+        {trendError && <div className="error-state reflect-review-error">{trendError}</div>}
+        {!trendLoading && trendSummary && !trendSummary.window.has_enough_data ? (
+          <div className="empty-state compact">{trendSummary.summary}</div>
+        ) : null}
+        {!trendLoading && trendSummary?.window.has_enough_data ? (
+          <div className="trend-summary-card">
+            <p className="daily-review-summary">{trendSummary.summary}</p>
+            <div className="trend-summary-grid">
+              <div className="trend-summary-block"><span className="daily-review-label">心情</span><p>{trendSummary.mood_trend}</p></div>
+              <div className="trend-summary-block"><span className="daily-review-label">行动</span><p>{trendSummary.action_trend}</p></div>
+              <div className="trend-summary-block"><span className="daily-review-label">节奏</span><p>{trendSummary.rhythm_trend}</p></div>
+              <div className="trend-summary-block"><span className="daily-review-label">模式</span><p>{trendSummary.pattern_trend}</p></div>
+            </div>
+            <div className="daily-review-section">
+              <span className="daily-review-label">下一步调整</span>
+              <ul>
+                {trendSummary.next_adjustments.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </div>
+            <div className="pattern-evidence-grid">
+              <small>证据日期：{trendSummary.evidence_dates.join('、')}</small>
+              <small>写回目标：{trendSummary.writeback_target}</small>
+            </div>
+          </div>
         ) : null}
       </section>
 

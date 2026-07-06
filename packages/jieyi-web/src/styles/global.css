@@ -931,3 +931,26 @@ button { border: 0; cursor: pointer; }
   line-height: 1;
 }
 @media (min-width: 700px) { .pattern-candidate-list { grid-template-columns: 1fr 1fr; } }
+
+.action-resistance-section,
+.trend-section { padding: 16px; }
+.resistance-signal-list,
+.trend-summary-grid { display: grid; gap: 10px; }
+.resistance-signal-card,
+.trend-summary-card,
+.trend-summary-block {
+  padding: 14px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.44);
+  border: 1px solid rgba(39,35,29,.09);
+}
+.resistance-signal-card.high { border-color: rgba(163,73,59,.26); }
+.resistance-signal-card.medium { border-color: rgba(124,79,47,.22); }
+.resistance-signal-card.low { border-color: rgba(79,122,85,.18); }
+.resistance-signal-card p,
+.trend-summary-block p { margin: 0; color: var(--text); line-height: 1.6; }
+.trend-summary-card { display: grid; gap: 12px; }
+@media (min-width: 700px) {
+  .resistance-signal-list,
+  .trend-summary-grid { grid-template-columns: 1fr 1fr; }
+}
