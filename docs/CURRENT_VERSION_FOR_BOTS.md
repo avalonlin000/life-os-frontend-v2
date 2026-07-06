@@ -70,9 +70,9 @@
 
 ## Delivery 同步语义
 
-- 小雪/结衣同步项目上下文靠读取 `/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/latest.md`，不是靠飞书 @ 或唤醒。
+- 小雪/结衣同步项目上下文靠读取 `/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/latest.md`，不是靠飞书唤醒。
 - `pnpm hermes:summary` 负责生成/更新 delivery 文件；这是同步主机制。
-- `pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，不是必要同步步骤；默认不 @、不发飞书。
+- `pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，不是必要同步步骤；默认不唤醒别人、不发飞书。
 - `pnpm hermes:sync:dry` 只做 dry-run，可用于检查广播内容，不会发送。
 - 如果广播失败，只说明“广播失败，不影响 delivery 文件同步”，不能改发给钧钧冒充已同步。
 

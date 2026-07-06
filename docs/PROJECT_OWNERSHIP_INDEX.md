@@ -197,7 +197,7 @@ http://42.193.177.127:5173/
 
 ## 5. 同步规则
 
-同步主机制是 delivery 文件，不是飞书 @ 或唤醒。`.hermes/deliveries/latest.md` 是小雪/结衣读取最新上下文的入口；`pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，不是必要同步步骤。默认不 @、不发飞书；广播失败不影响 delivery 文件同步，也不能改发给钧钧冒充已同步。
+同步主机制是 delivery 文件，不是飞书唤醒。`.hermes/deliveries/latest.md` 是小雪/结衣读取最新上下文的入口；`pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，不是必要同步步骤。默认不唤醒别人、不发飞书；广播失败不影响 delivery 文件同步，也不能改发给钧钧冒充已同步。
 
 ### 5.1 小白完成项目工作后
 

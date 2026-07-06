@@ -21,7 +21,7 @@ Life OS 是钧钧个人项目体系的内部工程母项目，不再作为用户
 | 结衣 | 日常低模型辅助 | `jieyi` | 陪伴、日常整理、复盘辅助、移动端日常入口 |
 | 小雪 | 日常低模型辅助 | `default`（身份是小雪） | 简单数据查询、日报辅助、小雪工作台日常使用 |
 
-没有小天。delivery 文件是小雪/结衣获取项目上下文的主机制，读取 `/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/latest.md`；`pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，默认不 @ 结衣/小雪、不发飞书。只有钧钧明确要求“叫她们/让她们接手”时才使用结构化 @。
+没有小天。delivery 文件是小雪/结衣获取项目上下文的主机制，读取 `/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/latest.md`；`pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，默认不唤醒结衣/小雪、不发飞书。需要人工接手时由钧钧明确指定。
 
 ## 当前前端入口
 
