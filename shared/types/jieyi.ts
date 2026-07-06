@@ -404,6 +404,31 @@ export interface DailyReviewOut {
   updated_at?: string;
 }
 
+export type JieyiPatternWindowStatus = 'ready' | 'insufficient';
+
+export interface JieyiPatternWindowDay {
+  date: string;
+  mood: MoodOut | null;
+  activities: ActivityOut[];
+  schedules: ScheduleOut[];
+  daily_review: DailyReviewOut | null;
+  has_enough_data: boolean;
+  insufficient_reason: string;
+}
+
+export interface JieyiPatternWindow {
+  status: JieyiPatternWindowStatus;
+  window_days: number;
+  min_evidence_days: number;
+  evidence_days: number;
+  generated_at: string;
+  start_date: string;
+  end_date: string;
+  has_enough_data: boolean;
+  insufficient_reason: string;
+  days: JieyiPatternWindowDay[];
+}
+
 export interface WisdomOut {
   id: number;
   content: string;

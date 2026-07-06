@@ -60,6 +60,7 @@
 | `COGNITIVE-ASSET-CANDIDATE-GENERATION.md` | P2 认知资产候选生成与归一化规则 |
 | `COGNITIVE-ASSET-CANDIDATE-POOL.md` | P2 认知资产候选池状态机制，不静默污染长期原则 |
 | `COGNITIVE-ASSET-CANDIDATE-WAY-DISPLAY.md` | P2 `/way` 认知资产候选与来源展示规则 |
+| `PATTERN-DETECTION-DATA-WINDOW.md` | P3 反复模式识别数据窗口：10-14 天只读聚合、数据不足口径、不伪造模式 |
 | `ACCEPTANCE.md` | 验收清单 |
 | `BACKLOG.md` | 可执行任务 |
 

@@ -9,7 +9,7 @@ import type {
   Mood, MoodCreate,
   Wisdom,
   MoodTrendItem, GoalCreate, GoalOut, NoteOut,
-  CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiPrincipleItem,
+  CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiPatternWindow, JieyiPatternWindowDay, JieyiPrincipleItem,
   JieyiDailyContext, JieyiTodayAggregate, JieyiWriteNextPlanInput, JieyiWriteNextPlanResult,
   DeepLearningPrepareInput, DeepLearningSession, DeepLearningAcceptanceInput, DeepLearningAcceptanceResult,
 } from '../../types';
@@ -49,6 +49,36 @@ const buildCognitiveCandidatePrinciples = (review: DailyReviewOut | null): Jieyi
     evidence_texts: candidate.evidence_texts,
   }));
 };
+
+
+const clampPatternWindowDays = (days: number): number => Math.min(14, Math.max(10, Math.floor(days)));
+
+const toLocalDateString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const parsePatternWindowEndDate = (endDate?: string | Date): Date => {
+  if (!endDate) return new Date();
+  if (endDate instanceof Date) return endDate;
+  const match = endDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  return new Date(endDate);
+};
+
+const buildPatternWindowDates = (days: number, endDate?: string | Date): string[] => {
+  const end = parsePatternWindowEndDate(endDate);
+  return Array.from({ length: days }, (_, index) => {
+    const date = new Date(end);
+    date.setDate(end.getDate() - (days - index - 1));
+    return toLocalDateString(date);
+  });
+};
+
+const buildPatternWindowInsufficientReason = (windowDays: number, evidenceDays: number): string =>
+  `最近${windowDays}天只有${evidenceDays}天存在 mood / activities / schedules / daily-review 数据，不足以识别。`;
 
 export const jieyiService = {
   knowledge: {
@@ -273,6 +303,50 @@ export const jieyiService = {
     },
     trend: async (days = 7): Promise<MoodTrendItem[]> =>
       api.get<MoodTrendItem[]>(`/mood/trend?days=${days}`),
+  },
+  patternRecognition: {
+    dataWindow: async (options: { days?: number; endDate?: string | Date; minEvidenceDays?: number } = {}): Promise<JieyiPatternWindow> => {
+      const windowDays = clampPatternWindowDays(options.days ?? 14);
+      const minEvidenceDays = Math.min(windowDays, Math.max(1, Math.floor(options.minEvidenceDays ?? 7)));
+      const dates = buildPatternWindowDates(windowDays, options.endDate);
+
+      const days = await Promise.all(dates.map(async (date): Promise<JieyiPatternWindowDay> => {
+        const [mood, activities, schedules, dailyReview] = await Promise.all([
+          jieyiService.mood.get(date).catch(() => null),
+          jieyiService.activities.list(date).catch((): Activity[] => []),
+          jieyiService.schedule.list(date).catch((): Schedule[] => []),
+          jieyiService.dailyReview.get(date).catch(() => null),
+        ]);
+        const hasData = Boolean(mood || activities.length || schedules.length || dailyReview);
+
+        return {
+          date,
+          mood,
+          activities,
+          schedules,
+          daily_review: dailyReview,
+          has_enough_data: hasData,
+          insufficient_reason: hasData ? '' : '当天没有 mood / activities / schedules / daily-review 数据。',
+        };
+      }));
+
+      const evidenceDays = days.filter((item) => item.has_enough_data).length;
+      const hasEnoughData = evidenceDays >= minEvidenceDays;
+      const insufficientReason = hasEnoughData ? '' : buildPatternWindowInsufficientReason(windowDays, evidenceDays);
+
+      return {
+        status: hasEnoughData ? 'ready' : 'insufficient',
+        window_days: windowDays,
+        min_evidence_days: minEvidenceDays,
+        evidence_days: evidenceDays,
+        generated_at: new Date().toISOString(),
+        start_date: days[0]?.date ?? '',
+        end_date: days[days.length - 1]?.date ?? '',
+        has_enough_data: hasEnoughData,
+        insufficient_reason: insufficientReason,
+        days,
+      };
+    },
   },
   wisdom: {
     list: async (): Promise<Wisdom[]> => {
