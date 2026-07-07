@@ -17,7 +17,7 @@
 ## 2. 小雪管什么
 
 ```text
-电竞 / LOL / MSI / LPL / LCK / INTL / 队伍 / 选手画像 / 队伍三维 / TK / 概念图 / TS 表 / mu / sigma / 赔率 / 波动 / 爆冷 / 盘口 / 市场笔记 / 日报
+电竞 / LOL / MSI / LPL / LCK / INTL / 队伍 / 选手画像 / 队伍三维 / TK / 概念图 / TS 表 / mu / sigma / 赔率 / 波动 / 爆冷 / 盘口 / 市场笔记 / 队伍交易备注 / 赛前交易判断日报 / 日报
 ```
 
 不归小雪：
@@ -35,6 +35,7 @@
 | 前端逻辑 | `/home/ubuntu/xiaoxue-web/src/main.js` | 基本面、TK、盘口交互 |
 | 后端 | `/home/ubuntu/xiaoxue-web/main.py` | FastAPI API |
 | 数据库 | `/home/ubuntu/lol_data/英雄联盟数据库.db` | LOL 数据库 |
+| 赛前交易判断日报脚本 | `/home/ubuntu/xiaoxue-web/scripts/build_pre_match_trading_report.py` | 生成 `赛前交易判断日报_YYYY-MM-DD.md` |
 | workspace React 包 | `/home/ubuntu/life-os-frontend-v2/packages/xiaoxue-web/` | 历史/共享包，不是当前主入口 |
 
 ## 4. 文档入口
@@ -73,6 +74,7 @@
 
 - 产品规格、数据结构、TS 表方法、验收标准：写入本目录 PRD/SSD/专项 MD。
 - 操作流程、排障步骤、必读文件、坑：写入 `xiaoxue-esports-workflow` skill。
+- 交易感悟：仍写入现有队伍 TK/Wiki 正源，用 `type=trading_note` 标记；不要新增交易 TK 实体，不要恢复 `tk_library`。
 - 单次任务结果：写入 `.hermes/deliveries/`，并在「给小雪」里写具体摘要。
 - 小雪只需要高层知道结衣：结衣是陪伴、轻量整理、复盘和知行闭环系统；不读结衣细节。
 
@@ -82,6 +84,7 @@
 cd /home/ubuntu/xiaoxue-web
 npm run build
 python3 -m py_compile main.py
+/home/ubuntu/.hermes/hermes-agent/venv/bin/python scripts/build_pre_match_trading_report.py --date today
 curl http://127.0.0.1:8880/
 curl http://127.0.0.1:8880/api/teams
 ```

@@ -1,6 +1,6 @@
 # 小雪电竞人生 — 当前阶段状态
 
-> 更新时间：2026-07-06
+> 更新时间：2026-07-08
 > 口径：当前主工作台 `/home/ubuntu/xiaoxue-web/`，产品文档 `/home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/`。
 
 ## 总结
@@ -10,6 +10,8 @@
 - 主工作台服务健康：`xiaoxue-workbench-api.service`、`xiaoxue-workbench-vite.service` active。
 - 基本面 / MSI / TK / 分析师 / market-notes 主链路可用。
 - 盘口页已收敛为手写判断工作区：不自动交易、不自动生成方向、不把命中率放主流程。
+- 日报已新增“赛前交易判断日报”层：按当日赛程读取双方队伍、结构化读取队伍 TK 中 active `type=trading_note`，输出命中交易备注、市场分歧、交易小结、入场点和 BP 待确认；无备注或数据不足时写“暂不推荐”。
+- 队伍交易备注仍挂在队伍 TK/Wiki 正源下，支持“小雪记到 HLE：虐菜大人头”这类自然语言写入；队伍不明确时不写正式 TK，不新增交易 TK 实体。
 - 重启整理风险项中，分析师入口、`tk_library` 审计、迁移冲突抽读、B站 txt 引用修复已完成；日报内容深度和 cron 运行观察属于持续运营项。
 
 ## 完成度口径
@@ -39,5 +41,6 @@
 ## 当前保留风险
 
 - 日报内容深度仍会随真实比赛日继续增强，不阻塞当前项目收口。
+- 赛前交易判断日报第一阶段只做日报和队伍交易备注链路；不做复杂页面，不恢复 `tk_library`，不接旧 `/api/trades` 统计面板。
 - cron 真实运行仍建议用 `vibe-status` 和产物检查持续观察，不只看 `last_status`。
 - 旧 `/api/trades` 仍保留为兼容层；当前主入口是 `/api/market-notes`，不要重新把旧交易统计放回主流程。

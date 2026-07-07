@@ -2,7 +2,7 @@
 
 > 来源：ACCEPTANCE.md + PRD/SSD v1.1
 > 原则：先保证 LOL 横向基本面和 MSI 环境可用，再增强盘口和图谱。
-> 当前口径：2026-07-06 已完成 P0/P1 收口；后续新增需求另开新阶段。
+> 当前口径：2026-07-06 已完成 P0/P1 收口；2026-07-08 已新增赛前交易判断日报第一阶段。
 
 ---
 
@@ -68,6 +68,17 @@
 | XX-P1-3 | 盘口草稿独立为 `/api/market-notes` | `/api/trades` 不再承载盘口语义 | Done | 2026-07-06 | `main.py`、`src/main.js` | 主链路已用 market-notes；旧 trades 仅兼容。 |
 | XX-P1-4 | 概念图嵌入基本面页 | 不只依赖新标签页 | Done | 2026-07-06 | `index.html` | 已有 iframe 嵌入。 |
 | XX-P1-5 | INTL/外卡资料补齐 | missing_profiles/missing_3d 减少 | Done | 2026-07-06 | `/api/fundamentals/msi` | 当前缺口为 0。 |
+
+---
+
+## 新阶段：赛前交易判断日报（2026-07-08）
+
+| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
+|----|------|------|------|----------|------|------|
+| XX-TRD-1 | 队伍交易备注结构化写入 | “小雪记到 HLE：虐菜大人头”写入 HLE 队伍 TK；队伍不明确不落库 | Done | 2026-07-08 | `/api/team-trading-notes/from-text`、`/api/team-trading-notes/{team}` | 交易备注仍归属队伍知识，不新增交易 TK 实体。 |
+| XX-TRD-2 | 赛前交易判断日报生成 | 当日赛程读取双方队伍，命中 active `type=trading_note` 后展示“命中队伍交易备注”与“交易小结” | Done | 2026-07-08 | `/api/pre-match-trading-report`、`scripts/build_pre_match_trading_report.py` | 无备注或数据不足时明确“暂不推荐”。 |
+| XX-TRD-3 | 今日内容可见入口 | `/api/daily-content` 白名单包含 `trading_report`，前端今日内容卡显示赛前交易判断日报路径 | Done | 2026-07-08 | `index.html`、`src/main.js`、`/api/daily-content?date=2026-07-08` | 不做复杂新页面，只接入日报入口。 |
+| XX-TRD-4 | 交易边界收敛 | 不写“破相条件”；不恢复 `tk_library`；不接旧 `/api/trades` 统计面板 | Done | 2026-07-08 | runtime grep、`memory-bank/modules.md` | 新链路只读/写 TK 与日报层。 |
 
 ---
 

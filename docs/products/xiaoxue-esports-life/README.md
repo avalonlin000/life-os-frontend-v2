@@ -9,7 +9,7 @@
 
 ## 一句话定义
 
-小雪电竞人生是电竞基本面工作台：平时系统化查看 LPL/LCK 队伍、选手、版本、TK 与概念图；研究 MSI 时把外赛区/外卡队伍纳入同一套横向基本面框架；交易另起独立页面，只给钧钧自己写分析、盘口、赔率、临场想法和可选保存。
+小雪电竞人生是电竞基本面工作台：平时系统化查看 LPL/LCK 队伍、选手、版本、TK 与概念图；研究 MSI 时把外赛区/外卡队伍纳入同一套横向基本面框架；交易另起独立页面，只给钧钧自己写分析、盘口、赔率、临场想法和可选保存；日报里额外生成赛前交易判断层，按队伍 TK 交易备注给出市场分歧、入场点和不碰项。
 
 ---
 
@@ -51,6 +51,15 @@
 | 版本快照来源 | `/home/ubuntu/xiaoxue-web/docs/小雪1.0版本.md` |
 | 电竞知识库 | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/` |
 | LOL 数据库 | `/home/ubuntu/lol_data/英雄联盟数据库.db` |
+
+## 赛前交易判断日报
+
+- 生成脚本：`/home/ubuntu/xiaoxue-web/scripts/build_pre_match_trading_report.py`
+- 产物：`/home/ubuntu/lol_data/scripts/赛前交易判断日报_YYYY-MM-DD.md`
+- 今日内容入口：`/api/daily-content` 的 `trading_report` 白名单项。
+- 队伍交易备注：仍挂在队伍 TK/Wiki 正源下，用 `type=trading_note` 标记，不新增交易 TK 实体。
+- 日常写法：`小雪记到 HLE：虐菜大人头`；队伍不明确时不写正式 TK。
+- 边界：不恢复 `tk_library`，不接旧 `/api/trades`，没有备注或数据不足时写“暂不推荐”。
 
 ---
 
