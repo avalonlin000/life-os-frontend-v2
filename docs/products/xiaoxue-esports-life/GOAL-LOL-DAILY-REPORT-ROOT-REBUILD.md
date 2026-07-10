@@ -2,7 +2,9 @@
 
 > Change ID：`XX-DAILY-ROOT-20260710`
 >
-> 当前状态：`In Progress`
+> 当前状态：`Released`
+>
+> 发布时间：`2026-07-10 19:43 BJT`
 >
 > 说明：本文件是唯一执行合同，不是完成证明。只有用户明确说“执行这份 Goal”后才开始修改生产。没有完成真实 cron、Wiki、飞书验证，不得标记 `Released`。
 
@@ -820,3 +822,17 @@ Git/Skill/文档/sync 是否完成：
 ```
 
 Codex 必须读取本文件完整内容后，从现状审计一直执行到真实发布、协议同步和交付；不能停在方案、局部代码、`/tmp` 草稿或“下一步建议”。
+
+---
+
+## 19. Released 证据
+
+- 日报代码 Git：`8d6bcc93095bc2eb0e4026da76ca1311af8389f7`。
+- 最终 run：`daily-2026-07-10-ca54db079099632f`。
+- `audit_ok=true`、`validation_errors=[]`、`published=true`。
+- scripts/Wiki SHA256：`423346db3dcf8eeafafc82b48821f00eacfaeb0b5a33712c23003f9b919f8c16`。
+- 飞书主入口：`https://acnsbexypvpd.feishu.cn/docx/VXdudH75Ao6MZ3x4ev2cGGAgn2f`；9 卷全部回读。
+- TK：近 60 天 535 条，近 7 天 91 条全部加粗。
+- 豆包：复用已有冻结包，当日实际请求累计 1 次、只有 `public_opinion`。
+- Cron：全局 Hermes job `ce93ed865057` active，下次运行 `2026-07-11 10:30 BJT`。
+- 自动测试：13/13 通过。
