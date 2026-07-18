@@ -1,6 +1,7 @@
 # Life OS 当前版本配置说明（给结衣/小雪/小白）
 
 ## 当前版本结论
+- 小雪工作台当前项目版本：`2.0.0`（模块化版，2026-07-18）；这是项目总版本，不覆盖日报、阵容分析等独立能力版本。
 
 - 指导文件/产品文档定目标，skill 定方法；执行前先看 `AGENTS.md`、`CLAUDE.md`、本文件、`PROJECT_OWNERSHIP_INDEX.md`，具体产品再看对应 BOT_GUIDE / PRD roadmap / BACKLOG / ACCEPTANCE。
 - 小白是项目主负责人，负责全部项目内容。
