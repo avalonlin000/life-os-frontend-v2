@@ -1,143 +1,145 @@
 # 小雪电竞人生 — 开发验收清单
 
-> 基于小雪主工作台 v7：LOL 横向基本面 + MSI 国际赛环境 + 独立交易页
-> 版本：1.1 | 2026-06-29
+> 版本：3.0 | 2026-07-18
+> 验收口径：个人电竞交易助理最终方案；“存在”不等于“走通”。
+
+## 0. 产品结果验收
+
+| # | 验收点 | 通过条件 |
+|---|---|---|
+| PRODUCT-1 | 主体定位 | 用户看到和对话得到的都是“小雪，个人电竞交易助理；目前主业 LOL” |
+| PRODUCT-2 | 三个窗口 | 只有日报、工作台、小雪对话；临场记录不成为第四主入口 |
+| PRODUCT-3 | 工作台三导航 | 只有队伍资料、当前赛事、TK资料库；旧今日赛前/盘口/BP/复盘入口不在主导航 |
+| PRODUCT-4 | 日报默认入口 | 每天默认打开真实日报；无产物或资料不足时明确标记，不显示旧内容冒充 |
+| PRODUCT-5 | 三层判断 | 大周期预案、赛前比赛判断、BP后阵容判断可独立读取并产生四类对照关系 |
+| PRODUCT-6 | 唯一主流程 | 至少用一场真实比赛从预案走到单场复盘和次日校准 |
+| PRODUCT-7 | 故障隔离 | 任一模块失败会单独标记，其他模块仍可使用 |
+| PRODUCT-8 | 完成证据 | 不能仅凭路由、按钮、文件或接口存在标 Done；必须有真实页面/API/产物或等价验收 |
 
 ---
 
-## 1. 验收总纲
+## 1. 文档体系验收
+
+| # | 验收点 | 通过条件 |
+|---|---|---|
+| DOC-1 | 总定义统一 | README / PROJECT_INDEX / BOT_GUIDE / PRD/00 均写明“个人电竞交易助理，目前主业 LOL” |
+| DOC-2 | PRD/04 总纲源 | 阅读顺序中 PRD/04 位于 PRD/00 之前或紧随 PROJECT_INDEX |
+| DOC-3 | 三轴模型 | PRD/04、PRD/00、SSD/00 均包含项目轴、使用时间轴、产物对象轴 |
+| DOC-4 | 八层能力 | PRD/01、SSD/00、Wiki index 均映射八层能力 |
+| DOC-5 | 日报边界 | 文档明确日报是每日唯一默认入口，但不是小雪的全部能力 |
+| DOC-6 | 非自动交易 | 文档明确小雪不是自动交易机器人，不输出自动买卖目标 |
+| DOC-7 | 纯阵容边界统一 | PRD/04、PRD/00、PRD/01、PRD/02、SSD/00、SSD/03、BOT_GUIDE 均写明 `lol-lineup-analysis` v7.3 只看十英雄，不读取队伍、选手、TS、三维、当前经济、盘口或赛果 |
+| DOC-8 | 交易系统边界统一 | 明确交易请求进入 `junjun-trading-system`；纯阵容结论只能作为一项独立输入，不能直接产生交易方向 |
+
+---
+
+## 2. API 口径验收
+
+| # | 验收点 | 通过条件 |
+|---|---|---|
+| API-1 | 今日内容入口 | SSD/02 记录 `/api/daily-content` |
+| API-2 | market_notes 主链路 | SSD/02 和 SSD/04 明确 `/api/market-notes` 是盘口主链路 |
+| API-3 | trades 兼容层 | SSD/02 和 SSD/04 明确 `/api/trades` 只作为历史兼容层 |
+| API-4 | 队伍交易备注 | SSD/02 记录 `/api/team-trading-notes` 和 `/api/team-trading-notes/from-text` |
+| API-5 | 赛前交易判断日报 | SSD/02 记录 `/api/pre-match-trading-report` |
+| API-6 | 单场 TS | SSD/02 记录 `/api/fundamentals/msi-match-context` |
+| API-7 | 版本理解 | SSD/02 记录 `/api/version-understanding/{team}` |
+| API-8 | 旧 BP 契约隔离 | `/api/lineup-workflow/prepare` 若仍返回历史结构，必须标为兼容接口，不能被文档或路由当作当前纯阵容方法 |
+| API-9 | 复盘确认写回 | `review-preview` 不写库；PUT review 必须确认且只写回原 market_note；接口通过不能单独证明完整复盘已走通 |
+
+### 前端复盘证据规则
+
+- 当前前端不显示“开始复盘”，不承载复盘问卷或确认写回。
+- 完整复盘验收必须来自小雪对话的真实流程、原始 `market_notes`、确认写回和读回证据。
+- 任何旧截图、旧文档或已移除按钮都不能作为当前完成证据。
+
+---
+
+## 3. 日报工程边界验收
+
+| # | 验收点 | 通过条件 |
+|---|---|---|
+| DR-1 | 唯一生产入口 | 生产/Cron/Skill 均只调用 `daily_pipeline.py --publish` |
+| DR-2 | 固定读者顺序 | 六个顶层模块顺序固定；每场六模块顺序固定 |
+| DR-3 | 正式 TK 对账 | 每场不做精选；末尾近 7 天全量且整行加粗；来源数=渲染数 |
+| DR-4 | 豆包门禁 | 只有 `public_opinion`，实际请求最多 3 次；其他联网类别不得回退豆包 |
+| DR-5 | 禁入旧模块 | 正文无全局分析师视角、独立赛前交易层、数据来源附录、`BP待确认` |
+| DR-6 | 三端回读 | 本地/Wiki SHA256 等于冻结报告；飞书主入口和全部分卷 `verified` |
+| DR-7 | 失败语义 | 任一实体未回读时 `published=false`，不得报成功 |
+| DR-8 | 数据就绪门禁 | publish 前当天 readiness manifest 必须是 `mode=full / ok=true`，且 ScoreGG、TS 两阶段均成功；check-only 不放行 |
+
+---
+
+## 4. 纯十英雄阵容分析 v7.3 验收
+
+| # | 验收点 | 通过条件 |
+|---|---|---|
+| LINEUP-1 | Skill 可读 | `/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md` 存在并标注 v7.3 |
+| LINEUP-2 | 路由优先级 | 小雪收到蓝红方十英雄并询问阵容强弱、阶段变化、比赛剧本、节奏、人头倾向或观赛重点时，只进入 `lol-lineup-analysis` |
+| LINEUP-3 | 输入边界 | 默认等经济、正常发育、同等操作水平；不使用队伍、选手、TS、三维、当前经济、盘口、赛果或社区观点 |
+| LINEUP-4 | 输出完整 | 输出总体粗略比例、四阶段强度、双方比赛剧本、节奏、人头高/中/低倾向、走势、结束时点和两个观赛信号 |
+| LINEUP-5 | 交易边界 | 不给具体人头数、盘口大小或买卖建议；明确交易请求另行进入 `junjun-trading-system` |
+| LINEUP-6 | 前端边界 | SSD/03 明确前端只整理并复制十英雄文本，不混入盘口、赛前想法或历史复杂分析模板 |
+
+---
+
+## 5. 搜索路由验收
+
+| # | 验收点 | 通过条件 |
+|---|---|---|
+| SEARCH-1 | 内部事实优先 | 赛程、赛果、队伍、选手、TS、三维和已有 TK 先查内部 DB/ScoreGG/Wiki/TK-RAG |
+| SEARCH-2 | Agent Reach 普通联网 | 最新公告、新闻、外部网页、指定平台和视频发现路由到 `agent-reach` |
+| SEARCH-3 | 正式舆情隔离 | 日报 `public_opinion` 只走 `lol-daily-online-sources` / 豆包冻结链路，Agent Reach 不写正式舆情包 |
+| SEARCH-4 | 判断层隔离 | 纯十英雄阵容进入 `lol-lineup-analysis` 且不搜索；盘口和交易进入交易系统/结构化数据链，搜索结果不直接产生交易方向 |
+| SEARCH-5 | 统一 Skill 源 | Codex 与三个 Hermes profile 都从 `/home/ubuntu/.agents/skills` 发现同一份路由和 Agent Reach |
+
+---
+
+## 6. Wiki 七层验收
+
+| Wiki 层 | 能力层 | 通过条件 |
+|---|---|---|
+| 00_入口 | 使用入口层 | 标题写“交易辅助系统入口层” |
+| 10_日报 | 交易前/交易后发布物层 | 明确不是总入口中心 |
+| 20_游戏理解 | 长期依据层 + 阵容变量层 | 明确赛前不得伪造 BP |
+| 30_队伍与选手 | 长期依据层 | 明确服务交易前/交易时/交易后 |
+| 40_TK知识 | 知识生产与沉淀层 | 明确 `type=trading_note` 归属队伍 TK |
+| 50_单场分析 | 单场判断 / 阵容变量 / 市场对照 / 复盘校准 | 覆盖交易前/交易时/交易后 |
+| 99_系统维护 | 数据工程与自动化层 | 明确只记录和审计，不发布、不覆盖 |
+
+---
+
+## 7. 旧口径清理验收
+
+必须用 `rg` 检查：
 
 ```bash
-cd /home/ubuntu/xiaoxue-web
-python3 -m py_compile main.py
-npm run build
-curl http://127.0.0.1:8880/
-curl http://127.0.0.1:8880/api/fundamentals/teams?scope=msi
-curl http://127.0.0.1:8880/api/fundamentals/msi
+rg -n "小雪只是 LOL 横向基本面工作台|日报是日常使用第一入口|/api/trades 是盘口主链路|P0 = LOL 横向基本面工作台" /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life /home/ubuntu/workspace/knowledge/wiki/小雪电竞 /home/ubuntu/.codex/skills/小雪 /home/ubuntu/.codex/skills/xiaoxue-esports-toolkit
+rg -n "阵容分析八步法|按阵容八步法|控制量化|24 场景|三维加权" /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life
 ```
 
-注意：小雪 8880 对 HEAD 可能返回 405，验证可用性用 GET。
+通过条件：
+
+- 旧句子不存在，或已被明确标注为历史/兼容口径。
+- “小雪前端不应该主打每天比赛”等历史句子如果保留，必须补充它现在属于 LOL 长期依据层，不是系统总定义。
+- 旧阵容长报告只能出现在明确标为历史的归档中；当前产品事实源不得继续把它写成现行路由。
 
 ---
 
-## 2. 顶层页面
+## 8. 文档任务验证命令
 
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| P1 | 基本面页签 | 默认展示「基本面」 |
-| P2 | 交易页签 | 点击后展示交易页，隐藏基本面主卡 |
-| P3 | 快捷 chips | 基本面 / MSI研究 / MSI概念图 / 交易页 / TK版本理解 可用 |
-
----
-
-## 3. 横向基本面
-
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| F1 | fundamentals teams | `/api/fundamentals/teams?scope=msi` 返回 teams 数组 |
-| F2 | scope 切换 | MSI / LPL / LCK / INTL / ALL 切换刷新表格 |
-| F3 | 横向表字段 | 显示队伍、赛区、优势、劣势、胜负手、摘要、资料状态 |
-| F4 | 资料状态 | 完整/部分/资料不足有明确视觉区分 |
-| F5 | 点击队伍 | 加载队伍画像、三维、TK |
+```bash
+git status --short
+git diff --check
+rg -n "电竞交易辅助系统|三轴模型|八层能力|lol-lineup-analysis|纯十英雄|v7.3|junjun-trading-system|/api/market-notes|/api/trades.*兼容|daily_pipeline.py --publish|LOL_DAILY_REPORT_V2" /home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life
+```
 
 ---
 
-## 4. MSI 国际赛环境
+## 9. 日报 v2.0 实际验收
 
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| M1 | MSI 聚合接口 | `/api/fundamentals/msi` 返回 event=MSI |
-| M2 | 队伍池 | 返回 LPL/LCK/INTL 队伍池 |
-| M3 | 赛区分布 | regions 展示 LPL/LCK/INTL 数量 |
-| M4 | 资料缺口 | missing_profiles / missing_3d 可见 |
-| M5 | 不做赛程表 | 页面文案说明“国际赛环境研究，不是赛程表” |
-
----
-
-## 5. 三维数据
-
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| D1 | 查询三维 | 显示优势局、劣势局、胜负手、笔记、版本理解 |
-| D2 | 编辑字段 | 输入后出现 dirty 状态 |
-| D3 | 保存成功 | 调用 PUT 后显示“已保存” |
-| D4 | 保存失败 | 显示“保存失败”，不伪装成功 |
-| D5 | 更新时间 | 保存后更新时间刷新或可见 |
-
----
-
-## 6. TK 知识库 / 概念图
-
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| T1 | 搜索 TK | `/api/tk/search` 返回结果并展示 |
-| T2 | 展开全文 | 点击结果可展开 |
-| T3 | 新增 TK | 写入 Wiki 并刷新列表 |
-| T4 | 删除 TK | 确认后删除并刷新 |
-| T5 | 搜索失败 | 显示“TK 搜索服务不可用” |
-| T6 | MSI 概念图 | 能打开 `/tk-graph/index.html?q=MSI` |
-
----
-
-## 7. 交易页
-
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| K1 | 盘口输入 | 可输入比赛、方向、理由等 |
-| K2 | 可选保存 | 保存后记录进入列表 |
-| K3 | 不强制结算 | 不要求每条记录结算 |
-| K4 | 不展示统计主面板 | 命中率/赢输统计不在主流程展示 |
-| K5 | 可删除旧记录 | 删除后列表刷新 |
-
----
-
-## 8. 命令栏与快捷键
-
-| # | 验收点 | 通过条件 |
-|---|--------|----------|
-| C1 | `/` 聚焦 | 命令框获得焦点 |
-| C2 | `Ctrl+K` 聚焦 | 命令框获得焦点 |
-| C3 | `Ctrl+S` 保存 | dirty 三维触发保存 |
-| C4 | `Esc` 关闭 | overlay 关闭 |
-| C5 | `看TES` | 切换队伍 |
-| C6 | `TK 野区` | 触发 TK 搜索 |
-| C7 | `MSI` | 加载 MSI 横向基本面并搜索 MSI TK |
-| C8 | `交易页` | 切换到交易页 |
-
----
-
-## 9. 已知待确认
-
-| 编号 | 问题 | 影响范围 |
-|------|------|----------|
-| TBD-1 | RAG reindex 是否稳定 | TK 新增/删除 |
-| TBD-2 | `/api/trades` 是否后续改名为 `/api/market-notes` | 盘口页语义 |
-| TBD-3 | 概念图是否嵌入前端 | 基本面页体验 |
-| TBD-4 | INTL/外卡队伍资料补齐节奏 | MSI 横向表 |
-
-
----
-
-## 10. 重启整理最终验收（2026-07-03）
-
-| # | 验收点 | 当前状态 | 证据 |
-|---|--------|----------|------|
-| R1 | 日报生成脚本存在并可运行 | 已完成 | `/home/ubuntu/lol_data/scripts/build_daily_report.py` |
-| R2 | 每日维护报告脚本存在并可运行 | 已完成 | `/home/ubuntu/lol_data/scripts/xiaoxue_daily_maintenance_report.py` |
-| R3 | Wiki 金字塔入口存在 | 已完成 | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/` |
-| R4 | 新增报告都有入口 | 已完成 | `README.md`、`PROJECT_INDEX.md` 已加入 PATH/CRON/SINGLE/FRONTEND/DATA/COMPLETION 报告入口 |
-| R5 | 小雪当前主线明确 | 已完成 | 当前主线仍为 `/home/ubuntu/xiaoxue-web/`，不接入旧 `hermes-refactor` |
-| R6 | 不改 cron 业务逻辑 | 已遵守 | 本轮只做文档收口和最终验证，不新增大功能，不改 cron 业务逻辑 |
-
-仍需后续小切片验收的项目：日报内容深度、分析师前端入口、旧 `tk_library` 兼容代码、迁移冲突备份抽读、下一次 cron 真实运行复查。
-
----
-
-## 11. 2026-07-06 当前收口验收
-
-| # | 验收点 | 当前状态 | 证据 |
-|---|--------|----------|------|
-| CLOSURE-1 | P0/P1 状态明确 | 已完成 | `STATUS.md`、`BACKLOG.md` |
-| CLOSURE-2 | runtime 构建与 API | 已完成 | `RUNTIME-CLOSURE-20260706.md` |
-| CLOSURE-3 | 盘口语义收敛 | 已完成 | 盘口页手写判断工作区、`/api/market-notes` |
-| CLOSURE-4 | 小白后续执行规则 | 已完成 | `xiaoxue-esports-workflow` skill 已更新 |
+- 自动化测试：`python -m unittest discover -s tests -p 'test_*.py' -v`。
+- 数据门禁诊断：`python scripts/data_readiness_pipeline.py --check-only`（只读复验，不解锁 publish）；生产放行需执行不带 `--check-only` 的完整流程。
+- 生产验收：`python scripts/daily_pipeline.py --date YYYY-MM-DD --publish`。
+- 当日证据：`/home/ubuntu/lol_data/scripts/daily_run_manifest_YYYY-MM-DD.json`。
+- 数据库写入仍为 0；日报只读本地正源。

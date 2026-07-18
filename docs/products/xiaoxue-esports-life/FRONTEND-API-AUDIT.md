@@ -2,7 +2,7 @@
 
 审计时间：2026-07-03
 审计范围：`/home/ubuntu/xiaoxue-web/index.html`、`src/main.js`、`main.py`
-目标接口：`/api/teams`、`/api/fundamentals/teams`、`/api/fundamentals/msi`、`/api/tk/search`、`/api/profile-full/{team}`、`/api/analyst/{team}`、`/api/market-notes`
+目标接口：`/api/teams`、`/api/fundamentals/teams`、`/api/fundamentals/msi`、`/api/tk/search`、`/api/profile-full/{team}`、`/api/analyst/{team}`、`/api/market-notes`、`/api/lineup-workflow/prepare`、`/api/market-notes/{id}/review-preview|review`
 约束：只做审计和必要小修；未改 cron；未做大重构。
 
 ## 1. 总结结论
@@ -16,6 +16,7 @@
 - TK：可用；本次小修过滤了 TK 搜索里导入失败的 `@/tmp/...` 指针和 frontmatter 噪声。
 - 队伍/选手画像：队伍画像可用；选手画像当前不是这个前端主链路，需后续单独设计，不建议在本轮小修里硬塞。
 - 盘口辅助：可用，`/api/market-notes` 是轻量盘口草稿；前端“只带入对象”可带入 MSI TS 单场底表，不自动给交易结论。
+- 固定工作流：BP 输入契约与复盘预览/确认写回可用；复盘只写回原草稿，不自动写知识。
 
 整体判断：
 
@@ -42,7 +43,7 @@
 
 问题/风险：
 
-- 已补 `#card-analyst`、顶部“分析师 / 单场分析”按钮和快捷 chip；仍保持轻量入口，不做完整 BP 输入器。
+- 已补 `#card-analyst`、顶部“BP 后问小雪”按钮和快捷 chip；仍保持轻量入口，不做完整 BP 输入器。
 - 页面宽度固定 `viewport width=1920`，适合桌面工作台，不适合手机；这不是本轮重启目标 P0。
 
 ### src/main.js
@@ -155,8 +156,8 @@
 
 修改内容：
 
-- 顶部补“分析师 / 单场分析”按钮，选择队伍后显示。
-- 命令快捷区补“分析师 / 单场分析”chip。
+- 顶部补“BP 后问小雪”按钮，选择队伍后显示。
+- 命令快捷区补“BP 后问小雪”chip。
 - 基本面页补 `#card-analyst` 说明卡，提供“中年电竞人 / 心语悦无言”两个轻量按钮。
 - `src/main.js` 新增 `loadAnalyst()`，调用现有 `/api/analyst/{team}?analyst=...`，loading、空结果、失败态都只写在分析师卡内，不影响基本面、TK、盘口页。
 
@@ -245,9 +246,9 @@ active
 | `/api/fundamentals/msi` | 200 | 返回 event=MSI、positioning、teams、regions、missing_profiles、missing_3d。 |
 | `/api/tk/search?q=MSI&team=T1&limit=3` | 200 | 修复后返回正文从 `【结论】...` 开始，不再以 `@/tmp/...` 指针作为结果正文。 |
 | `/api/profile-full/T1` | 200 | 返回 T1 Wiki 画像，含三维数据、版本理解、notes、相关 TK。 |
-| `/api/analyst/T1?analyst=中年电竞人` | 200 | 返回 found=true 和分析内容；前端已接入顶部按钮、快捷 chip、基本面页分析师卡。 |
+| `/api/analyst/T1?analyst=中年电竞人` | 200 | 返回 found=true 和分析内容；前端已接入顶部按钮、快捷 chip、基本面页 BP 后问小雪卡。 |
 | `/api/market-notes?game=lol&limit=3` | 200 | 返回 `{records: []}`，接口正常，当前无 LOL 草稿。 |
-| `/` grep `分析师 / 单场分析` | 200 | 首页 HTML 可 grep 到 3 处入口文本；源码和 dist 均包含入口。 |
+| `/` grep `BP 后问小雪` | 200 | 首页 HTML 可 grep 到轻入口文本；源码和 dist 均包含入口。 |
 
 `/api/tk/search` 修复后真实输出片段：
 

@@ -1,6 +1,8 @@
-# 小雪单场 / BP 分析调用链
+# 小雪单场 / BP 分析调用链（历史归档）
 
-> 用途：给小雪和后续 agent 明确“阵容出来后怎么聊、看不懂时怎么拆”。本文件只记录调用关系和输出口径，不修改 default profile skills，不替钧钧做交易结论。
+> **历史归档，禁止作为当前入口或方法。** 本文件记录 2026-07-16 之前的旧复杂单场流程，全文仅供追溯。当前纯阵容唯一正源是 `lol-lineup-analysis` v7.3：默认等经济、正常发育、同等操作水平，只看蓝红方十英雄；明确交易请求进入 `junjun-trading-system`。当前产品口径见 `CURRENT-CAPABILITY-MAP.md`、`PRD/04-trading-methodology-and-taxonomy.md` 和 `ACCEPTANCE.md`。
+
+> 原用途：给小雪和后续 agent 记录旧调用关系和输出口径。以下触发词、输入、输出、路径和底层框架均已失效，不得复制到 Skill、路由、前端模板或验收。
 
 ## 1. 触发场景
 

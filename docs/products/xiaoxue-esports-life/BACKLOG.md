@@ -1,93 +1,99 @@
 # 小雪电竞人生 — Backlog
 
-> 来源：ACCEPTANCE.md + PRD/SSD v1.1
-> 原则：先保证 LOL 横向基本面和 MSI 环境可用，再增强盘口和图谱。
-> 当前口径：2026-07-06 已完成 P0/P1 收口；2026-07-08 已新增赛前交易判断日报第一阶段。
+> 版本：3.0 | 2026-07-18
+> 当前口径：个人电竞交易助理；当前主业 LOL；只用真实路径证据标记完成。
+
+## 当前落地主线
+
+| 顺序 | 任务 | 状态 | 完成证据 |
+|---|---|---|---|
+| 1 | 定位、六职责、三个窗口边界与唯一主流程统一 | 已确认 | PRD/SSD/入口文档一致 |
+| 2 | 真实基础能力逐项核对 | 已完成当前盘点 | 可用、用户暂停、历史兼容和待走通已分开标记 |
+| 3 | 每日日报真实主路径 | 用户暂停 | 合同与代码已更新；剩余模块修好、实际验收并确认后才恢复运行 |
+| 4 | 工作台收缩为队伍资料/当前赛事/TK资料库 | 已验证 | 正式页面三导航、全部队伍默认页、预案空态、隐藏临场入口均已走通 |
+| 5 | 大周期预案、赛前判断、阵容判断、三层对照 | 待走通 | 一场真实比赛完整串联 |
+| 6 | 单场复盘、阶段知识整理、阶段交易复盘 | 待走通 | 真实复盘、确认写回与读回 |
+| 7 | 整体日常主路径验收 | 待开始 | 从赛事预案到未来提醒的完整证据 |
+| 8 | 知识长流程拆分 | 已验证 | 四个入口均可独立调用；真实 B 站 33 条和公众号 13 篇候选验收通过；两个资料导入入口无需确认、失败可续跑；完整编排保持兼容 |
 
 ---
 
-## P0-A：顶层页面与基本面入口
+## 总纲升级阶段（P0）
 
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-P0-A1 | 核对基本面 / 交易页签 | P1-P3 通过 | Done | 2026-07-06 | `STATUS.md`、runtime build | 顶层基本面/交易入口可用。 |
-| XX-P0-A2 | 核对命令栏 chips | P3 + C7-C8 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | MSI、交易页、分析师等入口已接入。 |
-| XX-P0-A3 | 核对默认进入基本面 | P1 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | 默认工作流仍以基本面为主。 |
-
----
-
-## P0-B：横向基本面闭环
-
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-P0-B1 | 核对 `/api/fundamentals/teams` | F1 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | MSI 横向表返回 teams 数组。 |
-| XX-P0-B2 | 核对 scope 切换 | F2 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | MSI/LPL/LCK/INTL/ALL 口径保留。 |
-| XX-P0-B3 | 核对队伍横向表字段 | F3-F4 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | 返回队伍、赛区、TS、资料状态等字段。 |
-| XX-P0-B4 | 核对点击队伍联动画像/三维/TK | F5 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | profile-full、team-3d、TK 搜索链路可用。 |
+| ID | 任务 | 验收 | 状态 | 证据 |
+|---|---|---|---|---|
+| XX-GOV-1 | 总入口升级 | README / PROJECT_INDEX / BOT_GUIDE 一句话定义统一为“电竞交易辅助系统，LOL 是第一项目” | Done | README、PROJECT_INDEX、BOT_GUIDE |
+| XX-GOV-2 | PRD 体系升级 | PRD/00-04 按总纲、八层能力和 P0-P4 路线重组 | Done | PRD/00-04 |
+| XX-GOV-3 | SSD 体系升级 | SSD/00-04 加入三轴、判断距离、真实 API、主链路/兼容层边界 | Done | SSD/00-04 |
+| XX-GOV-4 | Wiki 七层映射 | Wiki 00/10/20/30/40/50/99 index 标注能力层 | Done | Wiki index |
+| XX-GOV-5 | 执行文件同步 | Backlog / Status / Acceptance / Cron 说明同步 | Done | 本文件、STATUS、ACCEPTANCE、CRON |
+| XX-GOV-6 | Skill 口径同步 | 小雪 skill 和 toolkit 路由升级为电竞交易辅助系统日常入口 | Done | `.codex/skills/小雪`、`xiaoxue-esports-toolkit` |
 
 ---
 
-## P0-C：MSI 国际赛环境
+## P1：LOL / 交易前 / 每日入口与单场判断链
 
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-P0-C1 | 核对 `/api/fundamentals/msi` | M1-M4 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | event=MSI，teams=10。 |
-| XX-P0-C2 | 核对 MSI 页面不是赛程表 | M5 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | 页面口径是国际赛环境研究。 |
-| XX-P0-C3 | 核对 INTL/外卡资料不足标注 | F4 + M4 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | 当前 missing_profiles=0，missing_3d=0；缺口字段仍保留。 |
+| ID | 任务 | 验收 | 状态 | 当前证据 |
+|---|---|---|---|---|
+| XX-P1-1 | 日报入口 | `/api/daily-content` 读取真实当日产物并正确显示缺失 | In Progress | 接口和页面存在；完整每日真实路径尚未验收 |
+| XX-P1-2 | LOL 横向基本面 | `/api/fundamentals/teams` 支持 MSI/LPL/LCK/INTL/ALL | Done | Runtime closure / SSD |
+| XX-P1-3 | MSI 国际赛环境 | `/api/fundamentals/msi` 返回队伍池、赛区、缺口、主题 | Done | Runtime closure / SSD |
+| XX-P1-4 | TS 单场底表 | `/api/fundamentals/msi-match-context` 返回 mu/sigma/TS/risk_gap | Done | `main.py` |
+| XX-P1-5 | 队伍交易备注 | `type=trading_note` 写入队伍 TK，队伍不明确不落库 | Done | `/api/team-trading-notes` |
+| XX-P1-6 | 赛前比赛判断 | 只输出双方既有赢法、对局关系、赛前倾向、不确定性 | Planned | 旧交易判断报告不能作为最终产品证据 |
+| XX-P1-7 | 盘口手写判断 | `/api/market-notes` 是主链路 | Done | `memory-bank/modules.md`、SSD |
+| XX-P1-8 | 普通联网搜索路由 | 内部事实优先；Agent Reach 负责最新外部资料；日报 `public_opinion` 仍走冻结豆包链路 | Done | `SSD/05-search-routing.md`、`xiaoxue-esports-toolkit/references/search-routing.md` |
 
----
+### 日报 v2.0 根治收口
 
-## P0-D：三维与 TK 依据库
-
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-P0-D1 | 核对三维读取展示 | D1 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | 三维字段展示可用。 |
-| XX-P0-D2 | 核对三维编辑保存 | D2-D5 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | 编辑保存链路已有失败态。 |
-| XX-P0-D3 | 核对 TK 搜索展开 | T1-T2 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | TK 搜索返回可读正文。 |
-| XX-P0-D4 | 核对 TK 新增/删除 | T3-T5 通过 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md` | TK CRUD 主链路保留，失败态明确。 |
-| XX-P0-D5 | 核对 MSI 概念图入口 | T6 通过 | Done | 2026-07-06 | `index.html` iframe / `/tk-graph/index.html?q=MSI` | 基本面页已有嵌入和新标签入口。 |
-
----
-
-## P0-E：交易页
-
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-P0-E1 | 核对盘口输入窗口 | K1 通过 | Done | 2026-07-06 | `/home/ubuntu/xiaoxue-web/index.html` | 手写判断工作区已落地。 |
-| XX-P0-E2 | 核对可选保存/删除 | K2/K5 通过 | Done | 2026-07-06 | `/api/market-notes` smoke | market-notes 写入/删除可用。 |
-| XX-P0-E3 | 核对不强制结算/不展示统计主面板 | K3-K4 通过 | Done | 2026-07-06 | `RUNTIME-CLOSURE-20260706.md` | 不自动交易，不展示命中率主面板。 |
+| ID | 任务 | 验收 | 状态 | 当前证据 |
+|---|---|---|---|---|
+| XX-DR-1 | 唯一产品协议 | 功能、顺序、来源、缺失、修改点可追溯 | Done | `/home/ubuntu/lol_data/docs/LOL_DAILY_REPORT_V2.md` |
+| XX-DR-2 | 单一渲染流水线 | 不再手工拼接/发布后注入 | Done | `daily_pipeline.py`、`daily_report_contract.py` |
+| XX-DR-3 | 赛事与 TK 正源 | MSI 独占/LPL+LCK 常规；60 天正式 TK 精确对账 | Done | `competition_registry.json`、`daily_knowledge_manifest.py` |
+| XX-DR-4 | 豆包额度门禁 | 只有 public_opinion，统一问、冻结复用、每日最多 3 次 | Done | `collect_online_sources.py`、budget manifest |
+| XX-DR-5 | 三端真实发布 | 本地/Wiki hash 一致；飞书主入口+分卷回读 | Done | 2026-07-10 run manifest |
+| XX-DR-6 | 低级模型入口 | Cron 只运行 `daily_pipeline.py --publish`，Skill 不再传递旧链路 | Done | cron `ce93ed865057`、`lol日报` v18.0 |
 
 ---
 
-## P1：增强能力
+## P2：LOL / 纯十英雄阵容与交易系统分流
 
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-P1-1 | 电竞日报生成和查询稳定化 | 日报写入 `查询沉淀/日报/` | Done | 2026-07-06 | `RESTART-COMPLETION-REPORT.md`、`CRON-ORCHESTRATION.md` | 生成链路稳定；内容深度转持续运营。 |
-| XX-P1-2 | 双分析师视角输出结构校验 | 分析师面板稳定 | Done | 2026-07-06 | `FRONTEND-API-AUDIT.md`、`index.html` | 前端已有分析师入口与 BP 整理提示。 |
-| XX-P1-3 | 盘口草稿独立为 `/api/market-notes` | `/api/trades` 不再承载盘口语义 | Done | 2026-07-06 | `main.py`、`src/main.js` | 主链路已用 market-notes；旧 trades 仅兼容。 |
-| XX-P1-4 | 概念图嵌入基本面页 | 不只依赖新标签页 | Done | 2026-07-06 | `index.html` | 已有 iframe 嵌入。 |
-| XX-P1-5 | INTL/外卡资料补齐 | missing_profiles/missing_3d 减少 | Done | 2026-07-06 | `/api/fundamentals/msi` | 当前缺口为 0。 |
-
----
-
-## 新阶段：赛前交易判断日报（2026-07-08）
-
-| ID | 任务 | 验收 | 状态 | 完成日期 | 证据 | 结论 |
-|----|------|------|------|----------|------|------|
-| XX-TRD-1 | 队伍交易备注结构化写入 | “小雪记到 HLE：虐菜大人头”写入 HLE 队伍 TK；队伍不明确不落库 | Done | 2026-07-08 | `/api/team-trading-notes/from-text`、`/api/team-trading-notes/{team}` | 交易备注仍归属队伍知识，不新增交易 TK 实体。 |
-| XX-TRD-2 | 赛前交易判断日报生成 | 当日赛程读取双方队伍，命中 active `type=trading_note` 后展示“命中队伍交易备注”与“交易小结” | Done | 2026-07-08 | `/api/pre-match-trading-report`、`scripts/build_pre_match_trading_report.py` | 无备注或数据不足时明确“暂不推荐”。 |
-| XX-TRD-3 | 今日内容可见入口 | `/api/daily-content` 白名单包含 `trading_report`，前端今日内容卡显示赛前交易判断日报路径 | Done | 2026-07-08 | `index.html`、`src/main.js`、`/api/daily-content?date=2026-07-08` | 不做复杂新页面，只接入日报入口。 |
-| XX-TRD-4 | 交易边界收敛 | 不写“破相条件”；不恢复 `tk_library`；不接旧 `/api/trades` 统计面板 | Done | 2026-07-08 | runtime grep、`memory-bank/modules.md` | 新链路只读/写 TK 与日报层。 |
+| ID | 任务 | 验收 | 状态 | 说明 |
+|---|---|---|---|---|
+| XX-P2-1 | 纯阵容输入边界 | 蓝红方十英雄是唯一输入；默认等经济、正常发育、同等操作水平 | Done | `lol-lineup-analysis` v7.3、产品事实源 |
+| XX-P2-2 | 纯阵容输出合同 | 总体粗略比例、四阶段强度、比赛剧本、比赛画像和两个观赛信号 | Done | `lol-lineup-analysis` v7.3、ACCEPTANCE |
+| XX-P2-3 | 交易系统分流 | 明确“我的交易系统 / 交易理念 / 赛前预案”进入 `junjun-trading-system`；纯阵容结论只作一项输入 | Done | 产品事实源与当前 Skill 边界 |
+| XX-P2-4 | 前端阵容入口退场 | 工作台不承载 BP、复制模板或阵容判断 | Done | 正式页面已移出对应入口；阵容只在小雪对话进行 |
+| XX-P2-5 | 历史 BP API 隔离 | `/api/lineup-workflow/prepare` 不再作为当前纯阵容方法或对话路由正源 | Done | 接口仅作历史兼容，未被工作台加载，健康状态与文档均明确边界 |
 
 ---
 
-## 重启整理风险项收口（2026-07-06）
+## P3：LOL / 交易后 / 复盘校准
 
-| ID | 任务 | 状态 | 证据 | 结论 |
-|----|------|------|------|------|
-| XX-RISK-1 | 日报内容深度继续增强 | Done / 持续运营 | `RESTART-COMPLETION-REPORT.md` | 不阻塞项目收口，按比赛日继续迭代。 |
-| XX-RISK-2 | 分析师前端入口 | Done | `FRONTEND-API-AUDIT.md`、`index.html` | 已有轻量入口。 |
-| XX-RISK-3 | 旧 `tk_library` 兼容代码审计 | Done | `TK-LIBRARY-COMPAT-AUDIT.md` | 已降级/留痕，不恢复旧表。 |
-| XX-RISK-4 | 迁移冲突备份抽读 | Done | `MIGRATION-CONFLICT-REVIEW.md` | 5 项已复核，B站 txt 引用已修。 |
-| XX-RISK-5 | 下一次 cron 真实运行复查 | Done / 持续观察 | `CRON-ORCHESTRATION.md`、`vibe-status` | 作为运维观察，不阻塞产品收口。 |
+| ID | 任务 | 验收 | 状态 | 说明 |
+|---|---|---|---|---|
+| XX-P3-1 | 单场复盘 | 小雪对话读取原始记录，完成讨论、确认写回和读回 | Planned | 前端已移除“开始复盘”；局部接口存在不能作为完整复盘证据 |
+| XX-P3-2 | 判断兑现度 | TS、基本面、交易备注和实际走势对齐 | In Progress | 复盘字段已固定；证据仍由钧钧/小雪填写，不伪造自动对齐 |
+| XX-P3-3 | 沉淀回写 | 复盘结论能回到画像、三维、TK、日报或 market_notes review | In Progress | 当前只确认写回 market_notes；其它目的地只记录建议，不自动写 |
+| XX-P3-4 | 禁止自动规则 | 不生成“下次自动买/卖” | Done | 复盘契约 `knowledge_write_allowed=false`，仅校准判断链 |
+
+---
+
+## 暂停项：跨项目扩展
+
+| ID | 任务 | 验收 | 状态 | 说明 |
+|---|---|---|---|---|
+| XX-P4-1 | 项目 schema 模板 | LOL 日常主路径走通后再评估 | Paused | 当前不扩张 |
+| XX-P4-2 | KPL 接入预研 | LOL 日常主路径走通后再评估 | Paused | 当前不扩张 |
+| XX-P4-3 | DOTA2 接入预研 | LOL 日常主路径走通后再评估 | Paused | 当前不扩张 |
+| XX-P4-4 | CS2 接入预研 | LOL 日常主路径走通后再评估 | Paused | 当前不扩张 |
+| XX-P4-5 | Valorant 接入预研 | LOL 日常主路径走通后再评估 | Paused | 当前不扩张 |
+
+---
+
+## 持续边界
+
+- 不恢复 `tk_library`，不让日报自动写正式知识或自动交易。
+- 日报变更必须同时更新产品协议、模块合同、渲染器、测试和 Skill，不得只改 prompt。
+- 普通搜索可用；豆包搜索永久只服务赛前舆论。
