@@ -1,0 +1,115 @@
+{
+  "activation": {
+    "activated_at": "2026-07-19T00:50:41+08:00",
+    "status": "activated"
+  },
+  "artifacts": [
+    {
+      "activated_sha256": "bc0ef81b9a7cf762f0e2750f3fe78edc9849feffdbbd0c5308241627681f6e0f",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/backups/lineup-skill/SKILL.md",
+      "baseline_sha256": "8a89c14cd7bd9d13c977d2a7bacaf936c4a55790c2d3d533e1bc2b2e2ad61e8f",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/baseline/lineup-skill/SKILL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/diffs/lineup-skill.patch",
+      "id": "lineup-skill",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/staged/lineup-skill/SKILL.md",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md"
+    },
+    {
+      "activated_sha256": "dfa9567b4c6f8efecdee864a325202a0143423fe4959405c7e9346518f818ebf",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/backups/lineup-tests/test_skill_contract.py",
+      "baseline_sha256": "8163cd604e5affc08c6f8cdf1ee7ea8f7758ebb0c55434eba24314509aced866",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/baseline/lineup-tests/test_skill_contract.py",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/diffs/lineup-tests.patch",
+      "id": "lineup-tests",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/staged/lineup-tests/test_skill_contract.py",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py"
+    }
+  ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "tests": [
+        {
+          "argv": [
+            "python3",
+            "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/run_staged_tests.py"
+          ],
+          "attempt": 1,
+          "cwd": "/home/ubuntu",
+          "exit_code": 0,
+          "finished_at": "2026-07-19T00:50:41+08:00",
+          "id": "lineup-time-contract",
+          "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/tests/attempt-1/lineup-time-contract.log",
+          "log_sha256": "bbd190e2157113b3b914d912a3ac34d58db2d2e3dcb97dc3d0b92139e4fc57f4",
+          "name": "阵容分析固定30分钟大小契约",
+          "required": true,
+          "started_at": "2026-07-19T00:50:41+08:00",
+          "status": "passed",
+          "timeout_seconds": 120
+        }
+      ],
+      "verification": {
+        "artifact_sha256": {
+          "lineup-skill": "bc0ef81b9a7cf762f0e2750f3fe78edc9849feffdbbd0c5308241627681f6e0f",
+          "lineup-tests": "dfa9567b4c6f8efecdee864a325202a0143423fe4959405c7e9346518f818ebf"
+        },
+        "attempt": 1,
+        "finished_at": "2026-07-19T00:50:41+08:00",
+        "pass_rate": 1.0,
+        "pass_rate_percent": 100.0,
+        "required_passed": 1,
+        "required_total": 1,
+        "runner_host": "VM-0-6-ubuntu",
+        "status": "passed"
+      }
+    }
+  ],
+  "attempts": 1,
+  "change_id": "XX-LINEUP-TIME-20260719-01",
+  "created_at": "2026-07-19T00:47:12+08:00",
+  "goal": "阵容分析固定按30分钟给偏大偏小或放弃建议",
+  "max_attempts": 2,
+  "package_dir": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01",
+  "project_root": "/home/ubuntu",
+  "report": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/change-report.md",
+  "schema": "junjun-verified-change-v1",
+  "tests": [
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/run_staged_tests.py"
+      ],
+      "attempt": 1,
+      "cwd": "/home/ubuntu",
+      "exit_code": 0,
+      "finished_at": "2026-07-19T00:50:41+08:00",
+      "id": "lineup-time-contract",
+      "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/tests/attempt-1/lineup-time-contract.log",
+      "log_sha256": "bbd190e2157113b3b914d912a3ac34d58db2d2e3dcb97dc3d0b92139e4fc57f4",
+      "name": "阵容分析固定30分钟大小契约",
+      "required": true,
+      "started_at": "2026-07-19T00:50:41+08:00",
+      "status": "passed",
+      "timeout_seconds": 120
+    }
+  ],
+  "trust": {
+    "reason": "all required tests passed on the receiving host",
+    "status": "verified"
+  },
+  "updated_at": "2026-07-19T00:50:41+08:00",
+  "verification": {
+    "artifact_sha256": {
+      "lineup-skill": "bc0ef81b9a7cf762f0e2750f3fe78edc9849feffdbbd0c5308241627681f6e0f",
+      "lineup-tests": "dfa9567b4c6f8efecdee864a325202a0143423fe4959405c7e9346518f818ebf"
+    },
+    "attempt": 1,
+    "finished_at": "2026-07-19T00:50:41+08:00",
+    "pass_rate": 1.0,
+    "pass_rate_percent": 100.0,
+    "required_passed": 1,
+    "required_total": 1,
+    "runner_host": "VM-0-6-ubuntu",
+    "status": "passed"
+  }
+}

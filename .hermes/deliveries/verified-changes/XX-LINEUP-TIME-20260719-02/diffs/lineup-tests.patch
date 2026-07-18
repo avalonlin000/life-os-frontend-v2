@@ -1,0 +1,12 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py
+@@ -46,6 +46,9 @@
+             "偏大：更倾向在30:00之后才推掉基地",
+             "信号互相冲突",
+             "直接给`放弃`",
++            "终结信号和拖延信号同时成立时必须放弃",
++            "不能再用某个英雄或一次越塔能力强行打破平局",
++            "先给30分钟方向，再解释理由",
+             "单向推进`可以只是55/45的高滚雪球形态",
+             "两条以上彼此独立的抓人或强开路线",
+             "不能只写成“前期略优、后期自动被翻”",

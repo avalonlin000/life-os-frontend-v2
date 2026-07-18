@@ -1,0 +1,28 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py
+@@ -1,8 +1,10 @@
+ from pathlib import Path
++import json
+ import unittest
+ 
+ 
+ ROOT = Path("/home/ubuntu/.agents/skills/lol-lineup-analysis")
++EVALS = ROOT / "evals" / "evals.json"
+ 
+ 
+ class SkillContractTests(unittest.TestCase):
+@@ -80,6 +82,14 @@
+         for path in (paths[0], paths[2], paths[3]):
+             self.assertIn("人头", path.read_text(encoding="utf-8"))
+ 
++    def test_evals_use_the_fixed_30_minute_contract(self) -> None:
++        data = json.loads(EVALS.read_text(encoding="utf-8"))
++        text = json.dumps(data, ensure_ascii=False)
++        self.assertIn("固定30分钟", text)
++        self.assertIn("偏小 / 偏大 / 放弃", text)
++        for forbidden in ("结束时点", "30–35分钟", "35分钟后"):
++            self.assertNotIn(forbidden, text)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

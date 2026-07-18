@@ -21,7 +21,7 @@
 - 完整 LOL 内容持续形成比赛认知，再服务交易准备、判断和复盘。
 - 小雪提供事实、依据、分歧、风险和校准；交易对象、时机、金额和仓位由钧钧决定。
 - 队伍交易备注仍归属队伍知识，不新增交易 TK 实体。
-- `lol-lineup-analysis` 是纯十英雄阵容分析 v7.3：只在等经济、正常发育、同等操作水平下推演比赛，不是交易系统、日报附属或前端表单。
+- `lol-lineup-analysis` 是纯十英雄阵容分析 v7.4：只在等经济、正常发育、同等操作水平下推演比赛，不是交易系统、日报附属或前端表单。
 - `junjun-trading-system` 是明确交易请求的总纲；它可消费纯阵容结论，但必须独立核验队伍、市场、趋势、分歧和风险。
 
 ### 一个主体、三个窗口、一套后台
@@ -164,7 +164,7 @@
 | F14 | TK 概念图 | `/tk-graph/index.html`, `update_tk_graph.sh` | 力导向图展示 TK 概念关系，支持 MSI 查询入口 | TK 文件、query | 图谱页面 | 钧钧 | 内容以 LOL 为主 | 是，图谱方法可复用 |
 | F15 | BP 后问小雪 | 小雪 SOUL、`lol-lineup-analysis` | 动态对话直接接收蓝红方十英雄；工作台不再承载复制或分析入口 | 蓝红方各五英雄 | 纯阵容分析 | 钧钧 | 当前 LOL | 其他项目暂不扩张 |
 | F16 | 历史单场 / BP 调用资料 | `SINGLE-MATCH-ANALYSIS.md` | 仅保留历史背景，不作为当前路由或分析方法 | 无当前输入 | 历史参考 | 维护者 | 是，LOL 历史语义 | 否，禁止恢复为当前入口 |
-| F16A | 纯十英雄阵容分析 v7.3 | `lol-lineup-analysis`, 小雪 Skill 路由 | BP 出来后只看十英雄，给总体粗略比例、四阶段强度、比赛剧本、比赛画像和观赛信号 | 蓝红方各五英雄 | 阵容倾向与成立条件，不含交易方向 | 钧钧 / 模型 | 是，当前 LOL 专属 | 框架可参考，项目战术语义需重建 |
+| F16A | 纯十英雄阵容分析 v7.4 | `lol-lineup-analysis`, 小雪 Skill 路由 | BP 出来后只看十英雄，给总体粗略比例、四阶段强度、比赛剧本、比赛画像和观赛信号 | 蓝红方各五英雄 | 阵容倾向与成立条件，不含交易方向 | 钧钧 / 模型 | 是，当前 LOL 专属 | 框架可参考，项目战术语义需重建 |
 | F17 | TS 单场底表 | `/api/fundamentals/msi-match-context`, `MSI-TS-SEED-TABLE.csv` | 输出 mu、sigma、TS、risk_gap、强弱与波动解释 | team_a、team_b | TS 对比、市场观察提示 | 模型 / 钧钧 | 是，当前 MSI/LOL | 是，评分模型可替换 |
 | F18 | 盘口手写判断工作区 | `/api/market-notes`, `index.html`, `memory-bank/modules.md` | 记录钧钧手写盘口、赔率、分歧点、不碰项 | match、direction、odds、reason、review | market_notes 草稿 | 钧钧 | 否，前端已有 LOL/CS/Valorant/足球选项 | 是，是跨项目核心能力 |
 | F19 | 旧交易记录兼容层 | `/api/trades`, `/api/trades/stats` | 历史兼容接口，不再作为盘口主链路 | trade record | trade_records、统计 | 系统 | 否 | 不建议扩展，只保留兼容 |
@@ -201,7 +201,7 @@
 | F14 TK 概念图 | 可扩展项目 | 长期 / 交易前 | 知识 / 队伍 / 版本 | 展示 / 分析 | 钧钧 / 模型 | 解释 |
 | F15 BP 后问小雪轻入口 | 可扩展项目 | 交易时 | 阵容 | 组装 | 钧钧 | 解释 |
 | F16 单场 / BP 分析调用链 | LOL | 交易时 / 交易后 | 比赛 / 阵容 / 队伍 / 版本 | 分析 / 判断 / 校准 | 模型 / 钧钧 | 判断 |
-| F16A 纯十英雄阵容分析 v7.3 | LOL | 交易时 | 阵容 | 分析 / 解释 | 钧钧 / 模型 | 解释 / 判断 |
+| F16A 纯十英雄阵容分析 v7.4 | LOL | 交易时 | 阵容 | 分析 / 解释 | 钧钧 / 模型 | 解释 / 判断 |
 | F17 TS 单场底表 | 可扩展项目 | 交易前 | 比赛 / 队伍 / 市场 | 收集 / 分析 / 判断 | 模型 / 钧钧 | 证据 / 解释 |
 | F18 盘口手写判断工作区 | 可扩展项目 | 交易前 / 交易时 / 交易后 | 市场 / 比赛 | 记录 / 判断 / 校准 | 钧钧 | 判断 / 沉淀 |
 | F19 旧交易记录兼容层 | 可扩展项目 | 系统 / 交易后 | 市场 / 工程 | 记录 / 校验 | 系统 | 工程 |
@@ -266,7 +266,7 @@
 - BP 后如果只问阵容，单独进入纯十英雄比赛剧本；如果明确要求交易判断，进入 `junjun-trading-system`。
 - 赛后做复盘：赛前判断是否兑现、BP 是否兑现、哪些内容要进画像/TK/日报。
 
-当前结论：交易前靠日报和 TS 建底稿；BP 后的纯阵容问题由 `lol-lineup-analysis` v7.3 独立回答，不自动修正赛前交易判断。只有钧钧明确调用交易系统时，才综合其他资料形成预案。
+当前结论：交易前靠日报和 TS 建底稿；BP 后的纯阵容问题由 `lol-lineup-analysis` v7.4 独立回答，不自动修正赛前交易判断。只有钧钧明确调用交易系统时，才综合其他资料形成预案。
 
 ### 6.5 阵容变量层
 
@@ -340,7 +340,7 @@
 | 时间 | 目标 | 核心输入 | 核心输出 | 当前代表功能 |
 |---|---|---|---|---|
 | 交易前 | 建立赛前判断底稿 | 赛程、TS、队伍画像、三维、TK、版本、交易备注、舆论材料包 | 今日入口、赛前底表、盘口观察、单场判断与不碰项 | 今日内容、队伍横向表、TS 单场底表、LOL 日报 |
-| 交易时 | 分离阵容推演与交易判断 | 纯阵容只收蓝红方十英雄；交易系统另收已核验的队伍、历史、市场与风险资料 | 纯阵容比赛剧本；交易预案与放弃条件 | `lol-lineup-analysis` v7.3、`junjun-trading-system`、盘口手写工作区 |
+| 交易时 | 分离阵容推演与交易判断 | 纯阵容只收蓝红方十英雄；交易系统另收已核验的队伍、历史、市场与风险资料 | 纯阵容比赛剧本；交易预案与放弃条件 | `lol-lineup-analysis` v7.4、`junjun-trading-system`、盘口手写工作区 |
 | 交易后 | 校准和沉淀 | 赛果、每局阵容、资源团、市场变化、赛前判断 | 复盘、画像更新、三维更新、TK、日报摘要 | 赛后复盘、队伍三维、TK CRUD、market_notes review |
 
 ### 7.3 产物对象轴
@@ -348,7 +348,7 @@
 | 产物对象 | 面向谁 | 特征 | 代表产物 |
 |---|---|---|---|
 | 给钧钧看的 | 钧钧 | 可直接读、可复制、可手写判断、少工程细节 | 今日内容卡、日报、赛前交易判断日报、盘口页、队伍横向表 |
-| 给模型用的 | 模型 / 小雪 | 结构化上下文、调用链、证据和边界 | `lol-lineup-analysis` v7.3、`junjun-trading-system`、DailyContext、TS match context、TK 检索结果 |
+| 给模型用的 | 模型 / 小雪 | 结构化上下文、调用链、证据和边界 | `lol-lineup-analysis` v7.4、`junjun-trading-system`、DailyContext、TS match context、TK 检索结果 |
 | 给系统审计的 | 系统 / 小白 | 路径、schema、日志、健康检查、hash、marker、验收 | CRON-ORCHESTRATION、daily_report_structure、injector、health、acceptance_check |
 
 ---
@@ -361,7 +361,7 @@
 LOL → 交易前 → 给钧钧看的每日入口和单场判断链
 ```
 
-注意：P1 的核心是交易前，但必须预留交易时分流。BP 出来以后，纯阵容问题由小雪对话触发 `lol-lineup-analysis` v7.3，前端只整理十英雄；盘口、赛前想法和风险不能自动混入。明确交易请求再进入 `junjun-trading-system`。
+注意：P1 的核心是交易前，但必须预留交易时分流。BP 出来以后，纯阵容问题由小雪对话触发 `lol-lineup-analysis` v7.4，前端只整理十英雄；盘口、赛前想法和风险不能自动混入。明确交易请求再进入 `junjun-trading-system`。
 
 ### 8.1 第一阶段输入
 
@@ -398,7 +398,7 @@ LOL → 交易前 → 给钧钧看的每日入口和单场判断链
 → 对局赛前底稿
 → 队伍交易备注命中情况
 → 盘口手写判断
-→ BP 后对小雪说“只看十英雄分析这把”，进入 lol-lineup-analysis v7.3
+→ BP 后对小雪说“只看十英雄分析这把”，进入 lol-lineup-analysis v7.4
 → 需要交易预案时再明确调用 junjun-trading-system
 → 赛后进入复盘校准
 ```
@@ -446,7 +446,7 @@ LOL → 交易前 → 给钧钧看的每日入口和单场判断链
 | Player | 选手实体 | rosters 中首发选手 |
 | VersionContext | 版本/体系理解 | team_3d_data.version_understanding、TK 版本条目 |
 | LineupContext | BP/阵容变量 | 蓝红方、五位置英雄、ban/pick、阵容标签 |
-| LineupAnalysisSkill | 纯十英雄阵容推演 | `lol-lineup-analysis` v7.3 |
+| LineupAnalysisSkill | 纯十英雄阵容推演 | `lol-lineup-analysis` v7.4 |
 | TradingSystemSkill | 明确交易请求总纲 | `junjun-trading-system` |
 | MarketContext | 市场上下文 | 盘口、赔率、方向、人头大小、入场点 |
 | Evidence | 判断证据 | TS、三维、画像、TK、舆论材料包 |
@@ -465,7 +465,7 @@ SQLite schedules / teams / rosters / team_3d_data / msi_ts_seed
     ↓
 赛前交易判断日报 / 纯阵容入口提示 / 盘口手写草稿
     ↓
-BP 出来后：纯阵容问题触发 lol-lineup-analysis v7.3
+BP 出来后：纯阵容问题触发 lol-lineup-analysis v7.4
 明确交易请求：独立触发 junjun-trading-system
     ↓
 赛后复盘校准
@@ -500,5 +500,5 @@ BP 出来后：纯阵容问题触发 lol-lineup-analysis v7.3
 2. 产品采用“一个主体、三个窗口、一套后台”，不新增第四个入口。
 3. 每日默认入口是日报；工作台只承载长期资料；动态判断与复盘只在小雪对话进行。
 4. 工作台主导航固定为“队伍资料 / 当前赛事 / TK资料库”，临场记录只作隐藏辅助。
-5. 交易前看预案和日报；BP 后用 `lol-lineup-analysis` v7.3 独立判断阵容；明确交易请求才调用 `junjun-trading-system`；交易后做复盘校准。
+5. 交易前看预案和日报；BP 后用 `lol-lineup-analysis` v7.4 独立判断阵容；明确交易请求才调用 `junjun-trading-system`；交易后做复盘校准。
 6. 当前先走通 LOL 的真实每日路径、三层判断和长期成长闭环，其他电竞暂不扩张。

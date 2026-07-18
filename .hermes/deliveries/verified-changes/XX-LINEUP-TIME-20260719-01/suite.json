@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "id": "lineup-time-contract",
+      "name": "阵容分析固定30分钟大小契约",
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-TIME-20260719-01/run_staged_tests.py"
+      ],
+      "cwd": "/home/ubuntu",
+      "required": true,
+      "timeout_seconds": 120
+    }
+  ]
+}
