@@ -1,0 +1,127 @@
+{
+  "activation": {
+    "activated_at": "2026-07-18T04:57:37+08:00",
+    "status": "activated"
+  },
+  "artifacts": [
+    {
+      "activated_sha256": "97807122336e8d535a0ac49c60feb5720cebd79e89b7d035756fe87e0662994c",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/backups/root-soul/SOUL.md",
+      "baseline_sha256": "ec12c98a04611c239bcbd1c0cdd6c4be4a06d8cffb6088f74efd8afb014a789a",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/baseline/root-soul/SOUL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/diffs/root-soul.patch",
+      "id": "root-soul",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/staged/root-soul/SOUL.md",
+      "target": "/home/ubuntu/.hermes/SOUL.md"
+    },
+    {
+      "activated_sha256": "a55419a70478af0dbead613858fdbc10125d9fcc3970d6acba45ee96cfec3b54",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/backups/default-soul/SOUL.md",
+      "baseline_sha256": "eab55147ce47aee5cf345172bf7c37818f38f8fb177732ae037604ad69f2502a",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/baseline/default-soul/SOUL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/diffs/default-soul.patch",
+      "id": "default-soul",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/staged/default-soul/SOUL.md",
+      "target": "/home/ubuntu/.hermes/profiles/default/SOUL.md"
+    },
+    {
+      "activated_sha256": "c64525762d43db8daa4f88eb1a6e819db6ae69f9d4d0fe6cdd847deea3015e7c",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/backups/xiaoxue-skill/SKILL.md",
+      "baseline_sha256": "bfd017c4621afa5ec5c97d19fb0df5fff693805bd59fbd6b61639e4a5099ddcd",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/baseline/xiaoxue-skill/SKILL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/diffs/xiaoxue-skill.patch",
+      "id": "xiaoxue-skill",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/staged/xiaoxue-skill/SKILL.md",
+      "target": "/home/ubuntu/.agents/skills/小雪/SKILL.md"
+    }
+  ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "tests": [
+        {
+          "argv": [
+            "python3",
+            "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/tests/test_behavior_contract.py"
+          ],
+          "attempt": 1,
+          "cwd": "/home/ubuntu",
+          "exit_code": 0,
+          "finished_at": "2026-07-18T04:57:10+08:00",
+          "id": "xiaoxue-behavior-contract",
+          "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/tests/attempt-1/xiaoxue-behavior-contract.log",
+          "log_sha256": "921b60a7fd52e978fbb551cacd29df2d6708879400278e1fcc70fceeb0c6f8e0",
+          "name": "小雪身份、窗口与分流契约",
+          "required": true,
+          "started_at": "2026-07-18T04:57:10+08:00",
+          "status": "passed",
+          "timeout_seconds": 120
+        }
+      ],
+      "verification": {
+        "artifact_sha256": {
+          "default-soul": "a55419a70478af0dbead613858fdbc10125d9fcc3970d6acba45ee96cfec3b54",
+          "root-soul": "97807122336e8d535a0ac49c60feb5720cebd79e89b7d035756fe87e0662994c",
+          "xiaoxue-skill": "c64525762d43db8daa4f88eb1a6e819db6ae69f9d4d0fe6cdd847deea3015e7c"
+        },
+        "attempt": 1,
+        "finished_at": "2026-07-18T04:57:10+08:00",
+        "pass_rate": 1.0,
+        "pass_rate_percent": 100.0,
+        "required_passed": 1,
+        "required_total": 1,
+        "runner_host": "VM-0-6-ubuntu",
+        "status": "passed"
+      }
+    }
+  ],
+  "attempts": 1,
+  "change_id": "XX-ASSISTANT-20260718-01",
+  "created_at": "2026-07-18T04:55:01+08:00",
+  "goal": "统一小雪个人电竞交易助理定位、三个窗口、六项职责和真实分流",
+  "max_attempts": 2,
+  "package_dir": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01",
+  "project_root": "/home/ubuntu",
+  "report": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/change-report.md",
+  "schema": "junjun-verified-change-v1",
+  "tests": [
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/tests/test_behavior_contract.py"
+      ],
+      "attempt": 1,
+      "cwd": "/home/ubuntu",
+      "exit_code": 0,
+      "finished_at": "2026-07-18T04:57:10+08:00",
+      "id": "xiaoxue-behavior-contract",
+      "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/tests/attempt-1/xiaoxue-behavior-contract.log",
+      "log_sha256": "921b60a7fd52e978fbb551cacd29df2d6708879400278e1fcc70fceeb0c6f8e0",
+      "name": "小雪身份、窗口与分流契约",
+      "required": true,
+      "started_at": "2026-07-18T04:57:10+08:00",
+      "status": "passed",
+      "timeout_seconds": 120
+    }
+  ],
+  "trust": {
+    "reason": "all required tests passed on the receiving host",
+    "status": "verified"
+  },
+  "updated_at": "2026-07-18T04:57:37+08:00",
+  "verification": {
+    "artifact_sha256": {
+      "default-soul": "a55419a70478af0dbead613858fdbc10125d9fcc3970d6acba45ee96cfec3b54",
+      "root-soul": "97807122336e8d535a0ac49c60feb5720cebd79e89b7d035756fe87e0662994c",
+      "xiaoxue-skill": "c64525762d43db8daa4f88eb1a6e819db6ae69f9d4d0fe6cdd847deea3015e7c"
+    },
+    "attempt": 1,
+    "finished_at": "2026-07-18T04:57:10+08:00",
+    "pass_rate": 1.0,
+    "pass_rate_percent": 100.0,
+    "required_passed": 1,
+    "required_total": 1,
+    "runner_host": "VM-0-6-ubuntu",
+    "status": "passed"
+  }
+}

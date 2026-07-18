@@ -1,0 +1,15 @@
+{
+  "tests": [
+    {
+      "id": "xiaoxue-behavior-contract",
+      "name": "小雪身份、窗口与分流契约",
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-ASSISTANT-20260718-01/tests/test_behavior_contract.py"
+      ],
+      "cwd": "/home/ubuntu",
+      "required": true,
+      "timeout_seconds": 120
+    }
+  ]
+}
