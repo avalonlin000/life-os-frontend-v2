@@ -1,0 +1,103 @@
+{
+  "activation": {
+    "activated_at": "2026-07-19T17:47:36+08:00",
+    "status": "activated"
+  },
+  "artifacts": [
+    {
+      "activated_sha256": "28b3df5135d3aa939f592174d559b70495ab865929212f87197d5dab57aa2547",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/backups/lineup-time-wording/SKILL.md",
+      "baseline_sha256": "183f980cc8eb950abdc39a214534255e14335ab19d3f8dd86d2d1c19eff5b49c",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/baseline/lineup-time-wording/SKILL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/diffs/lineup-time-wording.patch",
+      "id": "lineup-time-wording",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/staged/lineup-time-wording/SKILL.md",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md"
+    }
+  ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "tests": [
+        {
+          "argv": [
+            "python3",
+            "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/time_wording_test.py"
+          ],
+          "attempt": 1,
+          "cwd": "/home/ubuntu",
+          "exit_code": 0,
+          "finished_at": "2026-07-19T17:47:35+08:00",
+          "id": "lineup-time-wording",
+          "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/tests/attempt-1/lineup-time-wording.log",
+          "log_sha256": "b731221294b0e3ce7cf2ecdd14de900ec9f001fdb33d2bcb894c9ae81677540e",
+          "name": "固定判断不使用30加模糊时间",
+          "required": true,
+          "started_at": "2026-07-19T17:47:35+08:00",
+          "status": "passed",
+          "timeout_seconds": 30
+        }
+      ],
+      "verification": {
+        "artifact_sha256": {
+          "lineup-time-wording": "28b3df5135d3aa939f592174d559b70495ab865929212f87197d5dab57aa2547"
+        },
+        "attempt": 1,
+        "finished_at": "2026-07-19T17:47:35+08:00",
+        "pass_rate": 1.0,
+        "pass_rate_percent": 100.0,
+        "required_passed": 1,
+        "required_total": 1,
+        "runner_host": "VM-0-6-ubuntu",
+        "status": "passed"
+      }
+    }
+  ],
+  "attempts": 1,
+  "change_id": "XX-LINEUP-V8-20260719-06",
+  "created_at": "2026-07-19T17:46:59+08:00",
+  "goal": "禁止32分30秒判断中的30加时间残留",
+  "max_attempts": 2,
+  "package_dir": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06",
+  "project_root": "/home/ubuntu",
+  "report": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/change-report.md",
+  "schema": "junjun-verified-change-v1",
+  "tests": [
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/time_wording_test.py"
+      ],
+      "attempt": 1,
+      "cwd": "/home/ubuntu",
+      "exit_code": 0,
+      "finished_at": "2026-07-19T17:47:35+08:00",
+      "id": "lineup-time-wording",
+      "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-06/tests/attempt-1/lineup-time-wording.log",
+      "log_sha256": "b731221294b0e3ce7cf2ecdd14de900ec9f001fdb33d2bcb894c9ae81677540e",
+      "name": "固定判断不使用30加模糊时间",
+      "required": true,
+      "started_at": "2026-07-19T17:47:35+08:00",
+      "status": "passed",
+      "timeout_seconds": 30
+    }
+  ],
+  "trust": {
+    "reason": "all required tests passed on the receiving host",
+    "status": "verified"
+  },
+  "updated_at": "2026-07-19T17:47:36+08:00",
+  "verification": {
+    "artifact_sha256": {
+      "lineup-time-wording": "28b3df5135d3aa939f592174d559b70495ab865929212f87197d5dab57aa2547"
+    },
+    "attempt": 1,
+    "finished_at": "2026-07-19T17:47:35+08:00",
+    "pass_rate": 1.0,
+    "pass_rate_percent": 100.0,
+    "required_passed": 1,
+    "required_total": 1,
+    "runner_host": "VM-0-6-ubuntu",
+    "status": "passed"
+  }
+}

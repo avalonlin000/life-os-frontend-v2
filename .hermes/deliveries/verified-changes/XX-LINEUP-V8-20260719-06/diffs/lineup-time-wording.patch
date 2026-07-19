@@ -1,0 +1,10 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md
+@@ -87,6 +87,7 @@
+ - 放弃：终结与拖延信号同时成立、版本来源冲突影响方向，或结论依赖单次高难操作。
+ 
+ 必须展示支持偏小的证据、支持偏大的证据和最终取舍。不要输出32:30前后的宽时间范围，后文不得反转方向。
++- 固定判断段所有终结时间必须写 `32:30前` 或 `32:30后`，禁止写 `30+`、`30分钟后` 或其他模糊时间替代。
+ 
+ ### 10. 风险与观赛验证
+ 
