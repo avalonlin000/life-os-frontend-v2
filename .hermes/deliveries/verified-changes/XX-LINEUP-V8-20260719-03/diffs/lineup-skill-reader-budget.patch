@@ -1,0 +1,11 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md
+@@ -25,7 +25,7 @@
+ 加载本 Skill 后，先读取 `references/version-and-24-scenarios.md`，再运行：
+ 
+ ```bash
+-python3 /home/ubuntu/.agents/skills/lol-lineup-analysis/scripts/read_version_context.py --json
++python3 /home/ubuntu/.agents/skills/lol-lineup-analysis/scripts/read_version_context.py --json --max-chars 500
+ ```
+ 
+ 如果用户明确给了比赛版本，以用户版本为准，脚本内容只作通用框架参考。脚本返回 `conflict` 时必须展示冲突，只使用两个正式来源都支持的通用结论；不能静默选较新的那一份。

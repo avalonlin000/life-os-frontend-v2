@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "id": "reader-output-budget",
+      "name": "版本读取结果保持可续接",
+      "argv": ["python3", "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-03/test_reader_budget.py"],
+      "cwd": "/home/ubuntu",
+      "required": true,
+      "timeout_seconds": 30
+    }
+  ]
+}
