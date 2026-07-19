@@ -1,0 +1,24 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py
+@@ -24,7 +24,7 @@
+             "24场景定位",
+             "四阶段强弱",
+             "比赛画像",
+-            "固定30分钟判断",
++            "固定32分30秒判断",
+             "风险与观赛验证",
+             "完整展示推导过程",
+         ):
+@@ -48,9 +48,9 @@
+     def test_fixed_30_minute_direction_has_no_wide_range(self) -> None:
+         text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+         for token in (
+-            "固定以30:00基地被推掉为唯一分界",
+-            "偏小：更倾向30:00前结束",
+-            "偏大：更倾向30:00后结束",
++            "固定以32:30基地被推掉为唯一分界",
++            "偏小：更倾向32:30前结束",
++            "偏大：更倾向32:30后结束",
+             "放弃：终结与拖延信号同时成立",
+             "支持偏小的证据、支持偏大的证据和最终取舍",
+         ):

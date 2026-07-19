@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "id": "lineup-time-reference",
+      "name": "24场景和评测统一32分30秒",
+      "argv": ["python3", "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-05/time_reference_test.py"],
+      "cwd": "/home/ubuntu",
+      "required": true,
+      "timeout_seconds": 30
+    }
+  ]
+}

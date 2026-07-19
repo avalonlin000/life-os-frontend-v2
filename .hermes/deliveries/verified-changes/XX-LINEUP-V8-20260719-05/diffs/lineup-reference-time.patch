@@ -1,0 +1,11 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/references/version-and-24-scenarios.md
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/references/version-and-24-scenarios.md
+@@ -50,7 +50,7 @@
+ 
+ ## 24场景矩阵
+ 
+-| # | 标签 | 纯阵容条件 | 典型走势 | 30分钟影响 |
++| # | 标签 | 纯阵容条件 | 典型走势 | 32:30影响 |
+ |---:|---|---|---|---|
+ | 1 | 碾压局 | 一方多路线权、多启动、能连续推塔控资源；另一方清线与替代线都弱 | 前期滚雪球后单向推进 | 明显偏小 |
+ | 2 | 控图翻盘 | 先拿线权的一方缺可靠终结，另一方有稳定反手和资源团结构 | 前期被压，资源团反转 | 偏大或放弃 |

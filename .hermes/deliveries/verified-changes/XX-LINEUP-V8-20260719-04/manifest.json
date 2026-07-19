@@ -1,0 +1,115 @@
+{
+  "activation": {
+    "activated_at": "2026-07-19T17:09:06+08:00",
+    "status": "activated"
+  },
+  "artifacts": [
+    {
+      "activated_sha256": "183f980cc8eb950abdc39a214534255e14335ab19d3f8dd86d2d1c19eff5b49c",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/backups/lineup-time-threshold/SKILL.md",
+      "baseline_sha256": "1c6691e91ead0d6b39e4cf7f40463474a864419109569b81b00fd0a929b8e012",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/baseline/lineup-time-threshold/SKILL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/diffs/lineup-time-threshold.patch",
+      "id": "lineup-time-threshold",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/staged/lineup-time-threshold/SKILL.md",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md"
+    },
+    {
+      "activated_sha256": "6c9ec6b922e3c8da927a48d3675a6f645e23ccc1495d4e843b5ca4dab759c0a0",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/backups/lineup-time-tests/test_skill_contract.py",
+      "baseline_sha256": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/baseline/lineup-time-tests/test_skill_contract.py",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/diffs/lineup-time-tests.patch",
+      "id": "lineup-time-tests",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/staged/lineup-time-tests/test_skill_contract.py",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py"
+    }
+  ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "tests": [
+        {
+          "argv": [
+            "python3",
+            "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/time_threshold_test.py"
+          ],
+          "attempt": 1,
+          "cwd": "/home/ubuntu",
+          "exit_code": 0,
+          "finished_at": "2026-07-19T17:09:06+08:00",
+          "id": "lineup-time-threshold",
+          "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/tests/attempt-1/lineup-time-threshold.log",
+          "log_sha256": "4c754a7508c8d116f34a71da8db10b351324325d65529b2792aeee65fd0ff800",
+          "name": "纯阵容终结分界为32分30秒",
+          "required": true,
+          "started_at": "2026-07-19T17:09:06+08:00",
+          "status": "passed",
+          "timeout_seconds": 30
+        }
+      ],
+      "verification": {
+        "artifact_sha256": {
+          "lineup-time-tests": "6c9ec6b922e3c8da927a48d3675a6f645e23ccc1495d4e843b5ca4dab759c0a0",
+          "lineup-time-threshold": "183f980cc8eb950abdc39a214534255e14335ab19d3f8dd86d2d1c19eff5b49c"
+        },
+        "attempt": 1,
+        "finished_at": "2026-07-19T17:09:06+08:00",
+        "pass_rate": 1.0,
+        "pass_rate_percent": 100.0,
+        "required_passed": 1,
+        "required_total": 1,
+        "runner_host": "VM-0-6-ubuntu",
+        "status": "passed"
+      }
+    }
+  ],
+  "attempts": 1,
+  "change_id": "XX-LINEUP-V8-20260719-04",
+  "created_at": "2026-07-19T17:06:58+08:00",
+  "goal": "将纯阵容终结分界调整为32分30秒",
+  "max_attempts": 2,
+  "package_dir": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04",
+  "project_root": "/home/ubuntu",
+  "report": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/change-report.md",
+  "schema": "junjun-verified-change-v1",
+  "tests": [
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/time_threshold_test.py"
+      ],
+      "attempt": 1,
+      "cwd": "/home/ubuntu",
+      "exit_code": 0,
+      "finished_at": "2026-07-19T17:09:06+08:00",
+      "id": "lineup-time-threshold",
+      "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/tests/attempt-1/lineup-time-threshold.log",
+      "log_sha256": "4c754a7508c8d116f34a71da8db10b351324325d65529b2792aeee65fd0ff800",
+      "name": "纯阵容终结分界为32分30秒",
+      "required": true,
+      "started_at": "2026-07-19T17:09:06+08:00",
+      "status": "passed",
+      "timeout_seconds": 30
+    }
+  ],
+  "trust": {
+    "reason": "all required tests passed on the receiving host",
+    "status": "verified"
+  },
+  "updated_at": "2026-07-19T17:09:06+08:00",
+  "verification": {
+    "artifact_sha256": {
+      "lineup-time-tests": "6c9ec6b922e3c8da927a48d3675a6f645e23ccc1495d4e843b5ca4dab759c0a0",
+      "lineup-time-threshold": "183f980cc8eb950abdc39a214534255e14335ab19d3f8dd86d2d1c19eff5b49c"
+    },
+    "attempt": 1,
+    "finished_at": "2026-07-19T17:09:06+08:00",
+    "pass_rate": 1.0,
+    "pass_rate_percent": 100.0,
+    "required_passed": 1,
+    "required_total": 1,
+    "runner_host": "VM-0-6-ubuntu",
+    "status": "passed"
+  }
+}

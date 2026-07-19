@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "id": "lineup-time-threshold",
+      "name": "纯阵容终结分界为32分30秒",
+      "argv": ["python3", "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-04/time_threshold_test.py"],
+      "cwd": "/home/ubuntu",
+      "required": true,
+      "timeout_seconds": 30
+    }
+  ]
+}
