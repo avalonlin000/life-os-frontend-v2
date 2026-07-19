@@ -1,0 +1,151 @@
+{
+  "activation": {
+    "activated_at": "2026-07-19T12:13:36+08:00",
+    "status": "activated"
+  },
+  "artifacts": [
+    {
+      "activated_sha256": "7bf279b8ed60dbea4626c6ece0f857fb9c90f90aab1e3f719e30530b014fdb05",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/backups/lineup-skill/SKILL.md",
+      "baseline_sha256": "c4dae17773cc71577016305a108140a920a7b3d4ba5dcda2f4fa75c936189813",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/baseline/lineup-skill/SKILL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/diffs/lineup-skill.patch",
+      "id": "lineup-skill",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/staged/lineup-skill/SKILL.md",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md"
+    },
+    {
+      "activated_sha256": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/backups/lineup-tests/test_skill_contract.py",
+      "baseline_sha256": "c235ea60ed2f139fdd39682acb59b895036c6d07b08e4ebca0c26e512e0f0c5c",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/baseline/lineup-tests/test_skill_contract.py",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/diffs/lineup-tests.patch",
+      "id": "lineup-tests",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/staged/lineup-tests/test_skill_contract.py",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py"
+    },
+    {
+      "activated_sha256": "23d1560a117ae414ee205121272421755e15febd7863de10f7c8505db8c9ff9c",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/backups/lineup-evals/evals.json",
+      "baseline_sha256": "31cec1a7c2f87d828250ba552faa6d62e28a4f7095cecab9d3f2bc471ec4c915",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/baseline/lineup-evals/evals.json",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/diffs/lineup-evals.patch",
+      "id": "lineup-evals",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/staged/lineup-evals/evals.json",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/evals/evals.json"
+    },
+    {
+      "activated_sha256": "bd563e6a8c667677cf7fbdde003d63f654eb7ded5e3673c805b1719c3350fc34",
+      "backup": null,
+      "baseline_sha256": null,
+      "baseline_snapshot": null,
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/diffs/lineup-v8-reference.patch",
+      "id": "lineup-v8-reference",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/staged/lineup-v8-reference/version-and-24-scenarios.md",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/references/version-and-24-scenarios.md"
+    },
+    {
+      "activated_sha256": "a549e7dde921f04c6563fb14670403ba1bca473b4574bbb97e34b8235647ae0c",
+      "backup": null,
+      "baseline_sha256": null,
+      "baseline_snapshot": null,
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/diffs/version-context-reader.patch",
+      "id": "version-context-reader",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/staged/version-context-reader/read_version_context.py",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/scripts/read_version_context.py"
+    }
+  ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "tests": [
+        {
+          "argv": [
+            "python3",
+            "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/run_staged_tests.py"
+          ],
+          "attempt": 1,
+          "cwd": "/home/ubuntu",
+          "exit_code": 0,
+          "finished_at": "2026-07-19T12:13:36+08:00",
+          "id": "lineup-v8-contract",
+          "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/tests/attempt-1/lineup-v8-contract.log",
+          "log_sha256": "c6ea7547cf417b103ce4c5c15a7ff3f00aedfec4552985e850827a3a4dad184b",
+          "name": "阵容分析v8版本与24场景契约",
+          "required": true,
+          "started_at": "2026-07-19T12:13:36+08:00",
+          "status": "passed",
+          "timeout_seconds": 120
+        }
+      ],
+      "verification": {
+        "artifact_sha256": {
+          "lineup-evals": "23d1560a117ae414ee205121272421755e15febd7863de10f7c8505db8c9ff9c",
+          "lineup-skill": "7bf279b8ed60dbea4626c6ece0f857fb9c90f90aab1e3f719e30530b014fdb05",
+          "lineup-tests": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+          "lineup-v8-reference": "bd563e6a8c667677cf7fbdde003d63f654eb7ded5e3673c805b1719c3350fc34",
+          "version-context-reader": "a549e7dde921f04c6563fb14670403ba1bca473b4574bbb97e34b8235647ae0c"
+        },
+        "attempt": 1,
+        "finished_at": "2026-07-19T12:13:36+08:00",
+        "pass_rate": 1.0,
+        "pass_rate_percent": 100.0,
+        "required_passed": 1,
+        "required_total": 1,
+        "runner_host": "VM-0-6-ubuntu",
+        "status": "passed"
+      }
+    }
+  ],
+  "attempts": 1,
+  "change_id": "XX-LINEUP-V8-20260719-01",
+  "created_at": "2026-07-19T12:04:46+08:00",
+  "goal": "阵容分析v8恢复完整版本契合与纯阵容24场景推演",
+  "max_attempts": 2,
+  "package_dir": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01",
+  "project_root": "/home/ubuntu",
+  "report": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/change-report.md",
+  "schema": "junjun-verified-change-v1",
+  "tests": [
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/run_staged_tests.py"
+      ],
+      "attempt": 1,
+      "cwd": "/home/ubuntu",
+      "exit_code": 0,
+      "finished_at": "2026-07-19T12:13:36+08:00",
+      "id": "lineup-v8-contract",
+      "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-01/tests/attempt-1/lineup-v8-contract.log",
+      "log_sha256": "c6ea7547cf417b103ce4c5c15a7ff3f00aedfec4552985e850827a3a4dad184b",
+      "name": "阵容分析v8版本与24场景契约",
+      "required": true,
+      "started_at": "2026-07-19T12:13:36+08:00",
+      "status": "passed",
+      "timeout_seconds": 120
+    }
+  ],
+  "trust": {
+    "reason": "all required tests passed on the receiving host",
+    "status": "verified"
+  },
+  "updated_at": "2026-07-19T12:13:36+08:00",
+  "verification": {
+    "artifact_sha256": {
+      "lineup-evals": "23d1560a117ae414ee205121272421755e15febd7863de10f7c8505db8c9ff9c",
+      "lineup-skill": "7bf279b8ed60dbea4626c6ece0f857fb9c90f90aab1e3f719e30530b014fdb05",
+      "lineup-tests": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+      "lineup-v8-reference": "bd563e6a8c667677cf7fbdde003d63f654eb7ded5e3673c805b1719c3350fc34",
+      "version-context-reader": "a549e7dde921f04c6563fb14670403ba1bca473b4574bbb97e34b8235647ae0c"
+    },
+    "attempt": 1,
+    "finished_at": "2026-07-19T12:13:36+08:00",
+    "pass_rate": 1.0,
+    "pass_rate_percent": 100.0,
+    "required_passed": 1,
+    "required_total": 1,
+    "runner_host": "VM-0-6-ubuntu",
+    "status": "passed"
+  }
+}

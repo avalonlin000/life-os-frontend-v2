@@ -1,0 +1,115 @@
+{
+  "activation": {
+    "activated_at": "2026-07-19T12:19:28+08:00",
+    "status": "activated"
+  },
+  "artifacts": [
+    {
+      "activated_sha256": "d0315ebced5ec5b08bd4ff85526be844a8b4089f6c141213326521517b96f3a2",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/backups/lineup-skill-boundary/SKILL.md",
+      "baseline_sha256": "7bf279b8ed60dbea4626c6ece0f857fb9c90f90aab1e3f719e30530b014fdb05",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/baseline/lineup-skill-boundary/SKILL.md",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/diffs/lineup-skill-boundary.patch",
+      "id": "lineup-skill-boundary",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/staged/lineup-skill-boundary/SKILL.md",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md"
+    },
+    {
+      "activated_sha256": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+      "backup": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/backups/lineup-boundary-tests/test_skill_contract.py",
+      "baseline_sha256": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+      "baseline_snapshot": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/baseline/lineup-boundary-tests/test_skill_contract.py",
+      "diff": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/diffs/lineup-boundary-tests.patch",
+      "id": "lineup-boundary-tests",
+      "staged": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/staged/lineup-boundary-tests/test_skill_contract.py",
+      "target": "/home/ubuntu/.agents/skills/lol-lineup-analysis/tests/test_skill_contract.py"
+    }
+  ],
+  "attempt_history": [
+    {
+      "attempt": 1,
+      "tests": [
+        {
+          "argv": [
+            "python3",
+            "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/boundary_test.py"
+          ],
+          "attempt": 1,
+          "cwd": "/home/ubuntu",
+          "exit_code": 0,
+          "finished_at": "2026-07-19T12:19:28+08:00",
+          "id": "lineup-boundary",
+          "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/tests/attempt-1/lineup-boundary.log",
+          "log_sha256": "fe20aff3497cafb8e48b290fb272c80923521f5ee3f88064c17300897fa3c8b4",
+          "name": "纯阵容观赛信号不引入经济数据",
+          "required": true,
+          "started_at": "2026-07-19T12:19:28+08:00",
+          "status": "passed",
+          "timeout_seconds": 30
+        }
+      ],
+      "verification": {
+        "artifact_sha256": {
+          "lineup-boundary-tests": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+          "lineup-skill-boundary": "d0315ebced5ec5b08bd4ff85526be844a8b4089f6c141213326521517b96f3a2"
+        },
+        "attempt": 1,
+        "finished_at": "2026-07-19T12:19:28+08:00",
+        "pass_rate": 1.0,
+        "pass_rate_percent": 100.0,
+        "required_passed": 1,
+        "required_total": 1,
+        "runner_host": "VM-0-6-ubuntu",
+        "status": "passed"
+      }
+    }
+  ],
+  "attempts": 1,
+  "change_id": "XX-LINEUP-V8-20260719-02",
+  "created_at": "2026-07-19T12:18:39+08:00",
+  "goal": "收紧纯阵容分析的观赛验证边界",
+  "max_attempts": 2,
+  "package_dir": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02",
+  "project_root": "/home/ubuntu",
+  "report": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/change-report.md",
+  "schema": "junjun-verified-change-v1",
+  "tests": [
+    {
+      "argv": [
+        "python3",
+        "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/boundary_test.py"
+      ],
+      "attempt": 1,
+      "cwd": "/home/ubuntu",
+      "exit_code": 0,
+      "finished_at": "2026-07-19T12:19:28+08:00",
+      "id": "lineup-boundary",
+      "log": "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/tests/attempt-1/lineup-boundary.log",
+      "log_sha256": "fe20aff3497cafb8e48b290fb272c80923521f5ee3f88064c17300897fa3c8b4",
+      "name": "纯阵容观赛信号不引入经济数据",
+      "required": true,
+      "started_at": "2026-07-19T12:19:28+08:00",
+      "status": "passed",
+      "timeout_seconds": 30
+    }
+  ],
+  "trust": {
+    "reason": "all required tests passed on the receiving host",
+    "status": "verified"
+  },
+  "updated_at": "2026-07-19T12:19:28+08:00",
+  "verification": {
+    "artifact_sha256": {
+      "lineup-boundary-tests": "0d8347dd65ddfa0f03ee3b78cb24f8bfc6a183ded3aeb9d00c7f0480413e6fc3",
+      "lineup-skill-boundary": "d0315ebced5ec5b08bd4ff85526be844a8b4089f6c141213326521517b96f3a2"
+    },
+    "attempt": 1,
+    "finished_at": "2026-07-19T12:19:28+08:00",
+    "pass_rate": 1.0,
+    "pass_rate_percent": 100.0,
+    "required_passed": 1,
+    "required_total": 1,
+    "runner_host": "VM-0-6-ubuntu",
+    "status": "passed"
+  }
+}

@@ -1,0 +1,10 @@
+--- before//home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md
++++ after//home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md
+@@ -93,6 +93,7 @@
+ - 列出两个最可能判断错的条件。
+ - 给两个“看到什么 → 说明什么”的现场信号：一个看关键技能与先后手，一个看站位、第二轮和资源转换。
+ - 不使用实时经济、补刀、装备和龙数重新预测；那些属于赛中综合判断。
++- 观赛信号也不得写经济差、补刀、装备或龙数门槛；只写关键技能、站位、人数先后和推塔/资源转换是否成功。
+ 
+ ## 输出要求
+ 

@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""Read Xiaoxue's confirmed version sources without modifying them."""
+
+from __future__ import annotations
+
+import argparse
+from datetime import datetime
+import json
+from pathlib import Path
+import sqlite3
+
+
+DB_PATH = Path("/home/ubuntu/lol_data/英雄联盟数据库.db")
+WIKI_PATH = Path("/home/ubuntu/workspace/knowledge/wiki/小雪电竞/20_游戏理解/版本理解/index.md")
+
+
+def clip(value: object, limit: int) -> str:
+    text = "" if value is None else str(value)
+    return text if len(text) <= limit else text[:limit] + "…"
+
+
+def read_database(limit: int) -> dict:
+    result = {"path": str(DB_PATH), "available": False, "latest_created_at": "", "items": []}
+    if not DB_PATH.exists():
+        return result
+    connection = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+    connection.row_factory = sqlite3.Row
+    try:
+        rows = connection.execute(
+            """SELECT source_category, topic, content, created_at
+               FROM shared_version_analysis
+               ORDER BY datetime(created_at) DESC, id DESC
+               LIMIT 8"""
+        ).fetchall()
+    finally:
+        connection.close()
+    result["available"] = True
+    for row in rows:
+        result["items"].append(
+            {
+                "source_category": clip(row["source_category"], 120),
+                "topic": clip(row["topic"], 240),
+                "content": clip(row["content"], limit),
+                "created_at": clip(row["created_at"], 80),
+            }
+        )
+    if rows:
+        result["latest_created_at"] = clip(rows[0]["created_at"], 80)
+    return result
+
+
+def read_wiki(limit: int) -> dict:
+    result = {"path": str(WIKI_PATH), "available": False, "modified_at": "", "content": ""}
+    if not WIKI_PATH.exists():
+        return result
+    result.update(
+        available=True,
+        modified_at=datetime.fromtimestamp(WIKI_PATH.stat().st_mtime).astimezone().isoformat(),
+        content=clip(WIKI_PATH.read_text(encoding="utf-8"), limit),
+    )
+    return result
+
+
+def source_day(value: str) -> str:
+    return value[:10] if value else ""
+
+
+def build_context(limit: int) -> dict:
+    database = read_database(limit)
+    wiki = read_wiki(limit * 2)
+    if database["available"] and wiki["available"]:
+        status = "aligned" if source_day(database["latest_created_at"]) == source_day(wiki["modified_at"]) else "conflict"
+    elif database["available"]:
+        status = "database_only"
+    elif wiki["available"]:
+        status = "wiki_only"
+    else:
+        status = "missing"
+    return {
+        "read_only": True,
+        "status": status,
+        "rule": "conflict 时只使用两端一致的通用版本结论；不得用队伍或选手内容补纯阵容判断",
+        "database": database,
+        "wiki": wiki,
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--json", action="store_true", help="print JSON")
+    parser.add_argument("--max-chars", type=int, default=3500)
+    args = parser.parse_args()
+    context = build_context(max(500, args.max_chars))
+    if args.json:
+        print(json.dumps(context, ensure_ascii=False, indent=2))
+    else:
+        print(f"status={context['status']}")
+        print(f"database={context['database']['latest_created_at'] or 'missing'}")
+        print(f"wiki={context['wiki']['modified_at'] or 'missing'}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

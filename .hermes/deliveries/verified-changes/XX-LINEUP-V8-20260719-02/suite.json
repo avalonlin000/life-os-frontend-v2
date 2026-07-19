@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "id": "lineup-boundary",
+      "name": "纯阵容观赛信号不引入经济数据",
+      "argv": ["python3", "/home/ubuntu/life-os-frontend-v2/.hermes/deliveries/verified-changes/XX-LINEUP-V8-20260719-02/boundary_test.py"],
+      "cwd": "/home/ubuntu",
+      "required": true,
+      "timeout_seconds": 30
+    }
+  ]
+}
