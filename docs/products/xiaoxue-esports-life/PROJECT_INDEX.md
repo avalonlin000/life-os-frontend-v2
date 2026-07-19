@@ -14,7 +14,7 @@
 | 产品结构 | 一个主体、三个窗口、一套后台 |
 | 三个窗口 | 日报 / 工作台 / 小雪对话 |
 | 工作台主导航 | 队伍资料 / 当前赛事 / TK 资料库 |
-| 纯阵容能力 | `lol-lineup-analysis` 纯十英雄阵容分析 v7.4 |
+| 纯阵容能力 | `lol-lineup-analysis` 纯十英雄完整分析 v8.0（版本契合 + 24场景 + 固定30分钟） |
 | 交易判断总纲 | `junjun-trading-system` |
 | 内部工程母项目 | Life OS |
 | 项目主责 | 小白 |
@@ -83,7 +83,7 @@
 | 数据库 | `/home/ubuntu/lol_data/英雄联盟数据库.db` | LOL 数据库，不在本轮修改 |
 | 小雪 skill | `/home/ubuntu/.codex/skills/小雪/SKILL.md` | 日常入口和路由口径 |
 | 工具路由 skill | `/home/ubuntu/.codex/skills/xiaoxue-esports-toolkit/SKILL.md` | 小雪电竞方法论和工具路由 |
-| 纯十英雄阵容 skill | `/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md` | v7.4，只看十英雄，不承担交易判断 |
+| 纯十英雄阵容 skill | `/home/ubuntu/.agents/skills/lol-lineup-analysis/SKILL.md` | v8.0，只看十英雄与比赛版本，不承担交易判断 |
 | 钧钧交易系统 skill | `/home/ubuntu/.agents/skills/junjun-trading-system/SKILL.md` | 明确交易请求的总纲 |
 | 日报产品协议 | `/home/ubuntu/lol_data/docs/LOL_DAILY_REPORT_V2.md` | 唯一功能、顺序、来源、缺失和发布口径 |
 | 日报统一 pipeline | `/home/ubuntu/lol_data/scripts/daily_pipeline.py` | 冻结材料 -> 单一渲染 -> 语义校验 -> 本地/Wiki/飞书分卷发布与回读 |
