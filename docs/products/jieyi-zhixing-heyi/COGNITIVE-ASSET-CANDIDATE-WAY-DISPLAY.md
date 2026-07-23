@@ -8,7 +8,7 @@
 `/way` 现在区分两类内容：
 
 1. 长期原则列表：来自 wisdom / method_library / 候选合流，按原有状态展示。
-2. 认知资产候选池：单独展示 `daily-review / reflection` 生成的候选，明确是 `pending`，不等于长期原则。
+2. 认知资产候选池：单独展示 `daily-review / reflection` 和深度学习验收生成的候选，明确是 `pending`，不等于长期原则；用户确认提升后从候选池消失，并在长期原则列表以 `verified` 展示。
 
 ## 页面展示字段
 
@@ -39,9 +39,11 @@
   - 增加独立“认知资产候选池”区块。
 - `shared/api/services/jieyi.ts`
   - `listWithCandidates()` 返回 `cognitive_asset_candidates`，供 /way 独立渲染。
+- `POST /api/jieyi/principles/candidates/{id}/promote`
+  - 用户明确确认后写入 `wisdom`，候选保留来源并标记 `promoted`。
 
 ## 验证
 
 - `pnpm --filter jieyi-web build` 通过。
 - TypeScript 能识别候选扩展字段。
-- 候选态显示为 pending，不进入 verified。
+- 候选态显示为 pending，不进入 verified；显式提升后正式原则显示为 verified。

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" href="data:,">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>结衣低保真线框 · 聚焦工作台</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#e9e9e7;color:#191919;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}button,input,textarea{font:inherit;color:inherit}.shell{min-height:100vh;display:grid;grid-template-columns:220px 1fr}.side{position:sticky;top:0;height:100vh;padding:20px 16px;background:#f7f7f5;border-right:1px solid #bebebb}.brand{font-weight:900;font-size:18px}.wire{font-size:10px;color:#777;margin:3px 0 24px}.side-nav{display:grid;gap:5px}.side-nav button{border:0;background:transparent;text-align:left;padding:10px 11px;border-radius:6px}.side-nav button.active{background:#222;color:white}.side hr{border:0;border-top:1px solid #d0d0cc;margin:22px 0}.issue-mini{font-size:12px}.issue-mini b{display:block;font-size:14px;margin:5px 0}.record{position:absolute;left:16px;right:16px;bottom:18px;border:1px solid #222;background:#222;color:white;border-radius:7px;padding:11px;font-weight:800}.main{min-width:0}.bar{position:sticky;top:0;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 24px;background:rgba(255,255,255,.94);border-bottom:1px solid #c9c9c6}.bar span{font-size:12px;color:#666}.bar strong{display:block}.bar button{border:1px solid #777;background:#fff;border-radius:6px;padding:7px 10px}.page{display:none;padding:26px;max-width:1180px;margin:auto}.page.active{display:block}.page-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:22px}.page-head h1{margin:3px 0 0;font-size:29px;letter-spacing:-.04em}.eyebrow{font-size:11px;letter-spacing:.12em;color:#6a6a66}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(270px,.75fr);gap:18px}.stack{display:grid;gap:14px}.panel{background:#fff;border:1px solid #bfbfbb;border-radius:8px;padding:17px}.panel h2{font-size:14px;margin:0 0 11px}.panel h3{font-size:18px;margin:0 0 8px}.panel p{margin:7px 0;color:#444}.panel.document p{font-family:Georgia,"Songti SC",serif;font-size:17px;line-height:1.65}.muted{font-size:12px;color:#74746f}.row{padding:12px 0;border-top:1px solid #ddd}.row:first-child{border-top:0}.row b{display:block}.status{display:inline-block;border:1px solid #999;border-radius:999px;padding:2px 8px;font-size:11px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.actions button{border:1px solid #888;background:#fff;border-radius:6px;padding:8px 11px}.actions .primary{background:#222;color:#fff;border-color:#222}.next{border:2px solid #222}.next strong{font-size:20px}.steps{counter-reset:item}.step{display:grid;grid-template-columns:27px 1fr;gap:8px;padding:9px 0;border-top:1px solid #ddd}.step:before{counter-increment:item;content:counter(item);width:22px;height:22px;border:1px solid #888;border-radius:50%;display:grid;place-items:center;font-size:11px}.search{width:100%;padding:9px 10px;border:1px solid #999;border-radius:6px;background:white}.tabs{display:flex;gap:5px;margin-bottom:13px}.tabs button{border:1px solid #aaa;background:#fff;border-radius:999px;padding:5px 9px;font-size:12px}.tabs button.on{background:#222;color:#fff}.metric{display:flex;align-items:center;justify-content:space-between;gap:10px}.metric strong{font-size:23px}.callout{padding:13px;background:#f1f1ee;border-left:4px solid #444}.bottom-nav{display:none}.overlay{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.4);display:none;place-items:center;padding:18px}.overlay.open{display:grid}.modal{width:min(620px,100%);background:white;border:2px solid #222;border-radius:10px;padding:20px}.modal header{display:flex;justify-content:space-between}.modal h2{margin:0}.modal textarea{width:100%;min-height:220px;margin:16px 0;padding:12px;border:1px solid #888;resize:vertical}.shortcuts{display:flex;gap:7px;flex-wrap:wrap}.shortcuts button{border:1px solid #999;background:white;border-radius:999px;padding:6px 10px}.saved{display:none;color:#276037;margin-top:10px;font-size:13px}
+    @media(max-width:760px){.shell{display:block;padding-bottom:72px}.side{display:none}.bar{padding:12px 14px}.bar .issue-title{max-width:230px}.page{padding:18px 14px}.page-head{align-items:start}.page-head h1{font-size:25px}.layout{grid-template-columns:1fr}.bottom-nav{position:fixed;z-index:7;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid #aaa}.bottom-nav button{border:0;background:white;padding:13px 4px}.bottom-nav button.active{font-weight:900;border-top:2px solid #222}.bar button{font-size:12px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="side"><div class="brand">结衣</div><div class="wire">低保真 · 聚焦工作台</div><nav class="side-nav"><button class="active" data-go="reality">现实</button><button data-go="understand">认识</button><button data-go="practice">实践</button><button data-go="assets">积累</button></nav><hr><div class="issue-mini"><span>当前现实课题</span><b>恢复能够长期维持的作息</b><span>认识 → 实践 → 等待反馈</span></div><button class="record" data-record>＋ 记一笔</button></aside>
+    <main class="main">
+      <header class="bar"><div class="issue-title"><span>当前现实课题</span><strong>恢复能够长期维持的作息</strong></div><button data-record>记一笔</button></header>
+
+      <section class="page active" data-page="reality">
+        <div class="page-head"><div><div class="eyebrow">REALITY / 默认首页</div><h1>现在正在认识和改变什么？</h1></div><button>切换课题</button></div>
+        <div class="layout">
+          <div class="stack">
+            <article class="panel"><span class="status">进行中</span><h3>最近睡眠很乱，白天没有精神。</h3><p>希望变成：恢复稳定作息，同时保持白天精力。</p><div class="actions"><button>编辑</button><button>暂停</button><button>完整轨迹</button></div></article>
+            <article class="panel document"><h2>现在最关键的认知</h2><p>单纯加强“必须早睡”的要求可能无效。当前更值得验证的是，晚间持续刺激是否在补偿白天缺少的自主感。</p><div class="actions"><button class="primary" data-go="understand">阅读完整依据</button><button>纠正</button></div></article>
+            <article class="panel"><h2>当前方法与实践</h2><h3>固定起床时间，建立睡前结束信号</h3><div class="row"><b>今晚 23:30 关闭屏幕</b><span class="muted">实践中 · 观察是否仍想继续寻找刺激</span></div><div class="actions"><button class="primary" data-go="practice">去执行</button><button data-state>今天先中断</button></div></article>
+            <article class="panel"><h2>最近一次真实结果</h2><p>关屏后仍然清醒，但没有继续刷视频；第二天上午依然困。</p><span class="muted">这个结果还不足以确认“压力补偿”假设。</span></article>
+          </div>
+          <aside class="stack">
+            <article class="panel next"><h2>下一步</h2><strong>继续同一实践，再观察两晚</strong><p class="muted">暂时不更换方法，也不扩大计划。</p></article>
+            <article class="panel"><div class="metric"><div><h2>待确认</h2><span class="muted">只显示与当前课题有关的候选</span></div><strong>2</strong></div><div class="actions"><button data-go="assets">集中处理</button></div></article>
+            <article class="panel"><h2>当前循环</h2><div class="row">事实 <span class="status">已有</span></div><div class="row">认识 <span class="status">已确认</span></div><div class="row">方法 <span class="status">已确认</span></div><div class="row">实践 <span class="status">进行中</span></div><div class="row">反馈 <span class="status">待补</span></div></article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page" data-page="understand">
+        <div class="page-head"><div><div class="eyebrow">UNDERSTAND / 认知与学习</div><h1>现在应该理解和学习什么？</h1></div><button>导入长文</button></div>
+        <div class="layout">
+          <div class="stack">
+            <article class="panel document"><div class="actions"><span class="status">仍待验证</span><span class="status">关联当前课题</span></div><h3>睡眠问题可能不只发生在睡前</h3><p>白天压力、未完成感和自主感不足，可能共同延迟一天真正结束的时刻。当前证据还不足以确认原因，因此不应该把它解释为“自控力差”。</p><div class="callout">判断边界：连续两天晚睡只能形成信号，不能单独证明压力或逃避。</div><div class="actions"><button>查看来源</button><button>纠正理解</button><button data-go="practice" class="primary">设计现实验证</button></div></article>
+            <article class="panel"><h2>现在值得学习</h2><div class="row"><b>1. 睡眠压力与昼夜节律</b><span class="muted">理解为什么“更用力睡”可能更难入睡</span></div><div class="row"><b>2. 报复性睡前拖延</b><span class="muted">区分压力补偿与普通娱乐</span></div></article>
+            <article class="panel"><h2>知识库</h2><input class="search" placeholder="搜索标题、全文、来源和标签"><div class="row"><b>固定起床时间比强制入睡更可控</b><span class="muted">已关联当前课题</span></div><div class="row"><b>压力下的自主感补偿</b><span class="muted">尚未关联 · 来源可查看</span></div></article>
+          </div>
+          <aside class="stack">
+            <article class="panel"><h2>待验证问题</h2><p>如果白天提前结束一件最压迫的任务，晚上对屏幕的依赖会不会降低？</p><div class="actions"><button>找结衣聊</button><button data-go="practice">进入实践</button></div></article>
+            <article class="panel"><h2>深度学习</h2><p class="muted">按需使用，不占日常主线。</p><button data-toggle="deep-b">展开学习工具</button><div id="deep-b" hidden><div class="row">材料</div><div class="row">三个问题</div><div class="row">学习包与五卡</div></div></article>
+            <article class="panel"><h2>认识历史</h2><p class="muted">查看一条认识怎样被知识和实践支持、修正或推翻。</p><button>打开历史</button></article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page" data-page="practice">
+        <div class="page-head"><div><div class="eyebrow">PRACTICE / 方法与行动</div><h1>基于当前认识，具体怎么做？</h1></div><button>调整时间</button></div>
+        <div class="layout">
+          <div class="stack">
+            <article class="panel document"><h2>当前方法</h2><h3>固定起床时间，建立睡前结束信号</h3><p>连续观察一周，不强迫自己一次解决全部作息。</p><span class="muted">依据：晚间刺激可能由白天节奏共同造成</span></article>
+            <article class="panel next"><div class="metric"><div><h2>当前实践</h2><span class="muted">今晚 · 实践中</span></div><span class="status">23:30</span></div><h3>关闭屏幕，并写下明天第一步</h3><div class="steps"><div class="step">23:20 保存正在做的内容</div><div class="step">写下明天第一步</div><div class="step">23:30 关闭屏幕</div></div><div class="callout"><b>最低版本</b><br>只关闭短视频，保留听音频。</div><div class="actions"><button class="primary" data-state>完成</button><button data-state>今天先中断</button><button data-state>重新回来</button></div></article>
+            <article class="panel"><h2>快速反馈</h2><textarea class="search" rows="4" placeholder="实际发生了什么？不用分析原因。"></textarea><button class="primary" data-state style="margin-top:10px">记录结果</button></article>
+          </div>
+          <aside class="stack">
+            <article class="panel"><h2>活动记录</h2><div class="actions"><button class="primary" data-state>开始活动</button><button>补记</button></div><p class="muted">活动会关联当前实践或现实课题。</p></article>
+            <article class="panel"><h2>客观条件</h2><div class="row">明早 8:00 需要起床</div><div class="row">今晚没有必须完成的外部任务</div></article>
+            <article class="panel"><h2>其他实践</h2><button data-toggle="other-b">展开 3 项</button><div id="other-b" hidden><div class="row">晨间步行 15 分钟</div><div class="row">未关联旧行动：整理书桌</div><div class="row">已完成：记录起床状态</div></div></article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page" data-page="assets">
+        <div class="page-head"><div><div class="eyebrow">ASSETS / 验证成果与历史</div><h1>哪些认识和方法值得留下？</h1></div><button>搜索全部历史</button></div>
+        <div class="tabs"><button class="on">待确认</button><button>已验证认识</button><button>已验证方法</button><button>整理与历史</button></div>
+        <div class="layout">
+          <div class="stack">
+            <article class="panel"><div class="metric"><div><h2>待确认</h2><span class="muted">显示来源、证据和可能影响</span></div><strong>2</strong></div><div class="row"><b>认识候选：压力越大，越需要先设计一天如何结束</b><p>支持：两次晚睡都发生在工作未收口的晚上。反证：样本只有两天。</p><div class="actions"><button class="primary">查看完整证据</button><button>暂不采用</button></div></div><div class="row"><b>方法候选：固定起床时间比强制入睡更适合当前阶段</b></div></article>
+            <article class="panel document"><h2>今日整理</h2><p>今天没有扩大计划，而是继续观察睡前刺激。实践没有证明压力假设，但排除了“完全无法关屏”的解释。</p><button>查看每日与阶段整理</button></article>
+            <article class="panel"><h2>现实课题历史</h2><div class="row"><b>恢复稳定作息</b><span class="muted">进行中 · 认识 → 实践 → 等待反馈</span></div><div class="row"><b>重新建立阅读习惯</b><span class="muted">已暂停 · 历史保留</span></div></article>
+          </div>
+          <aside class="stack">
+            <article class="panel"><h2>已验证认识</h2><div class="row"><b>坚持是回归能力</b><span class="muted">来自 3 项实践、2 次中断与回归</span></div><button>查看全部</button></article>
+            <article class="panel"><h2>已验证方法</h2><div class="row"><b>状态差时先降低实践强度</b><span class="muted">边界和失效条件可查看</span></div></article>
+            <article class="panel"><h2>长期方向</h2><p>知行合一与认知成长</p><span class="muted">阶段目标：建立能够自然回归的稳定实践循环</span><div class="actions"><button>纠正</button><button>查看关联课题</button></div></article>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav"><button class="active" data-go="reality">现实</button><button data-go="understand">认识</button><button data-go="practice">实践</button><button data-go="assets">积累</button></nav>
+  <div class="overlay" id="record-modal"><section class="modal"><header><h2>记一笔</h2><button data-close>关闭</button></header><div class="shortcuts"><button>普通记录</button><button>长文材料</button><button>活动</button><button>实践结果</button></div><textarea placeholder="直接写或粘贴，不用先分类……"></textarea><div class="actions"><button class="primary" id="save-record">保存原文</button></div><div class="saved" id="saved-note">原文已保存。系统将在后台建议关联。</div></section></div>
+  <script>
+    const pages=[...document.querySelectorAll('[data-page]')];
+    const nav=[...document.querySelectorAll('nav [data-go]')];
+    function go(name){pages.forEach(p=>p.classList.toggle('active',p.dataset.page===name));nav.forEach(b=>b.classList.toggle('active',b.dataset.go===name));scrollTo({top:0,behavior:'smooth'})}
+    document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+    document.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{const el=document.getElementById(b.dataset.toggle);el.hidden=!el.hidden}));
+    const modal=document.getElementById('record-modal');document.querySelectorAll('[data-record]').forEach(b=>b.onclick=()=>modal.classList.add('open'));document.querySelector('[data-close]').onclick=()=>modal.classList.remove('open');
+    document.getElementById('save-record').onclick=()=>document.getElementById('saved-note').style.display='block';
+    document.querySelectorAll('[data-state]').forEach(b=>b.addEventListener('click',()=>{b.textContent='已记录';b.disabled=true}));
+  </script>
+</body>
+</html>

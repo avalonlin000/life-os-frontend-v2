@@ -1,11 +1,69 @@
 # 结衣知行合一 — 数据与 API 文档
 
 > 基于原 `tech-spec.md` 的 API 约束拆分
-> 版本：1.0 | 2026-06-28
+> 版本：4.0（现实课题聚合契约） | 2026-07-21
+> 说明：现实课题聚合是当前新增主链；旧接口继续兼容。
+
+## V4 现实课题聚合契约
+
+`reality_issues` 与 `reality_issue_entries` 只承载新增关系和循环历史；历史知识、行动、活动、复盘、原则和成长地图不批量迁移。旧行动通过可空 `reality_issue_id` 关联现实课题。
+
+| 方法 | 路径 | 作用 |
+|---|---|---|
+| GET | `/api/jieyi/reality-issues` | 读取现实课题列表 |
+| GET | `/api/jieyi/reality-issues/focus` | 读取当前焦点课题完整聚合 |
+| POST | `/api/jieyi/reality-issues` | 用户确认后建立课题 |
+| PATCH | `/api/jieyi/reality-issues/{id}` | 用户确认后调整课题 |
+| POST | `/api/jieyi/reality-issues/{id}/focus` | 用户确认后切换焦点 |
+| POST | `/api/jieyi/reality-issues/{id}/entries` | 写入事实、知识、理解、问题、方法或更新；Agent 通用入口不允许绕过专用反馈链 |
+| POST | `/api/jieyi/reality-issues/{id}/entries/{entry_id}/confirm` | 用户确认候选 |
+| POST | `/api/jieyi/reality-issues/{id}/practices` | 创建关联实践，必须绑定同课题已确认的 `method_entry_id` |
+| POST | `/api/jieyi/reality-issues/{id}/practices/{schedule_id}/feedback` | 写入实践结果，并自动产生两类带来源的待确认更新候选 |
+
+所有写接口必须能从 `/focus` 读回；候选不等于正式认识；缺少数据返回空组，不使用假 fallback。
+
+## 0. 数据契约总原则
+
+现有 API 继续保持兼容；本轮先统一产品语义，再逐步补齐关系，不在没有真实使用证据时直接迁移历史数据。
+
+| 产品能力 | 必须能回答的问题 | 当前状态 |
+|----------|------------------|----------|
+| 人生方向 | 我长期愿意经营哪些领域？ | `goals` / `principles` 可读，但缺少正式三层关系 |
+| 现实输入 | 最近真实发生了什么？ | knowledge / schedule / activities / mood 可读 |
+| 当前选择 | 今天具体要承担哪项实践？ | schedule 可用，尚未统一挂接阶段目标 |
+| 实践与回归 | 中断后如何重新进入？ | 完成/重开可用，回归语义尚未独立 |
+| 反馈与整理 | 事实、阻力和调整是什么？ | daily-review、pattern、resistance 可用/部分可用 |
+| 认知成长 | 哪条认识有来源，是否已确认？ | candidate → promote 边界已存在 |
+| 节奏调整 | 多方向如何分配当前注意力？ | daily-plan/suggestion 可用，方向维度待补 |
+
+### 0.1 关系补齐方向（设计基线）
+
+未来领域、阶段目标和当前实践需要能表达：
+
+```text
+growth_domain
+  └─ stage_goal
+       └─ current_practice
+            ├─ evidence / feedback
+            ├─ return_attempt
+            └─ cognitive_asset_candidate
+```
+
+第一条主路径已经落到产品正源：
+
+| 能力 | 产品数据 | API |
+|---|---|---|
+| 成长领域 | `growth_domains` | `GET/POST /api/jieyi/growth-domains` |
+| 阶段目标 | `stage_goals.domain_id` | `POST /api/jieyi/stage-goals` |
+| 当前实践 | `schedules_new.stage_goal_id` | `POST /api/jieyi/current-practices` |
+| 完成/中断/回归 | `schedules_new.practice_status` + `practice_events` | `POST /api/jieyi/current-practices/{id}/events` |
+| 当前地图 | 同一产品数据库读回 | `GET /api/jieyi/growth-map?date=YYYY-MM-DD` |
+
+旧 `schedules_new` 行动的 `stage_goal_id` 允许为空，保持兼容；只有挂接阶段目标的行动才算当前实践主路径的一部分。
 
 ---
 
-## 1. API 分组
+## 1. API 分组（兼容实现）
 
 | 分组 | 说明 | 前端用途 |
 |------|------|----------|
@@ -19,6 +77,7 @@
 | goals | 长期目标 | /way（/dao 仅兼容 alias/历史称呼） |
 | wisdom | 智慧卡片 | /way（/dao 仅兼容 alias/历史称呼） |
 | agent | daily context、写入下一计划 | 后台 |
+| growthPath | 成长领域、阶段目标、当前实践和回归事件 | /way + /act |
 
 ---
 
@@ -44,6 +103,11 @@
 | GET | `/api/wisdom` | 智慧卡片 |
 | POST | `/api/agent/jieyi/deep-learning/prepare` | 准备学习包 |
 | POST | `/api/agent/jieyi/deep-learning/acceptance` | 保存五卡验收 |
+| GET | `/api/jieyi/growth-map?date=YYYY-MM-DD` | 读取成长领域、阶段目标、当天当前实践和事件轨迹 |
+| POST | `/api/jieyi/growth-domains` | 用户确认后新增成长领域 |
+| POST | `/api/jieyi/stage-goals` | 用户确认后新增阶段目标 |
+| POST | `/api/jieyi/current-practices` | 用户确认后新增挂接实践 |
+| POST | `/api/jieyi/current-practices/{id}/events` | 记录完成、中断或回归 |
 
 ---
 

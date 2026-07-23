@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "change_id": "JY-V4-9C",
+  "route": "delivery",
+  "guidance_mode": "guided",
+  "goal": "把正式前端收束为现实、认识、实践、积累四功能面，并提供贯穿页面的记一笔，同时保持知识改造现实主路径",
+  "target": "结衣私人系统前端",
+  "current_stage": "complete",
+  "status": "complete",
+  "locked_decisions": [
+    "一级导航固定为现实、认识、实践、积累，现实默认，记一笔贯穿全部页面",
+    "复用并重组现有 RealityIssue、Knowledge、Action、Reflect、Way，不建立第二套事实源"
+  ],
+  "acceptance": [
+    "四项导航在手机和桌面同序，旧 reflect/way/dao 路由继续可达",
+    "现有现实课题、知识、实践、整理、方向和原则均能从新入口读回"
+  ],
+  "forbidden_behavior": [
+    "不得删除正式数据、不得新增人格评价、不得把静态样例冒充真实内容",
+    "不得只改导航标签而丢失旧能力"
+  ],
+  "intake_answers": {
+    "project": {
+      "value": "结衣私人系统前端",
+      "source": "inferred"
+    },
+    "desired_result": {
+      "value": "把正式前端收束为现实、认识、实践、积累四功能面，并提供贯穿页面的记一笔，同时保持知识改造现实主路径",
+      "source": "user"
+    },
+    "current_problem": {
+      "value": "现有导航仍是现实、知、行、思、道五入口，用户必须跨旧分类寻找能力，前端信息架构尚未按已批准目标落地",
+      "source": "inferred"
+    },
+    "preserve": {
+      "value": "保留现实课题M1、知识长文与深度学习、实践与活动、复盘与原则、旧路由和全部正式数据",
+      "source": "user"
+    },
+    "acceptance": {
+      "value": "手机和桌面只显示现实、认识、实践、积累四项一级导航；任意页面可记一笔；旧链接仍可使用；真实数据、空态、失败态和保存回读通过",
+      "source": "inferred"
+    }
+  },
+  "reuse_assessment": [
+    {
+      "kind": "local",
+      "source": "现有 RealityIssue、Knowledge、Action、Reflect、Way 页面与共享导航/服务",
+      "decision": "adapt",
+      "reason": "现有能力和真实数据链已可用，本阶段只做兼容重组，不重写业务主链",
+      "license_note": ""
+    }
+  ],
+  "verified": {
+    "goal_lock": [
+      "PRD V4.3、SSD V4.2、ACCEPTANCE V4-16至V4-20已核对；当前导航仍为现实/知/行/思/道；现有五页和API均可复用"
+    ],
+    "reality_check": [
+      "方案已收束为复用现有页面与正源：reality/know/act/accumulate 四入口，reflect/way/dao 保持兼容，全局记一笔只存原文"
+    ],
+    "solution_alignment": [
+      "切片边界已确定：共享导航与路由；普通笔记写入；认识页当前课题知识；实践页现实实践与反馈；积累页真实聚合"
+    ],
+    "build_plan": [
+      "四导航、全局记一笔、认识页知识分析、实践页现实反馈、积累页真实聚合已实现；11项定向合同通过且生产构建通过"
+    ],
+    "build": [
+      "正式服务已上线：390px 现实/认识/实践/积累四页均读回真实课题、知识、方法和积累内容；无横向溢出、无页面错误；旧 reflect/way 可达；记一笔弹层可用；生产 notes 写入口对空白输入正确拒绝，原文保存与读回由后端隔离真实测试通过"
+    ],
+    "real_acceptance": [
+      "STATUS、BACKLOG 和 latest delivery 已同步；前后端服务 active"
+    ],
+    "forbidden_behavior": [
+      "浏览器与代码审查确认：无人格评价模块、无静态假数据、无正式数据删除；旧路由仍可达；记一笔不自动分类、不调用模型、不自动关联课题"
+    ],
+    "delivery": [
+      "四功能面与全局记一笔已在正式服务可用；后端61项、前端33项、生产构建和真实浏览器通过"
+    ]
+  },
+  "invalidated": [],
+  "blockers": [],
+  "resolved_blockers": [],
+  "next": "",
+  "created_at": "2026-07-22T13:40:33.299149+00:00",
+  "updated_at": "2026-07-22T14:06:48.262813+00:00",
+  "events": [
+    {
+      "at": "2026-07-22T13:40:33.299149+00:00",
+      "kind": "intake_started",
+      "stage": "intake"
+    },
+    {
+      "at": "2026-07-22T13:40:33.362940+00:00",
+      "kind": "intake_answered",
+      "field": "project",
+      "source": "inferred"
+    },
+    {
+      "at": "2026-07-22T13:40:33.424890+00:00",
+      "kind": "intake_answered",
+      "field": "desired_result",
+      "source": "user"
+    },
+    {
+      "at": "2026-07-22T13:40:33.487330+00:00",
+      "kind": "intake_answered",
+      "field": "current_problem",
+      "source": "inferred"
+    },
+    {
+      "at": "2026-07-22T13:40:33.547896+00:00",
+      "kind": "intake_answered",
+      "field": "preserve",
+      "source": "user"
+    },
+    {
+      "at": "2026-07-22T13:40:33.606248+00:00",
+      "kind": "intake_answered",
+      "field": "acceptance",
+      "source": "inferred"
+    },
+    {
+      "at": "2026-07-22T13:40:33.662640+00:00",
+      "kind": "intake_promoted",
+      "destination": "goal_lock"
+    },
+    {
+      "at": "2026-07-22T13:40:33.721910+00:00",
+      "kind": "reuse_assessed",
+      "assessment": {
+        "kind": "local",
+        "source": "现有 RealityIssue、Knowledge、Action、Reflect、Way 页面与共享导航/服务",
+        "decision": "adapt",
+        "reason": "现有能力和真实数据链已可用，本阶段只做兼容重组，不重写业务主链",
+        "license_note": ""
+      }
+    },
+    {
+      "at": "2026-07-22T13:44:58.865006+00:00",
+      "kind": "brief_locked",
+      "decisions": [
+        "一级导航固定为现实、认识、实践、积累，现实默认，记一笔贯穿全部页面"
+      ],
+      "acceptance": [
+        "四项导航在手机和桌面同序，旧 reflect/way/dao 路由继续可达"
+      ],
+      "forbidden": [
+        "不得删除正式数据、不得新增人格评价、不得把静态样例冒充真实内容"
+      ]
+    },
+    {
+      "at": "2026-07-22T13:44:58.927307+00:00",
+      "kind": "brief_locked",
+      "decisions": [
+        "复用并重组现有 RealityIssue、Knowledge、Action、Reflect、Way，不建立第二套事实源"
+      ],
+      "acceptance": [
+        "现有现实课题、知识、实践、整理、方向和原则均能从新入口读回"
+      ],
+      "forbidden": [
+        "不得只改导航标签而丢失旧能力"
+      ]
+    },
+    {
+      "at": "2026-07-22T13:44:58.986092+00:00",
+      "kind": "transition",
+      "source": "goal_lock",
+      "destination": "reality_check",
+      "evidence": "PRD V4.3、SSD V4.2、ACCEPTANCE V4-16至V4-20已核对；当前导航仍为现实/知/行/思/道；现有五页和API均可复用"
+    },
+    {
+      "at": "2026-07-22T14:01:27.008166+00:00",
+      "kind": "transition",
+      "source": "reality_check",
+      "destination": "solution_alignment",
+      "evidence": "方案已收束为复用现有页面与正源：reality/know/act/accumulate 四入口，reflect/way/dao 保持兼容，全局记一笔只存原文"
+    },
+    {
+      "at": "2026-07-22T14:01:27.069714+00:00",
+      "kind": "transition",
+      "source": "solution_alignment",
+      "destination": "build_plan",
+      "evidence": "切片边界已确定：共享导航与路由；普通笔记写入；认识页当前课题知识；实践页现实实践与反馈；积累页真实聚合"
+    },
+    {
+      "at": "2026-07-22T14:01:27.131689+00:00",
+      "kind": "transition",
+      "source": "build_plan",
+      "destination": "build",
+      "evidence": "四导航、全局记一笔、认识页知识分析、实践页现实反馈、积累页真实聚合已实现；11项定向合同通过且生产构建通过"
+    },
+    {
+      "at": "2026-07-22T14:06:22.112987+00:00",
+      "kind": "transition",
+      "source": "build",
+      "destination": "real_acceptance",
+      "evidence": "正式服务已上线：390px 现实/认识/实践/积累四页均读回真实课题、知识、方法和积累内容；无横向溢出、无页面错误；旧 reflect/way 可达；记一笔弹层可用；生产 notes 写入口对空白输入正确拒绝，原文保存与读回由后端隔离真实测试通过"
+    },
+    {
+      "at": "2026-07-22T14:06:48.198262+00:00",
+      "kind": "transition",
+      "source": "real_acceptance",
+      "destination": "delivery",
+      "evidence": "STATUS、BACKLOG 和 latest delivery 已同步；前后端服务 active"
+    },
+    {
+      "at": "2026-07-22T14:06:48.262792+00:00",
+      "kind": "completed",
+      "evidence": "四功能面与全局记一笔已在正式服务可用；后端61项、前端33项、生产构建和真实浏览器通过"
+    }
+  ]
+}

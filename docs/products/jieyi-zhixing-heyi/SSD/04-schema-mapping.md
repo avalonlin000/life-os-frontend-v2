@@ -1,8 +1,22 @@
 # 结衣知行合一 — 数据映射方案 (Schema Mapping)
 
 > 基于 `/home/ubuntu/workspace/knowledge/wiki/结衣LifeOS/规格重补/schema-mapping.md` 拆分整理
-> 版本：1.0 | 2026-06-28
+> 版本：2.0（能力总图重整） | 2026-07-19
 > 原则：先读真实 API / 数据库，再写入 Wiki；Wiki 是沉淀层，不替代业务数据库。
+
+## 0. 能力到现有数据的映射
+
+| 能力 | 当前主要数据 | 现有缺口 |
+|------|--------------|----------|
+| 人生方向 | `growth_domains`、`stage_goals`、`goals`、`wisdom` | 新三层关系已建立，旧 goals 保留兼容 |
+| 现实输入 | `knowledge`、`activities`、`mood`、`schedules_new` | 来源和成长方向关联不统一 |
+| 当前选择 | `schedules_new.stage_goal_id`、`daily_plan` | 新挂接实践统一表达为 current practice，旧行动允许为空关联 |
+| 实践与回归 | `practice_status`、`practice_events`、活动记录 | 完成/中断/回归已有显式事件语义 |
+| 反馈与整理 | `daily_review`、模式/阻力/趋势快照 | 结果、解释、目的和下一次实践尚未统一 |
+| 认知成长 | `cognitive_asset_candidate`、`wisdom` | 候选提升已存在，证据链需持续补强 |
+| 节奏调整 | `daily_plan`、schedule suggestion | 尚未按多个成长方向分配焦点 |
+
+本轮重整只统一语义和映射，不假装现有数据已经具备这些关系；后续按真实路径逐步补契约和迁移。
 
 ---
 
@@ -11,12 +25,12 @@
 | 产品模块 | 前端页面 | API 路径 | shared 封装 | Wiki 落点 | 数据状态 |
 |----------|----------|----------|-------------|-----------|----------|
 | 知识输入 | /know | `/knowledge` | `jieyiService.knowledge` | `结衣LifeOS/知/` | API 在线，数据待检查 |
-| 行动队列 | /act | `/schedule` | `jieyiService.schedule` | `结衣LifeOS/行/` | API 在线，数据待检查 |
+| 当前实践（兼容行动队列） | /act | `/jieyi/current-practices` + `/schedule` | `jieyiService.growthPath` + `jieyiService.schedule` | `结衣LifeOS/行/` | 新实践可追溯到阶段目标；旧行动继续兼容 |
 | 活动记录 | /reflect | `/activities` | `jieyiService.activities` | `结衣LifeOS/思/` | API 在线，已用 curl 校验创建/结束/读取 |
 | 统一复盘原文 | /reflect | `/mood` | `jieyiService.mood` | `结衣LifeOS/思/复盘原文/` | API 在线，当前落 `mood.note` |
 | 今日整理 | /reflect | `/daily-review` | `jieyiService.dailyReview` | `结衣LifeOS/思/今日整理/` | API 在线，POST `/daily-review?date=` 生成 |
 | 每日计划 | /act | `/daily-plan` | `jieyiService.dailyPlan` | - | API 在线，含 learn/review/doTasks |
-| 长期目标 | /way（/dao 仅兼容 alias/历史称呼） | `/goals` | `jieyiService.goals` | `结衣LifeOS/道/目标/` | API 存在，数据待确认 |
+| 成长领域/阶段目标 | /way（/dao 仅兼容 alias/历史称呼） | `/jieyi/growth-map`、`/jieyi/growth-domains`、`/jieyi/stage-goals` | `jieyiService.growthPath` | `结衣LifeOS/道/目标/` | 第一条正式三层关系已接通；旧 `/goals` 保留兼容 |
 | 智慧/模式 | /way（/dao 仅兼容 alias/历史称呼） | `/wisdom` | `jieyiService.wisdom` | `结衣LifeOS/道/智慧/` | API 存在，数据待确认 |
 | 深度学习 | /know | `/agent/jieyi/deep-learning/prepare` | `jieyiService.deepLearning` | `结衣LifeOS/知/深度学习/` | 前端 MVP 存在，后端检索待确认 |
 | 每日上下文 | 后台 | `/agent/jieyi/daily-context` | `jieyiService.agent.dailyContext` | - | 聚合接口，用于 Hermes 整理 |

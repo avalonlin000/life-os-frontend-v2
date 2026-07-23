@@ -52,6 +52,9 @@
 - `GET /api/jieyi/reflection/today`
 - `POST /api/jieyi/reflection/write-tomorrow`
 - `GET /api/jieyi/principles`
+- `POST /api/jieyi/principles/candidates/{id}/promote`
+  - 入参：`{ "statement": "用户确认后的正式原则" }`
+  - 仅显式确认后把候选写入 `wisdom`；原候选保留并标记 `promoted`，重复调用幂等。
 
 ### 深度学习 API
 

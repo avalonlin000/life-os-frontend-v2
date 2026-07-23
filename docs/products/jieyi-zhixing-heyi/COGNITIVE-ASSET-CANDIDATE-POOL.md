@@ -7,10 +7,10 @@
 
 当前切片采用“原则候选池”而不是直接写 Wiki：
 
-- `daily-review / reflection` 生成的认知资产只进入 `candidate` 状态。
+- `daily-review / reflection` 和深度学习验收生成的认知资产默认只进入 `candidate` 状态。
 - 前端 service 把候选映射成 `JieyiPrincipleItem`，追加到 `/way` 原则列表的候选区语义里。
 - 候选使用 `source_type = cognitive_asset_candidate`、`verification_status = pending`、`verification_label = 候选池 · 待确认`。
-- 不调用 Wiki 写入，不写入长期原则表，不把候选伪装成已验证原则。
+- 默认不调用 Wiki 写入、不写入长期原则表，不把候选伪装成已验证原则；用户明确确认后可通过显式提升入口写入 `wisdom`，并把原候选标记为 `promoted` 保留来源。
 
 ## 为什么不直接写 Wiki
 
@@ -47,6 +47,9 @@ COG4 的核心不是“必须立刻写文件”，而是防止静默污染长期
 - `packages/jieyi-web/src/pages/Way.tsx`
   - 道页改用 `listWithCandidates()`
   - 候选来源显示为“来自今日整理候选池”
+- `POST /api/jieyi/principles/candidates/{id}/promote`
+  - 仅在用户明确确认后创建正式 `wisdom`
+  - 重复调用返回原正式原则，不重复创建
 
 ## 验收口径
 

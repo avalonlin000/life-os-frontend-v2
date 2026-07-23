@@ -1,6 +1,6 @@
 # 结衣知行合一 · 项目索引
 
-> 本文件是结衣项目的归属入口。任何知/行/思/道、复盘、行动、原则、个人反馈相关内容，先从这里进入；不要混到小雪电竞人生。
+> 本文件是结衣项目的归属入口。任何现实课题、认识、方法、实践、反馈、知/行/思/道和原则相关内容，先从这里进入；不要混到小雪电竞人生。
 
 ## 1. 项目归属
 
@@ -8,8 +8,10 @@
 |---|---|
 | 用户侧产品 | 结衣知行合一 |
 | 内部工程母项目 | Life OS |
-| 项目主责 | 小白 |
-| 日常辅助 | 结衣 |
+| 项目主责 | Codex |
+| 日常入口 | 结衣 Agent 与现实课题页 |
+| 小维护 | Hermes `jieyi-product-ops` |
+| 用户说明书 | `/home/ubuntu/.hermes/team/JIEYI_MANUAL.html`（总控制台中与小雪说明书并列） |
 | 专用 skill | `jieyi-zhixing-workflow` |
 | 当前前端 | `/home/ubuntu/life-os-frontend-v2/packages/jieyi-web/` |
 | 产品文档根目录 | `/home/ubuntu/life-os-frontend-v2/docs/products/jieyi-zhixing-heyi/` |
@@ -17,7 +19,7 @@
 ## 2. 结衣管什么
 
 ```text
-知 / 行 / 思 / 道 / 知识输入 / 今日行动 / 今日复盘 / 活动记录 / 原则沉淀 / 深度学习 / 个人反馈调整 / 移动端日常入口
+现实课题 / 认识世界 / 方法 / 时间与实践 / 真实反馈 / 世界观与方法论更新 / 知行思道兼容能力 / 移动端日常入口
 ```
 
 不归结衣：
@@ -35,7 +37,7 @@
 | 知识库 | `/home/ubuntu/workspace/knowledge/wiki/结衣LifeOS/` | 结衣知识来源 |
 | 历史规格来源 | `/home/ubuntu/workspace/knowledge/wiki/结衣LifeOS/规格重补/` | 历史迁移来源 |
 
-当前页面路由：`/know`、`/act`、`/reflect`、`/way`。其中 `/way` 是「道」页主入口；`/dao` 只作为兼容 alias/历史称呼，进入后应回到 `/way`，底部导航不改成 `/dao`。
+当前主路由：`/reality`，`/` 与 `/jieyi/` 默认进入当前现实课题。支持路由继续保留 `/know`、`/act`、`/reflect`、`/way`；`/dao` 只作为兼容 alias/历史称呼。
 
 ## 4. 文档入口
 
@@ -43,7 +45,10 @@
 |---|---|
 | `README.md` | 结衣项目总览和阅读顺序 |
 | `BOT_GUIDE.md` | 结衣机器人说明书 |
+| `/home/ubuntu/.hermes/team/JIEYI_MANUAL.html` | 给钧钧看的结衣使用说明书 |
 | `PRD/00-overview.md` | 产品定位、目标、边界 |
+| `CURRENT-CAPABILITY-MAP.md` | 当前真实入口、能力、数据正源、写入边界与冲突地图 |
+| `AGENT-CAPABILITY-MAP.md` | 结衣 Agent runtime 的真实入口、工具、cron、写入和越界边界 |
 | `PRD/01-features.md` | 功能范围、P0/P1、AC |
 | `PRD/02-roadmap.md` | 路线图 |
 | `SSD/00-system-semantics.md` | 知/行/思/道系统语义 |
@@ -82,6 +87,7 @@
 cd /home/ubuntu/life-os-frontend-v2
 pnpm --filter jieyi-web build
 curl http://127.0.0.1:3001/
+curl http://127.0.0.1:3001/reality
 curl http://127.0.0.1:3001/know
 curl http://127.0.0.1:3001/act
 curl http://127.0.0.1:3001/reflect
