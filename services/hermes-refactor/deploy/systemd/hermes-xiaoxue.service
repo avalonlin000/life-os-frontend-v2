@@ -15,13 +15,13 @@ Wants=network.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/workspace/hermes-refactor/backend
+WorkingDirectory=/home/ubuntu/xiaoxue-web
 
 # 环境变量从 .env 加载（或通过 EnvironmentFile 指定）
-EnvironmentFile=/home/ubuntu/workspace/hermes-refactor/.env
+# 当前小雪独立项目不依赖结衣后端的 .env。
 
 # 启动命令
-ExecStart=/usr/bin/python3 -m uvicorn app.main:app \
+ExecStart=/home/ubuntu/.hermes/hermes-agent/venv/bin/python -m uvicorn main:app \
   --host 0.0.0.0 \
   --port 8880 \
   --log-level info \

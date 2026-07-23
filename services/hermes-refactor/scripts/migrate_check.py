@@ -5,7 +5,7 @@ migrate_check.py — 迁移校验脚本
 读不出来就停，绝不改原库。
 
 用法：
-    cd /home/ubuntu/workspace/hermes-refactor
+    cd /home/ubuntu/life-os-frontend-v2/services/hermes-refactor
     python scripts/migrate_check.py
 """
 

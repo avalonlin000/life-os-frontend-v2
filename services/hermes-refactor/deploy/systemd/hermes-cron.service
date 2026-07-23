@@ -8,12 +8,12 @@ After=network.target
 [Service]
 Type=oneshot
 User=ubuntu
-WorkingDirectory=/home/ubuntu/workspace/hermes-refactor/backend
-EnvironmentFile=/home/ubuntu/workspace/hermes-refactor/.env
+WorkingDirectory=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend
+EnvironmentFile=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend/.env
 
 # 此处为 cron 入口——采集任务统一调度脚本
 # 可扩展为跑单个采集：python3 -c "from app.collectors.scoregg import run; run()"
-ExecStart=/usr/bin/python3 -c "from app.collectors.daily_report import run; run()"
+ExecStart=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend/venv/bin/python -c "from app.collectors.daily_report import run; run()"
 
 StandardOutput=journal
 StandardError=journal

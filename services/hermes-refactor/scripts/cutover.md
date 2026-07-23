@@ -61,7 +61,7 @@ sudo systemctl status hermes-xiaoxue 2>/dev/null || echo "无旧服务"
 
 ```bash
 # 3.1 进入目标目录
-cd /home/ubuntu/workspace/hermes-refactor
+cd /home/ubuntu/life-os-frontend-v2/services/hermes-refactor
 
 # 3.2 拉取最新代码（如果使用 git）
 # git pull origin main
@@ -191,9 +191,9 @@ cp 英雄联盟数据库.db.bak.* 英雄联盟数据库.db
 
 | 内容 | 路径 |
 |------|------|
-| 项目根 | `/home/ubuntu/workspace/hermes-refactor/` |
+| 项目根 | `/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/` |
 | 原库 | `/home/ubuntu/lol_data/英雄联盟数据库.db` |
-| 新库 | `/home/ubuntu/workspace/hermes-refactor/refactor_data.db` |
+| 新库 | `/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/refactor_data.db` |
 | 小雪后端 | `localhost:8880` |
 | 结衣后端 | `localhost:3001` |
 | 日志查看 | `journalctl -u hermes-xiaoxue -f` |
