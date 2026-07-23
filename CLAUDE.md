@@ -4,10 +4,9 @@
 >
 > 统一口径：指导文件/产品文档定目标，skill 定方法；本文件主要提供工程上下文、命令、目录、风险提醒，不覆盖 AGENTS 的执行方式。普通代码、接口、构建、文档、delivery、低风险适配默认自动推进；内容方向大改、产品定位/语义大改、用户体验主路径取舍、非测试业务数据写入、破坏性动作、系统级网络/密钥/模型/账号配置才需要钧钧确认。
 
-> **你是谁：你是小白（项目主负责人）。当飞书群里有人 @小白，你就是被叫的那个人。**
-> 你的职责：负责全部项目内容：需求理解、方案判断、数据排查、代码实现、构建部署、服务运维、文档沉淀、验收闭环。结衣和小雪只是日常低模型辅助钧钧，不是项目主责方。钧钧是你老板。
-> 群里对话直接回复就好，不需要多余解释。代码任务执行到底，有问题群里说。
-> 交付同步默认不唤醒别人；需要人工接手时由钧钧明确指定。
+> **当前默认开发主力是 Codex。**钧钧直接给 Codex Goal；Codex 负责方案、代码、数据排查、构建、验证、必要文档和交付闭环。小白只保留飞书入口、Hermes 运维、bot 恢复和 Codex 不可用时的备用接手。
+>
+> 唯一主控协议：`/home/ubuntu/.hermes/team/CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md`。身份或执行方式冲突时，以 `AGENTS.md` 和该协议为准。
 
 
 ## 飞书群聊协作与交接总则（当前口径）
@@ -18,7 +17,7 @@
 
 ### 2. 交接闭环
 
-群聊推进任务时，默认由小白主责闭环。只有钧钧明确指定别人接手时，才写清交接对象、原因和上下文；否则只写“给小雪/给结衣”的摘要分区，不唤醒。
+群聊推进开发任务时默认由 Codex 主责闭环。只有 Codex 不可用或钧钧明确指定小白接手时，才交给小白；Delivery 仍只写给小雪/结衣的必要摘要，不主动唤醒。
 
 ### 3. 不要形成机器人互相 @ 死循环
 
@@ -230,7 +229,7 @@ Default handling order:
 3. Try a targeted fix and rerun the relevant verification command
 4. If 3 repair attempts fail in a row, stop and summarize what was tried before asking for direction
 
-Safe actions 小白/Hermes coding agents can usually perform automatically in this repo:
+Safe actions Codex can usually perform automatically in this repo:
 - read and edit project code files
 - run builds / type checks
 - inspect git status / diff

@@ -16,9 +16,11 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 
 | 项目 | 归属 | 详细上下文入口 | 专用 skill |
 |---|---|---|---|
-| 小雪电竞人生 | 电竞判断工作台 | `docs/products/xiaoxue-esports-life/PROJECT_INDEX.md` | `xiaoxue-esports-workflow` |
+| 小雪电竞人生 | 电竞交易辅助系统，LOL 是第一项目 | `docs/products/xiaoxue-esports-life/PROJECT_INDEX.md` | `xiaoxue-esports-workflow` |
 | 结衣知行合一 | 个人反馈调整系统 | `docs/products/jieyi-zhixing-heyi/PROJECT_INDEX.md` | `jieyi-zhixing-workflow` |
 | 共享工程层 | delivery 文件、可选通知、bot 边界、共享脚本、仓库级文档 | 本文件 + `README.md` + `AGENTS.md` + `CLAUDE.md` | `life-os-frontend-workflow` 仅限共享/跨项目 |
+
+项目主控协议：`/home/ubuntu/.hermes/team/CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md`。Codex 是长期默认开发主力，钧钧直接给 Codex Goal；小白只保留飞书入口、Hermes 运维、bot 恢复和 Codex 不可用时的备用接手。
 
 任何需求先判断产品归属：
 
@@ -119,7 +121,8 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 | `docs/products/README.md` | 两个用户侧产品的总索引 |
 | `docs/PROJECT_OWNERSHIP_INDEX.md` | 本文件：归属、索引、沉淀规则 |
 | `docs/CURRENT_VERSION_FOR_BOTS.md` | 给机器人看的当前入口/职责/验证速查 |
-| `AGENTS.md` | 小白工程执行规则和飞书交接规则 |
+| `/home/ubuntu/.hermes/team/CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md` | Codex 项目主控与小雪/结衣双项目开发同步协议 |
+| `AGENTS.md` | Codex 工程执行、验证、安全和交付规则 |
 | `CLAUDE.md` | 仓库工程上下文和 legacy agent 指南 |
 | `.hermes/delivery-template.md` | 交付记录模板 |
 | `.hermes/deliveries/latest.md` | 最新交付摘要 |
@@ -203,11 +206,12 @@ http://42.193.177.127:5173/
 
 同步主机制是 delivery 文件，不是飞书唤醒。`.hermes/deliveries/latest.md` 是小雪/结衣读取最新上下文的入口；`pnpm hermes:sync` 只是可选广播/通知 latest.md 的位置，不是必要同步步骤。默认不唤醒别人、不发飞书；广播失败不影响 delivery 文件同步，也不能改发给钧钧冒充已同步。
 
-### 5.1 小白完成项目工作后
+### 5.1 Codex 完成项目工作后
 
 - 小雪项目：更新小雪 PRD/SSD/专项文档或 `xiaoxue-esports-workflow`；delivery 的「给小雪」写具体摘要，「给结衣」写“无影响”或高层一句。
 - 结衣项目：更新结衣 PRD/SSD/专项文档或 `jieyi-zhixing-workflow`；delivery 的「给结衣」写具体摘要，「给小雪」写“无影响”或高层一句。
 - 共享层：更新本索引/README/AGENTS/CLAUDE/脚本；delivery 同时写清两个产品是否受影响。
+- Codex 主控协议相关：同步 `CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md`、钧钧工作台和对应 scoped latest；稳定改动验证后形成 Git 版本点，是否 push 服从钧钧当次要求和仓库状态。
 
 ### 5.2 小雪/结衣读取上下文
 

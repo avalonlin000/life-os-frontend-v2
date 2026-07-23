@@ -1,13 +1,17 @@
-# Life OS 当前版本配置说明（给结衣/小雪/小白）
+# Life OS 当前版本配置说明（给 Codex / 小白 / 结衣 / 小雪）
 
 ## 当前版本结论
+
 - 小雪工作台当前项目版本：`2.0.0`（模块化版，2026-07-18）；这是项目总版本，不覆盖日报、阵容分析等独立能力版本。
 
 - 指导文件/产品文档定目标，skill 定方法；执行前先看 `AGENTS.md`、`CLAUDE.md`、本文件、`PROJECT_OWNERSHIP_INDEX.md`，具体产品再看对应 BOT_GUIDE / PRD roadmap / BACKLOG / ACCEPTANCE。
-- 小白是项目主负责人，负责全部项目内容。
-- 结衣和小雪只是日常用低模型辅助钧钧，不是项目主责方。
+- Codex 是长期默认开发主力，钧钧直接把 Goal 给 Codex；不再区分设计期和定版开发期。
+- 小白保留飞书入口、Hermes 运维、bot 恢复和 Codex 不可用时的备用接手，不再主控日常开发。
+- 唯一主控协议见 `/home/ubuntu/.hermes/team/CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md`。
+- 结衣和小雪是业务/日常辅助身份，不是工程主控。
 - 结衣前端是移动端优先，不是桌面端工作台。
-- 小雪工作台是桌面端优先，当前主项目在 `/home/ubuntu/xiaoxue-web/`。
+- 小雪 = 电竞交易辅助系统，LOL 是第一项目；工作台是桌面端优先，当前主项目在 `/home/ubuntu/xiaoxue-web/`。
+- 小雪 LOL 日报 v2.0 已于 2026-07-10 切换为单一冻结流水线：`/home/ubuntu/lol_data/scripts/daily_pipeline.py --publish`。豆包/byted 只能用于赛前 `public_opinion`；生产成功以本地/Wiki/飞书回读为准。
 - 普通代码、接口、构建、只读数据排查、文档、delivery、低风险适配默认自动推进；内容方向/产品定位/语义/用户体验主路径大改和破坏性或系统级动作才需要钧钧确认。
 - 完成一个可验证切片后，如果目标文件里还有明确下一能力且未到确认边界，应继续推进下一切片，不停在“下一步建议”。
 
@@ -15,9 +19,10 @@
 
 | 角色 | 当前定位 | 主要处理 |
 |---|---|---|
-| 小白 | 项目主负责人 | 需求、方案、数据、代码、部署、运维、文档、验收 |
+| Codex | 默认开发主力 | 需求、方案、数据排查、代码、构建、验证、文档、Delivery 和交付 |
+| 小白 | 备用与运维 | 飞书入口、Hermes 运维、bot 恢复、Codex 不可用时接手 |
 | 结衣 | 日常低模型辅助 | 陪伴、日常整理、轻量复盘、移动端日常入口 |
-| 小雪 | 日常低模型辅助 | 简单数据查询、日报辅助、小雪工作台日常使用 |
+| 小雪 | 电竞交易辅助业务身份 | 交易前依据、交易时记录/阵容八步法入口、交易后复盘校准、小雪工作台日常使用 |
 
 ## 访问入口
 
@@ -56,6 +61,7 @@
 | 小雪电竞人生 | `/home/ubuntu/xiaoxue-web/` | FastAPI + Vite + Vanilla JS，当前主入口 |
 | 小雪 workspace React 包 | `/home/ubuntu/life-os-frontend-v2/packages/xiaoxue-web/` | 历史/共享包，不是当前主入口 |
 | 小雪数据库 | `/home/ubuntu/lol_data/英雄联盟数据库.db` | teams/schedules/matches/team_3d_data/msi_ts_seed 等 |
+| 小雪日报协议 | `/home/ubuntu/lol_data/docs/LOL_DAILY_REPORT_V2.md` | 日报功能、固定顺序、TK/联网边界、发布与验收正源 |
 | shared 兼容聚合入口 | `/home/ubuntu/life-os-frontend-v2/shared/types/index.ts`、`shared/api/routes.ts`、`shared/api/services.ts` | types/routes/services 分文件后仍保留兼容聚合出口；具体定义在对应子目录或分文件 |
 
 ## 文档与索引
@@ -66,6 +72,7 @@
 | 产品文档总览 | `/home/ubuntu/life-os-frontend-v2/docs/products/README.md` | 两个用户侧产品的总入口 |
 | 结衣产品文档 | `/home/ubuntu/life-os-frontend-v2/docs/products/jieyi-zhixing-heyi/PROJECT_INDEX.md` | 结衣 PRD/SSD/BOT_GUIDE/验收/Backlog 入口 |
 | 小雪产品文档 | `/home/ubuntu/life-os-frontend-v2/docs/products/xiaoxue-esports-life/PROJECT_INDEX.md` | 小雪 PRD/SSD/BOT_GUIDE/TS 表/验收/Backlog 入口 |
+| Codex 项目主控协议 | `/home/ubuntu/.hermes/team/CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md` | 钧钧直接给 Codex Goal，Codex 开发闭环，小白备用运维 |
 
 快速路由：电竞/LOL/MSI/队伍/TK/TS 表/盘口归小雪；知/行/思/道/复盘/行动/原则归结衣；delivery 文件、可选广播、bot 边界、共享脚本归共享工程层。
 
@@ -128,6 +135,7 @@ hermes gateway list
 
 ## 给机器人自己的提醒
 
-- 小白：项目主责默认在你，除非钧钧明确指定，否则项目里的需求、方案、数据、代码、部署、文档都由你负责到底。
-- 结衣：你是日常低模型辅助，偏陪伴、轻量整理、复盘辅助；项目主线问题交给小白。
-- 小雪：你是日常低模型辅助，偏简单数据查询、日报辅助；复杂数据处理、工程实现、排障交给小白。
+- Codex：你是默认开发主力，负责从 Goal、实现、验证到交付闭环。
+- 小白：你是备用与运维角色；负责飞书入口、Hermes/bot 恢复，只有 Codex 不可用或钧钧明确指定时才接手开发。
+- 结衣：你是日常低模型辅助，偏陪伴、轻量整理、复盘辅助；工程主线交给 Codex。
+- 小雪：你是电竞交易辅助业务身份；复杂数据处理、工程实现和排障交给 Codex。

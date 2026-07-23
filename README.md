@@ -1,10 +1,10 @@
 # Life OS · 内部工程母项目
 
-> 小白主责的内部工程母项目；用户侧产品拆分为「结衣知行合一」和「小雪电竞人生」。
+> Codex 主控开发的内部工程母项目；用户侧产品拆分为「结衣知行合一」和「小雪电竞人生」。
 
 ## 一句话
 
-Life OS 是钧钧个人项目体系的内部工程母项目，不再作为用户侧单一产品名。当前项目主负责人是小白：需求理解、方案判断、数据排查、代码实现、构建部署、服务运维、文档沉淀和验收闭环都由小白负责。结衣和小雪是日常低模型辅助，主要用于陪伴、整理、简单查询、日报/数据初筛，不作为项目主责方。
+Life OS 是钧钧个人项目体系的内部工程母项目，不再作为用户侧单一产品名。Codex 是当前默认开发主力，负责需求理解、方案判断、数据排查、代码实现、构建验证、必要文档和交付闭环。小白保留飞书入口、Hermes 运维、bot 恢复和 Codex 不可用时的备用接手；结衣和小雪承载各自业务与日常辅助，不做工程主控。
 
 ## 当前产品拆分
 
@@ -13,11 +13,12 @@ Life OS 是钧钧个人项目体系的内部工程母项目，不再作为用户
 | 结衣知行合一 | 个人反馈调整系统：知、行、思、道闭环 | `docs/products/jieyi-zhixing-heyi/PROJECT_INDEX.md` |
 | 小雪电竞人生 | 电竞判断工作台：赛程背景、队伍画像、TK、TS 表、盘口、日报沉淀 | `docs/products/xiaoxue-esports-life/PROJECT_INDEX.md` |
 
-## 当前机器人定位
+## 当前协作定位
 
-| 角色 | 定位 | Hermes profile | 主要用途 |
+| 角色 | 定位 | 入口 / profile | 主要用途 |
 |---|---|---|---|
-| 小白 | 项目主负责人 | `xiaobai` | 全部项目内容：需求、方案、数据、代码、部署、文档、验收 |
+| Codex | 默认开发主力 | 当前 Codex 会话 | 方案、代码、数据排查、构建、验证、文档和交付 |
+| 小白 | 备用与运维 | `xiaobai` | 飞书入口、Hermes 运维、bot 恢复、Codex 不可用时接手 |
 | 结衣 | 日常低模型辅助 | `jieyi` | 陪伴、日常整理、复盘辅助、移动端日常入口 |
 | 小雪 | 日常低模型辅助 | `default`（身份是小雪） | 简单数据查询、日报辅助、小雪工作台日常使用 |
 
@@ -110,8 +111,11 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8880
 - 结衣知行合一：`docs/products/jieyi-zhixing-heyi/PROJECT_INDEX.md`
 - 小雪电竞人生：`docs/products/xiaoxue-esports-life/PROJECT_INDEX.md`
 - 新手说明书：`docs/PROJECT_USER_GUIDE.md`
+- Vibe Coding 使用手册：`docs/VIBE_CODING_PLAYBOOK.md`
+- 项目演变与变更痛点复盘：`docs/PROJECT_EVOLUTION_REVIEW.md`
 - 当前版本机器人说明：`docs/CURRENT_VERSION_FOR_BOTS.md`
-- 小白工程规则：`AGENTS.md`
+- Codex 工程规则：`AGENTS.md`
+- Codex 主控协议：`/home/ubuntu/.hermes/team/CODEX_PROJECT_CONTROL_AND_SYNC_PROTOCOL.md`
 - 工程上下文：`CLAUDE.md`
 - 小雪来源规格：`/home/ubuntu/xiaoxue-web/SPEC.md`
 - 小雪项目记忆：`/home/ubuntu/xiaoxue-web/memory-bank/`

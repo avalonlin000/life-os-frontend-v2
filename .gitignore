@@ -20,3 +20,6 @@ __pycache__/
 .vite/
 **/.vite/
 coverage/
+
+# Generated verification sandboxes may contain copied runtime credentials.
+.hermes/deliveries/verified-changes/
