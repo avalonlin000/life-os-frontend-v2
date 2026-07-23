@@ -1,0 +1,32 @@
+# ===== systemd: hermes-jieyi.service — 结衣后端 =====
+# 部署路径：/etc/systemd/system/hermes-jieyi.service
+
+[Unit]
+Description=Hermes 结衣后端（知行合一数字分身 + 长期复盘）
+Documentation=https://hermes-agent.nousresearch.com/docs
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/workspace/hermes-refactor/backend
+
+EnvironmentFile=/home/ubuntu/workspace/hermes-refactor/.env
+
+ExecStart=/usr/bin/python3 -m uvicorn app.main:app \
+  --host 0.0.0.0 \
+  --port 3001 \
+  --log-level info \
+  --workers 1
+
+Restart=always
+RestartSec=10
+LimitNOFILE=65536
+MemoryMax=512M
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,68 @@
+# ===== docker-compose.yml — Hermes 系统重构 =====
+# 设计方案 §6-8：双后端 + 前端端口预留
+# 所有密钥/路径/模型名走环境变量，不硬编码
+
+services:
+  # ── 小雪后端（LOL 数据 + 交易记录）：8880 ──
+  xiaoxue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hermes-xiaoxue
+    ports:
+      - "8880:8880"
+    environment:
+      - PORT=8880
+      - ORIGINAL_DB_PATH=${ORIGINAL_DB_PATH:-/data/英雄联盟数据库.db}
+      - REFACTOR_DB_PATH=${REFACTOR_DB_PATH:-/data/refactor_data.db}
+      - APP_ENV=${APP_ENV:-production}
+      - DEBUG=${DEBUG:-0}
+    env_file:
+      - .env
+    volumes:
+      - lol_data:/data
+      - ./backend:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import http.client; c=http.client.HTTPConnection('localhost',8880); c.request('GET','/api/health'); r=c.getresponse(); assert r.status==200"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── 结衣后端（知行合一 + 长期复盘）：3001 ──
+  jieyi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hermes-jieyi
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - ORIGINAL_DB_PATH=${ORIGINAL_DB_PATH:-/data/英雄联盟数据库.db}
+      - REFACTOR_DB_PATH=${REFACTOR_DB_PATH:-/data/refactor_data.db}
+      - APP_ENV=${APP_ENV:-production}
+      - DEBUG=${DEBUG:-0}
+    env_file:
+      - .env
+    volumes:
+      - lol_data:/data
+      - ./backend:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import http.client; c=http.client.HTTPConnection('localhost',3001); c.request('GET','/api/health'); r=c.getresponse(); assert r.status==200"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── 前端端口预留（前端后续单独做） ──
+  # 小雪前端（:5173 / :80）
+  # 结衣前端（:3000 / :80）
+
+volumes:
+  lol_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ubuntu/lol_data
