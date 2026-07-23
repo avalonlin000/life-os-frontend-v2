@@ -56,6 +56,20 @@ http://42.193.177.127/dao
 
 http://42.193.177.127:3001/
 
+### 结衣后端
+
+- GitHub 正式源码：`services/hermes-refactor/backend/`
+- 生产兼容工作树：`/home/ubuntu/workspace/hermes-refactor/backend/`
+- 服务：`jieyi-backend.service`
+- 端口：`127.0.0.1:8881`
+
+后端工作树只是结衣项目的生产部署检出，不是第三个产品或第三个 GitHub 仓库。经过验证的后端提交通过 Git subtree 归档到本仓库的 `services/hermes-refactor/`。
+
+```bash
+cd services/hermes-refactor/backend
+PYTHONPATH=. venv/bin/python -m pytest -q
+```
+
 ### 小雪工作台：桌面端优先
 
 - 当前主项目位置：`/home/ubuntu/xiaoxue-web/`
