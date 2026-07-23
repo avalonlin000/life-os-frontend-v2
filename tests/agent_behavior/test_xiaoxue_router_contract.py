@@ -7,6 +7,8 @@ STAGED = (
     ROOT
     / ".hermes/deliveries/verified-changes/XX-XIAOXUE-ROOT-20260716-01/staged"
 )
+if not STAGED.exists():
+    raise unittest.SkipTest("generated Xiaoxue router delivery sandbox is not present")
 
 
 def read_staged(name: str) -> str:
