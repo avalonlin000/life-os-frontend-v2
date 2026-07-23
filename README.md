@@ -59,11 +59,11 @@ http://42.193.177.127:3001/
 ### 结衣后端
 
 - GitHub 正式源码：`services/hermes-refactor/backend/`
-- 生产兼容工作树：`/home/ubuntu/workspace/hermes-refactor/backend/`
+- 生产运行目录：`/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend/`
 - 服务：`jieyi-backend.service`
 - 端口：`127.0.0.1:8881`
 
-后端工作树只是结衣项目的生产部署检出，不是第三个产品或第三个 GitHub 仓库。经过验证的后端提交通过 Git subtree 归档到本仓库的 `services/hermes-refactor/`。
+结衣前端、后端、文档和部署配置现在统一由本仓库维护。旧独立工作树已移出活动开发区，只作为回滚归档保留。
 
 ```bash
 cd services/hermes-refactor/backend

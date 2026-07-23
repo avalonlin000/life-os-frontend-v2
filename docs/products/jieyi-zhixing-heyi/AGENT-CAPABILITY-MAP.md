@@ -159,7 +159,7 @@ Feishu 用户私聊/群聊 @结衣
 
 ### 5.2 后端同名 Agent 的边界
 
-`/home/ubuntu/workspace/hermes-refactor/backend/app/agents/jieyi_agent.py` 现在是 223 行的项目侧兼容外壳，不再由结衣产品路由实例化，也不再直接持有数据库、模型提示词或业务编排。知、行、思主链、目标、笔记、原则、首页聚合、深度学习、每日整理、每日计划、行动建议、知识拆行动和长期复盘 AI 均由 `app/services/jieyi/` 承接；旧方法名只做转发兼容。它不是 Feishu profile runtime，也不应被 SOUL 解释成“结衣自己会查数据库”。
+`services/hermes-refactor/backend/app/agents/jieyi_agent.py` 现在是 223 行的项目侧兼容外壳，不再由结衣产品路由实例化，也不再直接持有数据库、模型提示词或业务编排。知、行、思主链、目标、笔记、原则、首页聚合、深度学习、每日整理、每日计划、行动建议、知识拆行动和长期复盘 AI 均由 `app/services/jieyi/` 承接；旧方法名只做转发兼容。它不是 Feishu profile runtime，也不应被 SOUL 解释成“结衣自己会查数据库”。
 
 ## 6. 当前正源与事实冲突
 

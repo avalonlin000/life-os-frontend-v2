@@ -161,7 +161,7 @@ Life OS 只作为内部工程母项目和共享底座，不再作为用户侧单
 | 小雪 GitHub | `https://github.com/avalonlin000/xiaoxue-web` |
 | Nginx | `nginx.service`，80 默认入口反代到 `127.0.0.1:3001` |
 | 结衣 Web | `jieyi-web.service`，端口 `3001` |
-| 结衣 Backend | GitHub 正式源码 `services/hermes-refactor/backend/`；生产兼容工作树 `/home/ubuntu/workspace/hermes-refactor/backend/`；`jieyi-backend.service`，端口 `127.0.0.1:8881` |
+| 结衣 Backend | 正式源码与生产目录 `services/hermes-refactor/backend/`；`jieyi-backend.service`，端口 `127.0.0.1:8881` |
 | 小雪稳定服务 | `xiaoxue-workbench-api.service`，端口 `8880` |
 | 小雪开发服务 | `xiaoxue-workbench-vite.service`，端口 `5173` |
 

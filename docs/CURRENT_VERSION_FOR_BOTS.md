@@ -45,7 +45,7 @@
 | 系统 | 服务 / 仓库 | 当前状态 |
 |---|---|---|
 | 结衣 Web | `jieyi-web.service` | user service，3001，active running |
-| 结衣 Backend | `jieyi-backend.service` | user service，127.0.0.1:8881，active running，供 3001 /api proxy 与 daily-review/reflection 使用 |
+| 结衣 Backend | `jieyi-backend.service` | `services/hermes-refactor/backend/`，127.0.0.1:8881，active running，供 3001 /api proxy 与 daily-review/reflection 使用 |
 | 小雪稳定服务 | `xiaoxue-workbench-api.service` | user service，8880，active running |
 | 小雪 Vite 服务 | `xiaoxue-workbench-vite.service` | user service，5173，active running |
 | Nginx | `nginx.service` | system service，80 反代到 `127.0.0.1:3001` |

@@ -1,0 +1,15 @@
+[Unit]
+Description=Jieyi Zhixing Heyi Backend API (8881)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend
+ExecStart=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend/venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8881
+Environment=REFACTOR_DB_PATH=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/refactor_data.db
+Environment=PATH=/home/ubuntu/life-os-frontend-v2/services/hermes-refactor/backend/venv/bin:/home/ubuntu/.local/bin:/home/ubuntu/.npm-global/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

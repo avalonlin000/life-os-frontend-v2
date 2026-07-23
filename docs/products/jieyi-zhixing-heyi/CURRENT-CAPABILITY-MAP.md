@@ -141,8 +141,8 @@
 当前代码入口：
 
 - 前端：`packages/jieyi-web/`
-- 产品 API：`/home/ubuntu/workspace/hermes-refactor/backend/app/api/jieyi/routes.py`
-- 产品数据库：`/home/ubuntu/workspace/hermes-refactor/refactor_data.db`
+- 产品 API：`services/hermes-refactor/backend/app/api/jieyi/routes.py`
+- 产品数据库：`services/hermes-refactor/refactor_data.db`
 - 共享 API/type 兼容出口：`shared/api/`、`shared/types/`
 
 ## 4. 用户可见能力地图
