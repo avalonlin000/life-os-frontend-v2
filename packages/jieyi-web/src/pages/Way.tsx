@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { jieyiService } from '@shared/api/services';
-import type { JieyiPatternCandidate, JieyiPrincipleItem } from '@shared/types';
+import type { GrowthMap, JieyiPatternCandidate, JieyiPrincipleItem } from '@shared/types';
 import { wayPrincipleCandidateSample } from '../contentSamples';
 
 type PrinciplesResponse = {
@@ -48,14 +48,26 @@ export default function Way() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [sampleDetailsOpen, setSampleDetailsOpen] = useState(false);
+  const [growthMap, setGrowthMap] = useState<GrowthMap | null>(null);
+  const [domainName, setDomainName] = useState('');
+  const [stageGoalContent, setStageGoalContent] = useState('');
+  const [selectedDomainId, setSelectedDomainId] = useState<number | null>(null);
+  const [growthSaving, setGrowthSaving] = useState(false);
+
+  const refreshGrowthMap = async () => {
+    const nextMap = await jieyiService.growthPath.map();
+    setGrowthMap(nextMap);
+    setSelectedDomainId((current) => current ?? nextMap.domains[0]?.id ?? null);
+  };
 
   useEffect(() => {
     setLoading(true);
     Promise.all([
       jieyiService.principles.listWithCandidates(),
       jieyiService.patternRecognition.detect({ days: 14 }).catch(() => null),
+      jieyiService.growthPath.map().catch(() => null),
     ])
-      .then(([data, patternData]: [PrinciplesResponse, Awaited<ReturnType<typeof jieyiService.patternRecognition.detect>> | null]) => {
+      .then(([data, patternData, growthData]: [PrinciplesResponse, Awaited<ReturnType<typeof jieyiService.patternRecognition.detect>> | null, GrowthMap | null]) => {
         const way = data?.way;
         const items = Array.isArray(data?.principles) ? data.principles : (Array.isArray(way?.principles) ? way.principles : []);
         const candidates = Array.isArray(data?.cognitive_asset_candidates)
@@ -70,6 +82,8 @@ export default function Way() {
         setPatternMessage(patternData?.message || '模式识别暂不可用；不会用假模式补位。');
         setDataSources(Array.isArray(data?.data_sources) ? data.data_sources : (Array.isArray(way?.data_sources) ? way.data_sources : []));
         setMessage(way?.message || '原则来自知页学习判断、行页动作练习和思页复盘沉淀。');
+        setGrowthMap(growthData);
+        setSelectedDomainId(growthData?.domains[0]?.id ?? null);
         setError('');
       })
       .catch(() => {
@@ -81,6 +95,39 @@ export default function Way() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const createDomain = async () => {
+    const name = domainName.trim();
+    if (!name || growthSaving) return;
+    setGrowthSaving(true);
+    try {
+      const domain = await jieyiService.growthPath.createDomain({ name });
+      setDomainName('');
+      setSelectedDomainId(domain.id);
+      await refreshGrowthMap();
+      setError('');
+    } catch {
+      setError('成长领域保存失败；没有写入假数据，请稍后重试。');
+    } finally {
+      setGrowthSaving(false);
+    }
+  };
+
+  const createStageGoal = async () => {
+    const content = stageGoalContent.trim();
+    if (!content || !selectedDomainId || growthSaving) return;
+    setGrowthSaving(true);
+    try {
+      await jieyiService.growthPath.createStageGoal({ domain_id: selectedDomainId, content });
+      setStageGoalContent('');
+      await refreshGrowthMap();
+      setError('');
+    } catch {
+      setError('阶段目标保存失败；没有写入假数据，请稍后重试。');
+    } finally {
+      setGrowthSaving(false);
+    }
+  };
 
   const counters = useMemo(() => {
     const verified = principles.filter((item) => item.verification_status === 'verified').length;
@@ -102,6 +149,52 @@ export default function Way() {
           <b>{counters.verified} 已验证</b>
           <b>{counters.checked} 今日已练</b>
           <b>{counters.pending} 待验证</b>
+        </div>
+      </section>
+
+      <section className="growth-map-section card" aria-label="成长领域与阶段目标">
+        <div className="section-header compact">
+          <span className="status-pill">人生方向</span>
+          <h2>成长领域 → 阶段目标</h2>
+          <p>这里保存你确认过的方向。结衣可以给建议，但不会替你新增或改变方向。</p>
+        </div>
+
+        {growthMap?.domains.length ? (
+          <div className="growth-domain-list">
+            {growthMap.domains.map((domain) => (
+              <article className="growth-domain-card" key={domain.id}>
+                <strong>{domain.name}</strong>
+                {domain.stage_goals.length ? (
+                  <ul>
+                    {domain.stage_goals.map((goal) => (
+                      <li key={goal.id}>
+                        <span>{goal.content}</span>
+                        <small>{goal.current_practices.length ? `今天 ${goal.current_practices.length} 个当前实践` : '今天还没有当前实践'}</small>
+                      </li>
+                    ))}
+                  </ul>
+                ) : <p className="empty-state compact">这个领域还没有阶段目标。</p>}
+              </article>
+            ))}
+          </div>
+        ) : <div className="empty-state compact">还没有成长领域。先确认一个你愿意长期经营的方向。</div>}
+
+        <div className="growth-map-create-grid">
+          <label>
+            <span>新增成长领域</span>
+            <input value={domainName} onChange={(event) => setDomainName(event.target.value)} placeholder="例如：认知成长" maxLength={120} />
+          </label>
+          <button type="button" className="btn-secondary" disabled={!domainName.trim() || growthSaving} onClick={createDomain}>确认新增领域</button>
+
+          <label>
+            <span>新增阶段目标</span>
+            <select value={selectedDomainId ?? ''} onChange={(event) => setSelectedDomainId(Number(event.target.value) || null)} disabled={!growthMap?.domains.length}>
+              <option value="">先选择成长领域</option>
+              {growthMap?.domains.map((domain) => <option key={domain.id} value={domain.id}>{domain.name}</option>)}
+            </select>
+            <input value={stageGoalContent} onChange={(event) => setStageGoalContent(event.target.value)} placeholder="这个阶段准备验证什么变化" maxLength={500} />
+          </label>
+          <button type="button" className="btn-secondary" disabled={!selectedDomainId || !stageGoalContent.trim() || growthSaving} onClick={createStageGoal}>确认阶段目标</button>
         </div>
       </section>
 

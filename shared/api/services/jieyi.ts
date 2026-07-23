@@ -8,16 +8,25 @@ import type {
   Activity, ActivityCreate, ActivityFinish,
   Mood, MoodCreate,
   Wisdom,
-  MoodTrendItem, GoalCreate, GoalOut, NoteOut,
+  MoodTrendItem, GoalCreate, GoalOut, NoteCreate, NoteOut,
   CognitiveAssetCandidate, DailyPlan, DailyReviewOut, JieyiActionResistanceResult, JieyiActionResistanceSignal, JieyiPatternCandidate, JieyiPatternDetectionResult, JieyiPatternWindow, JieyiPatternWindowDay, JieyiPrincipleItem, JieyiReviewTrendSummary,
   JieyiDailyContext, JieyiTodayAggregate, JieyiWriteNextPlanInput, JieyiWriteNextPlanResult,
   DeepLearningPrepareInput, DeepLearningSession, DeepLearningAcceptanceInput, DeepLearningAcceptanceResult,
+  CurrentPracticeCreate, GrowthDomainCreate, GrowthDomainOut, GrowthMap, StageGoalCreate, StageGoalOut,
+  RealityIssue, RealityIssueCreate, RealityIssueEntry, RealityIssueEntryCreate,
+  KnowledgeAnalysis, KnowledgeMethodCandidateCreate, PersonalMethodVersion,
+  RealityIssueFeedbackCreate, RealityIssuePracticeCreate, RealityIssueUpdate,
 } from '../../types';
 import { normalizeDailyContext, normalizeDailyPlan, normalizeDailyReview, parseJsonField, toJsonField } from './normalizers';
 
 const normalizeCandidateArray = (value: Array<string | CognitiveAssetCandidate> | undefined): CognitiveAssetCandidate[] => {
   if (!Array.isArray(value)) return [];
-  return value.filter((item): item is CognitiveAssetCandidate => Boolean(item) && typeof item === 'object' && 'content' in item);
+  return value.filter((item): item is CognitiveAssetCandidate =>
+    Boolean(item)
+    && typeof item === 'object'
+    && 'content' in item
+    && !isInternalSmokeText(JSON.stringify(item)),
+  );
 };
 
 const buildCognitiveCandidatePrinciples = (review: DailyReviewOut | null): JieyiPrincipleItem[] => {
@@ -501,6 +510,58 @@ const buildReviewTrendSummary = (window: JieyiPatternWindow): JieyiReviewTrendSu
 };
 
 export const jieyiService = {
+  realityIssues: {
+    list: async (): Promise<RealityIssue[]> =>
+      api.get<RealityIssue[]>(JIEYI_API.REALITY_ISSUES),
+    focus: async (): Promise<RealityIssue | null> => {
+      try {
+        return await api.get<RealityIssue>(JIEYI_API.REALITY_ISSUE_FOCUS);
+      } catch (error) {
+        if (error instanceof Error && error.message.startsWith('404 ')) return null;
+        throw error;
+      }
+    },
+    create: async (data: RealityIssueCreate): Promise<RealityIssue> =>
+      api.post<RealityIssue>(JIEYI_API.REALITY_ISSUES, data),
+    update: async (issueId: number | string, data: RealityIssueUpdate): Promise<RealityIssue> =>
+      api.patch<RealityIssue>(JIEYI_API.REALITY_ISSUE(issueId), data),
+    setFocus: async (issueId: number | string): Promise<RealityIssue> =>
+      api.post<RealityIssue>(JIEYI_API.REALITY_ISSUE_SET_FOCUS(issueId)),
+    addEntry: async (issueId: number | string, data: RealityIssueEntryCreate): Promise<RealityIssueEntry> =>
+      api.post<RealityIssueEntry>(JIEYI_API.REALITY_ISSUE_ENTRIES(issueId), data),
+    confirmEntry: async (issueId: number | string, entryId: number | string): Promise<RealityIssueEntry> =>
+      api.post<RealityIssueEntry>(JIEYI_API.REALITY_ISSUE_ENTRY_CONFIRM(issueId, entryId)),
+    rejectEntry: async (issueId: number | string, entryId: number | string): Promise<RealityIssueEntry> =>
+      api.post<RealityIssueEntry>(JIEYI_API.REALITY_ISSUE_ENTRY_REJECT(issueId, entryId)),
+    createPractice: async (issueId: number | string, data: RealityIssuePracticeCreate): Promise<RealityIssue> =>
+      api.post<RealityIssue>(JIEYI_API.REALITY_ISSUE_PRACTICES(issueId), data),
+    recordFeedback: async (issueId: number | string, scheduleId: number | string, data: RealityIssueFeedbackCreate): Promise<RealityIssue> =>
+      api.post<RealityIssue>(JIEYI_API.REALITY_ISSUE_PRACTICE_FEEDBACK(issueId, scheduleId), data),
+    analyzeKnowledge: async (issueId: number | string): Promise<KnowledgeAnalysis> =>
+      api.get<KnowledgeAnalysis>(JIEYI_API.REALITY_ISSUE_KNOWLEDGE_ANALYSIS(issueId)),
+    createKnowledgeMethod: async (issueId: number | string, data: KnowledgeMethodCandidateCreate): Promise<RealityIssueEntry> =>
+      api.post<RealityIssueEntry>(JIEYI_API.REALITY_ISSUE_KNOWLEDGE_METHOD(issueId), data),
+    promoteMethodVersion: async (issueId: number | string, entryId: number | string): Promise<PersonalMethodVersion> =>
+      api.post<PersonalMethodVersion>(JIEYI_API.REALITY_ISSUE_PROMOTE_METHOD_VERSION(issueId, entryId)),
+  },
+  growthPath: {
+    map: async (date?: string): Promise<GrowthMap> => {
+      const url = date ? `/jieyi/growth-map?date=${encodeURIComponent(date)}` : '/jieyi/growth-map';
+      return api.get<GrowthMap>(url);
+    },
+    createDomain: async (data: GrowthDomainCreate): Promise<GrowthDomainOut> =>
+      api.post<GrowthDomainOut>('/jieyi/growth-domains', data),
+    createStageGoal: async (data: StageGoalCreate): Promise<StageGoalOut> =>
+      api.post<StageGoalOut>('/jieyi/stage-goals', data),
+    createPractice: async (data: CurrentPracticeCreate): Promise<Schedule> =>
+      api.post<Schedule>('/jieyi/current-practices', data),
+    recordPracticeEvent: async (
+      scheduleId: number | string,
+      event_type: 'completed' | 'interrupted' | 'returned',
+      note = '',
+    ): Promise<{ practice: Schedule; event: unknown }> =>
+      api.post(`/jieyi/current-practices/${scheduleId}/events`, { event_type, note }),
+  },
   knowledge: {
     list: async (source_type?: string): Promise<Knowledge[]> => {
       const url = source_type ? `/knowledge?source_type=${source_type}` : '/knowledge';
@@ -557,6 +618,8 @@ export const jieyiService = {
   },
   principles: {
     list: async (): Promise<any> => api.get<any>('/jieyi/principles'),
+    promoteCandidate: async (candidateId: number, statement: string): Promise<any> =>
+      api.post(`/jieyi/principles/candidates/${candidateId}/promote`, { statement }),
     listWithCandidates: async (date?: string): Promise<any> => {
       const [principles, review] = await Promise.all([
         api.get<any>('/jieyi/principles'),
@@ -795,6 +858,7 @@ export const jieyiService = {
   },
   notes: {
     list: async (limit = 10): Promise<NoteOut[]> => api.get<NoteOut[]>(`/notes?limit=${limit}`),
+    create: async (data: NoteCreate): Promise<NoteOut> => api.post<NoteOut>('/notes', data),
   },
   dailyNote: {
     get: async (date?: string): Promise<{date: string; text: string; found: boolean}> => {

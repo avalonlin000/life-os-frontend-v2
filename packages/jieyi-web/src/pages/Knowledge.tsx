@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ModuleSection } from '@shared/layouts';
 import { QuickInput, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
-import type { DeepLearningSession, JieyiThinkingCard, JieyiTodayAggregate, Knowledge, Schedule } from '@shared/types';
+import type { DeepLearningSession, JieyiThinkingCard, JieyiTodayAggregate, Knowledge, KnowledgeAnalysis, RealityIssue, Schedule } from '@shared/types';
 import { jieyiContentSamples } from '../contentSamples';
 
 type TodayFlow = {
@@ -40,6 +41,7 @@ const fallbackQuestion: JieyiThinkingCard = {
 const todayDate = () => new Date().toISOString().slice(0, 10);
 
 export default function KnowledgePage() {
+  const navigate = useNavigate();
   const [today, setToday] = useState<TodayFlow | null>(null);
   const [aggregate, setAggregate] = useState<JieyiTodayAggregate | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,6 +67,9 @@ export default function KnowledgePage() {
   const [splittingKnowledgeId, setSplittingKnowledgeId] = useState<number | string | null>(null);
   const [error, setError] = useState('');
   const [lastThoughtStatus, setLastThoughtStatus] = useState('');
+  const [focusIssue, setFocusIssue] = useState<RealityIssue | null>(null);
+  const [issueKnowledge, setIssueKnowledge] = useState<KnowledgeAnalysis | null>(null);
+  const [issueKnowledgeError, setIssueKnowledgeError] = useState('');
   const toast = useToast();
 
   const card = aggregate?.know.today_question || today?.question_card || fallbackQuestion;
@@ -114,12 +119,20 @@ export default function KnowledgePage() {
   useEffect(() => {
     loadToday();
     loadKnowledge();
+    jieyiService.realityIssues.focus()
+      .then(async (issue) => {
+        setFocusIssue(issue);
+        if (!issue) return;
+        setIssueKnowledge(await jieyiService.realityIssues.analyzeKnowledge(issue.id));
+      })
+      .catch(() => setIssueKnowledgeError('当前课题的私人知识暂时没有读取成功。'));
   }, []);
 
-  const suggestedTopic = useMemo(() => {
-    if (deepTopic.trim()) return deepTopic.trim();
+  const recommendedTopic = useMemo(() => {
     return card.practice || card.pillar || card.question || '行动力';
-  }, [deepTopic, card]);
+  }, [card]);
+
+  const suggestedTopic = deepTopic.trim() || recommendedTopic;
 
   const summarizeKnowledge = (content: string, limit = 120) => {
     const compact = content.replace(/\s+/g, ' ').trim();
@@ -294,6 +307,31 @@ export default function KnowledgePage() {
     <div className="knowledge-page page-enter">
       {error && <div className="api-warning">{error}</div>}
 
+      <section className="current-issue-knowledge" aria-label="当前课题调用的私人知识">
+        <header>
+          <span>RECOGNITION</span>
+          <h1>当前课题调用的私人知识</h1>
+          <p>{focusIssue ? `正在服务：${focusIssue.title}` : '建立现实课题后，系统会在这里展示真正命中的私人知识。'}</p>
+        </header>
+        {issueKnowledgeError && <div className="api-warning">{issueKnowledgeError}</div>}
+        {issueKnowledge?.status === 'knowledge_gap' && <p className="empty-state compact">私人知识不足，当前不生成通用答案。</p>}
+        {issueKnowledge?.status === 'knowledge_unavailable' && <p className="empty-state compact">私人知识入口暂时不可用，不使用模型常识补位。</p>}
+        {issueKnowledge?.matches.map((match) => (
+          <article key={match.knowledge_id}>
+            <small>知识 #{match.knowledge_id} · {match.source_type || '私人知识库'}</small>
+            <h2>{match.title}</h2>
+            <dl>
+              <div><dt>为何相关</dt><dd>{match.relevance_reason}</dd></div>
+              <div><dt>可借用的方法</dt><dd>{match.method}</dd></div>
+              <div><dt>适用条件</dt><dd>{match.applicable_conditions}</dd></div>
+              <div><dt>边界与缺口</dt><dd>{match.boundary}</dd></div>
+              <div><dt>怎样检验</dt><dd>{match.verification_action}</dd></div>
+            </dl>
+          </article>
+        ))}
+        {focusIssue && <button type="button" className="btn-secondary" onClick={() => navigate('/reality')}>回到现实课题确认方法</button>}
+      </section>
+
       <section className="knowledge-first-screen glass-card">
         <div className="deep-learning-hero daily-question-card">
           <div>
@@ -312,38 +350,45 @@ export default function KnowledgePage() {
           </div>
         </div>
 
-        <div className="deep-start-card one-sentence-card">
-          <div>
-            <b>写一句想法</b>
-            <p>{aggregate?.know.one_sentence_thought.placeholder || '写下你现在的判断、卡点或反例。'}</p>
+        <details className="optional-thought">
+          <summary>按需补充一句想法</summary>
+          <div className="deep-start-card one-sentence-card">
+            <div>
+              <b>写一句想法</b>
+              <p>{aggregate?.know.one_sentence_thought.placeholder || '写下你现在的判断、卡点或反例。'}</p>
+            </div>
+            <QuickInput
+              placeholder="一句就够：我现在真正的问题是..."
+              buttonText={savingThought ? '保存中' : '保存'}
+              onSubmit={handleThought}
+              toastError="记录失败，请重试"
+              disableSuccessToast
+            />
+            {lastThoughtStatus && <div className="inline-feedback">{lastThoughtStatus}</div>}
+            {liveCard && <button className="btn-primary" onClick={handleToAction}>把今日一问转成行动</button>}
           </div>
-          <QuickInput
-            placeholder="一句就够：我现在真正的问题是..."
-            buttonText={savingThought ? '保存中' : '保存'}
-            onSubmit={handleThought}
-            toastError="记录失败，请重试"
-            disableSuccessToast
-          />
-          {lastThoughtStatus && <div className="inline-feedback">{lastThoughtStatus}</div>}
-          {liveCard && <button className="btn-primary" onClick={handleToAction}>把今日一问转成行动</button>}
-        </div>
+        </details>
 
         <div className="deep-start-card deep-entry-card">
           <div>
             <b>深度学习入口</b>
             <p>{deepEntry?.label || '围绕今日一问准备 60 分钟学习包。'}</p>
+            <p>当前推荐：{recommendedTopic}</p>
           </div>
           <div className="deep-start-form">
-            <input
-              value={deepTopic}
-              onChange={(e) => setDeepTopic(e.target.value)}
-              placeholder={`默认：${suggestedTopic}`}
-              className="deep-learning-topic-input"
-            />
             <button className="btn-primary" onClick={startDeepLearning} disabled={deepLoading || !deepEntry?.enabled}>
               {deepLoading ? '准备中' : '进入深度学习'}
             </button>
           </div>
+          <details className="optional-deep-topic">
+            <summary>换一个学习主题</summary>
+            <input
+              value={deepTopic}
+              onChange={(e) => setDeepTopic(e.target.value)}
+              placeholder={`默认：${recommendedTopic}`}
+              className="deep-learning-topic-input"
+            />
+          </details>
           <span className={`deep-learning-status ${deepEntry?.status === 'materials_ready' ? 'live' : 'fallback'}`}>
             <span className="status-dot" />
             {deepEntry?.status === 'materials_ready' ? 'prepare/acceptance 已连接' : '材料不足，可先用 fallback 学习包'}
@@ -402,59 +447,62 @@ export default function KnowledgePage() {
             <article className="deep-learning-acceptance">
               <div>
                 <b>完成后验收</b>
-                <p>写完五卡后回写到知识卡、行动或下一问。</p>
+                <p>需要更完整地检验理解时，再填写五卡并选择回写位置。</p>
               </div>
-              <div className="acceptance-control">
-                <span>理解层级</span>
-                <div className="acceptance-pills">
-                  {deepSession.acceptance.levels.map((level) => (
-                    <button
-                      type="button"
-                      key={level}
-                      className={`acceptance-pill ${acceptanceLevel === level ? 'active' : ''}`}
-                      onClick={() => setAcceptanceLevel(level)}
-                    >
-                      {level}
-                    </button>
-                  ))}
+              <details className="optional-deep-acceptance">
+                <summary>按需深度验收</summary>
+                <div className="acceptance-control">
+                  <span>理解层级</span>
+                  <div className="acceptance-pills">
+                    {deepSession.acceptance.levels.map((level) => (
+                      <button
+                        type="button"
+                        key={level}
+                        className={`acceptance-pill ${acceptanceLevel === level ? 'active' : ''}`}
+                        onClick={() => setAcceptanceLevel(level)}
+                      >
+                        {level}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="acceptance-control">
-                <span>回写位置</span>
-                <div className="acceptance-pills">
-                  {deepSession.acceptance.destinations.map((destination) => (
-                    <button
-                      type="button"
-                      key={destination}
-                      className={`acceptance-pill ${acceptanceDestination === destination ? 'active' : ''}`}
-                      onClick={() => setAcceptanceDestination(destination)}
-                    >
-                      {destination}
-                    </button>
-                  ))}
+                <div className="acceptance-control">
+                  <span>回写位置</span>
+                  <div className="acceptance-pills">
+                    {deepSession.acceptance.destinations.map((destination) => (
+                      <button
+                        type="button"
+                        key={destination}
+                        className={`acceptance-pill ${acceptanceDestination === destination ? 'active' : ''}`}
+                        onClick={() => setAcceptanceDestination(destination)}
+                      >
+                        {destination}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="five-card-grid">
-                {acceptanceCardDefs.map((definition, index) => {
-                  const serverCard = deepSession.cards.find((item) => item.key === definition.key);
-                  return (
-                    <label className="five-card" key={definition.key}>
-                      <span className="five-card-index">{index + 1}</span>
-                      <b>{serverCard?.title || definition.title}</b>
-                      <small>{serverCard?.prompt || definition.prompt}</small>
-                      <textarea
-                        value={acceptanceCards[definition.key]}
-                        onChange={(e) => updateAcceptanceCard(definition.key, e.target.value)}
-                        placeholder="写一句真实理解..."
-                      />
-                    </label>
-                  );
-                })}
-              </div>
-              <button className="btn-primary" onClick={submitAcceptance} disabled={savingAcceptance}>
-                {savingAcceptance ? '回写中' : '提交验收'}
-              </button>
-              {acceptanceFeedback && <div className={`inline-feedback ${acceptanceFeedbackType}`}>{acceptanceFeedback}</div>}
+                <div className="five-card-grid">
+                  {acceptanceCardDefs.map((definition, index) => {
+                    const serverCard = deepSession.cards.find((item) => item.key === definition.key);
+                    return (
+                      <label className="five-card" key={definition.key}>
+                        <span className="five-card-index">{index + 1}</span>
+                        <b>{serverCard?.title || definition.title}</b>
+                        <small>{serverCard?.prompt || definition.prompt}</small>
+                        <textarea
+                          value={acceptanceCards[definition.key]}
+                          onChange={(e) => updateAcceptanceCard(definition.key, e.target.value)}
+                          placeholder="写一句真实理解..."
+                        />
+                      </label>
+                    );
+                  })}
+                </div>
+                <button className="btn-primary" onClick={submitAcceptance} disabled={savingAcceptance}>
+                  {savingAcceptance ? '回写中' : '提交验收'}
+                </button>
+                {acceptanceFeedback && <div className={`inline-feedback ${acceptanceFeedbackType}`}>{acceptanceFeedback}</div>}
+              </details>
             </article>
           </div>
         </ModuleSection>
@@ -466,24 +514,27 @@ export default function KnowledgePage() {
             <b>粘贴一段材料</b>
             <p>保存后进入最近知识；能拆就拆成行动，拆不了就保留为知页材料。</p>
           </div>
-          <input
-            value={knowledgeTitle}
-            onChange={(e) => setKnowledgeTitle(e.target.value)}
-            placeholder="标题（可不填，默认取正文第一行）"
-            className="knowledge-input"
-          />
           <textarea
             value={knowledgeContent}
             onChange={(e) => setKnowledgeContent(e.target.value)}
             placeholder="粘贴文章、聊天、想法或一段可行动材料..."
             className="knowledge-textarea"
           />
-          <input
-            value={knowledgeSource}
-            onChange={(e) => setKnowledgeSource(e.target.value)}
-            placeholder="来源链接/出处（可选）"
-            className="knowledge-input"
-          />
+          <details className="optional-knowledge-meta">
+            <summary>补充标题和来源</summary>
+            <input
+              value={knowledgeTitle}
+              onChange={(e) => setKnowledgeTitle(e.target.value)}
+              placeholder="标题（可不填，默认取正文第一行）"
+              className="knowledge-input"
+            />
+            <input
+              value={knowledgeSource}
+              onChange={(e) => setKnowledgeSource(e.target.value)}
+              placeholder="来源链接/出处（可选）"
+              className="knowledge-input"
+            />
+          </details>
           <button className="btn-primary" onClick={saveKnowledge} disabled={savingKnowledge}>
             {savingKnowledge ? '保存中' : '保存材料'}
           </button>

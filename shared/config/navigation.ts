@@ -8,10 +8,10 @@ export interface NavItem {
 
 // 结衣导航
 export const JIEYI_NAV: NavItem[] = [
-  { path: '/know', label: '知' },
-  { path: '/act', label: '行' },
-  { path: '/reflect', label: '思' },
-  { path: '/way', label: '道' },
+  { path: '/reality', label: '现实' },
+  { path: '/know', label: '认识' },
+  { path: '/act', label: '实践' },
+  { path: '/accumulate', label: '积累' },
 ];
 
 // 小雪导航

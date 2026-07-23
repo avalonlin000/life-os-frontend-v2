@@ -1,7 +1,9 @@
 import { type CSSProperties, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QuickInput, useToast } from '@shared/components';
 import { jieyiService } from '@shared/api/services';
-import type { DailyPlan, JieyiActionResistanceResult, JieyiPracticeItem, JieyiTodayAggregate, Schedule } from '@shared/types';
+import type { DailyPlan, GrowthMap, JieyiActionResistanceResult, JieyiPracticeItem, JieyiTodayAggregate, RealityIssue, Schedule } from '@shared/types';
+import { choosePrimaryAction, filterPersonalResistanceSignals, isPersonalDailyContent, toLocalDateString } from '../action-focus';
 
 type ActionQueueItem = {
   kind: 'schedule';
@@ -14,6 +16,8 @@ type ActionQueueItem = {
   reason: string;
   sourceHint: string;
   resistanceEvidence: string[];
+  stageGoalId: number | null;
+  practiceStatus: string;
 };
 
 type PlanQueueItem = {
@@ -26,11 +30,14 @@ type PlanQueueItem = {
   isDone: false;
   reason: string;
   sourceHint: string;
+  stageGoalId: null;
+  practiceStatus: 'active';
 };
 
 type QueueItem = ActionQueueItem | PlanQueueItem;
 
 const sourceLabels: Record<string, string> = {
+  reality_issue: '现实课题实践',
   ai_suggest: 'AI 建议',
   user_add: '手动补充',
   daily_plan: '今日计划',
@@ -39,11 +46,12 @@ const sourceLabels: Record<string, string> = {
 
 const getSourceLabel = (source: string) => sourceLabels[source] ?? source;
 
-const todayDate = () => new Date().toISOString().slice(0, 10);
+const todayDate = () => toLocalDateString();
 
 const actionReason = (item: Schedule) => {
   const reason = (item as Schedule & { reason?: unknown }).reason;
   if (typeof reason === 'string' && reason.trim()) return reason;
+  if (item.source === 'reality_issue') return '来自当前现实课题的已确认方法：先按这项实践取得真实反馈。';
   if (item.source === 'knowledge_split' || item.source === 'knowledge_suggest') return '来自知页学习拆解：把今天的新理解落成一个真实动作。';
   if (item.source === 'ai_suggest') return '来自 AI 今日建议：根据今日状态挑一个最能推进改变的动作。';
   if (item.source === 'user_add') return '来自你手动补充：这是今天主动认领的改命动作。';
@@ -92,7 +100,13 @@ export default function Action() {
   const [updatingPracticeId, setUpdatingPracticeId] = useState<string | null>(null);
   const [resistanceResult, setResistanceResult] = useState<JieyiActionResistanceResult | null>(null);
   const [resistanceError, setResistanceError] = useState('');
+  const [showMore, setShowMore] = useState(false);
+  const [growthMap, setGrowthMap] = useState<GrowthMap | null>(null);
+  const [selectedStageGoalId, setSelectedStageGoalId] = useState<number | null>(null);
+  const [practiceEventId, setPracticeEventId] = useState<number | null>(null);
+  const [focusIssue, setFocusIssue] = useState<RealityIssue | null>(null);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const today = todayDate();
 
@@ -100,12 +114,13 @@ export default function Action() {
     setLoading(true);
     setError('');
     try {
-      const [aggregateResult, scheduleResult, planResult, practiceResult, resistanceResult] = await Promise.allSettled([
+      const [aggregateResult, scheduleResult, planResult, practiceResult, resistanceResult, growthResult] = await Promise.allSettled([
         jieyiService.today.aggregate(today),
         jieyiService.schedule.list(today),
         jieyiService.dailyPlan.get(),
         jieyiService.practices.today(today),
         jieyiService.patternRecognition.resistanceSignals({ days: 14 }),
+        jieyiService.growthPath.map(today),
       ]);
 
       const liveAggregate = aggregateResult.status === 'fulfilled' ? aggregateResult.value : null;
@@ -120,12 +135,15 @@ export default function Action() {
             ? practicePayload
             : [];
       const resistancePayload = resistanceResult.status === 'fulfilled' ? resistanceResult.value : null;
+      const growthPayload = growthResult.status === 'fulfilled' ? growthResult.value : null;
 
       setAggregate(liveAggregate);
       setItems(liveAggregate?.act.today_actions?.length ? liveAggregate.act.today_actions : liveSchedule);
       setDailyPlan(livePlan);
       setPractices(liveAggregate?.act.today_practices?.length ? liveAggregate.act.today_practices : livePractices);
       setResistanceResult(resistancePayload);
+      setGrowthMap(growthPayload);
+      setSelectedStageGoalId((current) => current ?? growthPayload?.domains.flatMap((domain) => domain.stage_goals)[0]?.id ?? null);
       setResistanceError(resistanceResult.status === 'rejected' ? '行动阻力信号暂不可用；不会用假信号补位。' : '');
 
       if (aggregateResult.status === 'rejected' && scheduleResult.status === 'rejected' && planResult.status === 'rejected') {
@@ -137,6 +155,7 @@ export default function Action() {
       setAggregate(null);
       setPractices([]);
       setResistanceResult(null);
+      setGrowthMap(null);
       setResistanceError('行动阻力信号暂不可用；不会用假信号补位。');
       setError('今日行动接口未连接：不生成假动作，只展示可解释空态。');
     } finally {
@@ -144,11 +163,15 @@ export default function Action() {
     }
   };
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => {
+    void fetchAll();
+    jieyiService.realityIssues.focus().then(setFocusIssue).catch(() => setFocusIssue(null));
+  }, []);
 
   const actionItems = useMemo<QueueItem[]>(() => {
     const scheduleItems: QueueItem[] = items
-      .filter((item) => item.source === 'ai_suggest' || item.source === 'user_add' || item.source === 'knowledge_split' || item.source === 'knowledge_suggest')
+      .filter((item) => item.source === 'reality_issue' || item.source === 'ai_suggest' || item.source === 'user_add' || item.source === 'knowledge_split' || item.source === 'knowledge_suggest')
+      .filter((item) => isPersonalDailyContent(item.content))
       .map((item) => ({
         kind: 'schedule',
         id: item.id,
@@ -160,9 +183,11 @@ export default function Action() {
         reason: actionReason(item),
         sourceHint: item.knowledge_id ? `关联知识 #${item.knowledge_id}` : getSourceLabel(item.source),
         resistanceEvidence: getResistanceEvidence(item),
+        stageGoalId: item.stage_goal_id,
+        practiceStatus: item.practice_status || (item.is_done ? 'completed' : 'active'),
       }));
 
-    const planItems: QueueItem[] = (dailyPlan?.doTasks ?? []).map((task, index) => ({
+    const planItems: QueueItem[] = (dailyPlan?.doTasks ?? []).filter(isPersonalDailyContent).map((task, index) => ({
       kind: 'daily_plan',
       id: `daily-plan-${index}`,
       content: task,
@@ -172,14 +197,12 @@ export default function Action() {
       isDone: false,
       reason: planReason(dailyPlan),
       sourceHint: 'dailyPlan.doTasks 只读降级',
+      stageGoalId: null,
+      practiceStatus: 'active',
     }));
 
     return [...scheduleItems, ...planItems];
   }, [items, dailyPlan]);
-
-  const splitActionItems = actionItems.filter((item) => item.source === 'knowledge_split' || item.source === 'knowledge_suggest');
-  const userActionItems = actionItems.filter((item) => item.source === 'user_add');
-  const otherActionItems = actionItems.filter((item) => item.source !== 'knowledge_split' && item.source !== 'knowledge_suggest' && item.source !== 'user_add');
 
   const renderActionList = (itemsToRender: QueueItem[], emptyText: string) => (
     itemsToRender.length > 0 ? (
@@ -215,11 +238,7 @@ export default function Action() {
                 <span className="schedule-badge">{item.sourceHint}</span>
               </div>
             </div>
-            {item.kind === 'schedule' ? (
-              <button className="btn-edit tactile-button" onClick={() => updateDone(item, !item.isDone)} disabled={updatingId === item.id}>
-                {item.isDone ? '取消' : '完成'}
-              </button>
-            ) : (
+            {item.kind === 'daily_plan' && (
               <span className="action-readonly-note status-pill">只读降级</span>
             )}
           </li>
@@ -232,17 +251,37 @@ export default function Action() {
 
   const dailyLearnItems = dailyPlan?.learn ?? [];
   const dailyReviewItems = dailyPlan?.review ?? [];
-  const primaryAction = actionItems.find((item) => !item.isDone) ?? actionItems[0] ?? null;
+  const linkedCurrentPractice = actionItems.find((item): item is ActionQueueItem => (
+    item.kind === 'schedule' && Boolean(item.stageGoalId) && !item.isDone
+  )) ?? actionItems.find((item): item is ActionQueueItem => item.kind === 'schedule' && Boolean(item.stageGoalId)) ?? null;
+  const primaryAction = linkedCurrentPractice ?? choosePrimaryAction(actionItems);
+  const secondaryActionItems = primaryAction ? actionItems.filter((item) => item.id !== primaryAction.id) : actionItems;
+  const splitActionItems = secondaryActionItems.filter((item) => item.source === 'knowledge_split' || item.source === 'knowledge_suggest');
+  const userActionItems = secondaryActionItems.filter((item) => item.source === 'user_add');
+  const otherActionItems = secondaryActionItems.filter((item) => item.source !== 'knowledge_split' && item.source !== 'knowledge_suggest' && item.source !== 'user_add');
   const primaryPractice = practices.find((item) => !item.is_done) ?? practices[0] ?? null;
   const completedCount = actionItems.filter((item) => item.isDone).length;
   const totalCount = actionItems.length;
   const practiceDone = practices.filter((item) => item.is_done).length;
   const completionMessage = aggregate?.act.completion_status.message || `修炼 ${practiceDone}/${practices.length} · 行动 ${completedCount}/${totalCount}`;
   const suggestionLabel = aggregate?.act.ai_suggestion_entry.label || '请结衣给一个行动建议';
-  const resistanceSignals = resistanceResult?.signals ?? [];
+  const resistanceSignals = filterPersonalResistanceSignals(resistanceResult?.signals ?? []);
+  const secondaryCount = dailyLearnItems.length + dailyReviewItems.length + practices.length + actionItems.length + resistanceSignals.length;
+  const stageGoalOptions = useMemo(() => (growthMap?.domains ?? []).flatMap((domain) => (
+    domain.stage_goals.map((goal) => ({ id: goal.id, label: `${domain.name} · ${goal.content}` }))
+  )), [growthMap]);
+  const stageGoalLabel = (stageGoalId: number | null) => stageGoalOptions.find((goal) => goal.id === stageGoalId)?.label || '';
+  const confirmedFocusMethods = focusIssue?.methods.filter((item) => item.status === 'confirmed') ?? [];
+  const focusMethod = confirmedFocusMethods[confirmedFocusMethods.length - 1];
+  const focusPractices = focusIssue?.practices ?? [];
+  const focusPractice = focusPractices.find((item) => !item.is_done) ?? focusPractices[focusPractices.length - 1];
 
   const handleAdd = async (content: string) => {
-    await jieyiService.schedule.create({ date: today, content, source: 'user_add' });
+    if (selectedStageGoalId) {
+      await jieyiService.growthPath.createPractice({ date: today, content, stage_goal_id: selectedStageGoalId });
+    } else {
+      await jieyiService.schedule.create({ date: today, content, source: 'user_add' });
+    }
     await fetchAll();
   };
 
@@ -250,13 +289,31 @@ export default function Action() {
     if (item.kind !== 'schedule' || updatingId) return;
     setUpdatingId(item.id);
     try {
-      await jieyiService.schedule.update(item.id, { is_done: isDone });
+      if (item.stageGoalId) {
+        await jieyiService.growthPath.recordPracticeEvent(item.id, isDone ? 'completed' : 'returned');
+      } else {
+        await jieyiService.schedule.update(item.id, { is_done: isDone });
+      }
       await fetchAll();
       toast?.showToast(isDone ? '已完成，反馈已写入后端' : '已取消完成，后端已重开', 'success');
     } catch {
       toast?.showToast(isDone ? '完成失败：后端未写入' : '取消失败：后端未写入', 'error');
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const recordCurrentPracticeEvent = async (item: ActionQueueItem, event: 'interrupted' | 'returned') => {
+    if (practiceEventId) return;
+    setPracticeEventId(item.id);
+    try {
+      await jieyiService.growthPath.recordPracticeEvent(item.id, event);
+      await fetchAll();
+      toast?.showToast(event === 'interrupted' ? '已记为中断，不会清零' : '已经回到这项实践', 'success');
+    } catch {
+      toast?.showToast(event === 'interrupted' ? '中断状态保存失败' : '回归状态保存失败', 'error');
+    } finally {
+      setPracticeEventId(null);
     }
   };
 
@@ -295,21 +352,32 @@ export default function Action() {
     <div className="action-page page-enter">
       {error && <div className="api-warning">{error}</div>}
 
+      {focusIssue && (
+        <section className="current-reality-practice" aria-label="当前现实课题的方法与实践">
+          <header><span>PRACTICE</span><h1>当前现实课题的方法</h1><p>{focusIssue.title}</p></header>
+          <div><small>已确认方法</small><b>{focusMethod?.content || '当前课题还没有已确认方法。'}</b></div>
+          <div><small>正在检验</small><b>{focusPractice?.content || '当前课题还没有建立实践。'}</b></div>
+          {focusPractice && <button type="button" className="btn-secondary" onClick={() => navigate('/reality')}>到现实页记录结果</button>}
+        </section>
+      )}
+
       <section className="action-focus-card">
         <div className="action-focus-copy">
           <span className="action-kicker">今日最该做</span>
           {primaryAction ? (
             <>
-              <h1>{primaryAction.content}</h1>
+              <h1 className={primaryAction.content.length > 34 ? 'long-title' : undefined}>{primaryAction.content}</h1>
               <p>{primaryAction.reason}</p>
               <div className="action-queue-meta">
                 <span className={`schedule-badge meta-pill badge-${primaryAction.source}`}>{getSourceLabel(primaryAction.source)}</span>
                 <span className="schedule-badge">{primaryAction.sourceHint}</span>
+                {primaryAction.stageGoalId && <span className="schedule-badge">{stageGoalLabel(primaryAction.stageGoalId)}</span>}
+                {primaryAction.stageGoalId && <span className="schedule-badge">{primaryAction.practiceStatus === 'interrupted' ? '已中断，可回归' : primaryAction.isDone ? '已完成' : '实践中'}</span>}
               </div>
             </>
           ) : primaryPractice ? (
             <>
-              <h1>{primaryPractice.name}</h1>
+              <h1 className={primaryPractice.name.length > 34 ? 'long-title' : undefined}>{primaryPractice.name}</h1>
               <p>{primaryPractice.reason || primaryPractice.statement || '后端暂未返回具体行动，先完成一个今日修炼，让系统获得真实反馈。'}</p>
               <div className="action-queue-meta">
                 <span className="schedule-badge meta-pill badge-daily_practice">今日修炼</span>
@@ -325,10 +393,15 @@ export default function Action() {
           )}
         </div>
         <div className="action-focus-buttons">
-          {primaryAction?.kind === 'schedule' && (
+          {primaryAction?.kind === 'schedule' && primaryAction.stageGoalId && primaryAction.practiceStatus === 'interrupted' ? (
+            <button className="btn-primary action-big-button" onClick={() => recordCurrentPracticeEvent(primaryAction, 'returned')} disabled={practiceEventId === primaryAction.id}>重新回来</button>
+          ) : primaryAction?.kind === 'schedule' ? (
             <button className="btn-primary action-big-button" onClick={() => updateDone(primaryAction, !primaryAction.isDone)} disabled={updatingId === primaryAction.id}>
-              {primaryAction.isDone ? '取消完成' : '完成今天这个'}
+              {primaryAction.isDone && primaryAction.stageGoalId ? '重新回来' : primaryAction.isDone ? '取消完成' : '完成今天这个'}
             </button>
+          ) : null}
+          {primaryAction?.kind === 'schedule' && primaryAction.stageGoalId && primaryAction.practiceStatus === 'active' && !primaryAction.isDone && (
+            <button className="btn-suggest action-big-button secondary" onClick={() => recordCurrentPracticeEvent(primaryAction, 'interrupted')} disabled={practiceEventId === primaryAction.id}>今天先中断</button>
           )}
           {!primaryAction && primaryPractice && (
             <button className="btn-primary action-big-button" onClick={() => updatePractice(primaryPractice, !primaryPractice.is_done)} disabled={updatingPracticeId === primaryPractice.method_id}>
@@ -342,6 +415,41 @@ export default function Action() {
         <span className="inline-feedback">{completionMessage}</span>
         {suggestError && <div className="api-warning action-inline-warning">{suggestError}</div>}
       </section>
+
+      <details className="action-quick-add">
+        <summary>想换行动时再填写</summary>
+        <div className="action-quick-add-body">
+        <h2 className="section-title">换成你自己的一件事</h2>
+        {stageGoalOptions.length > 0 ? (
+          <label className="current-practice-goal-select">
+            <span>这项实践服务于</span>
+            <select value={selectedStageGoalId ?? ''} onChange={(event) => setSelectedStageGoalId(Number(event.target.value) || null)}>
+              {stageGoalOptions.map((goal) => <option key={goal.id} value={goal.id}>{goal.label}</option>)}
+            </select>
+          </label>
+        ) : (
+          <p className="action-path-hint">还没有阶段目标。先到道页确认成长领域和阶段目标；也可以继续添加普通行动。</p>
+        )}
+        <QuickInput
+          placeholder="一句话，今天能做完..."
+          buttonText="设为今天要做"
+          toastSuccess="已设为今天的主行动"
+          toastError="添加失败，请重试"
+          onSubmit={handleAdd}
+        />
+        </div>
+      </details>
+
+      <button
+        className="action-more-toggle"
+        type="button"
+        aria-expanded={showMore}
+        onClick={() => setShowMore((value) => !value)}
+      >
+        {showMore ? '收起其他内容' : `需要时再看其他内容${secondaryCount ? ` · ${secondaryCount} 项` : ''}`}
+      </button>
+
+      {showMore && <div className="action-secondary-content">
 
       <section className="glass-section action-resistance-section" aria-label="行动阻力信号">
         <div className="module-section-header">
@@ -483,16 +591,7 @@ export default function Action() {
         {renderActionList(otherActionItems, 'AI 建议或 dailyPlan doTasks 暂无可展示行动；页面不补假任务。')}
       </section>
 
-      <section>
-        <h2 className="section-title">补一个今天能做的动作</h2>
-        <QuickInput
-          placeholder="一句话，今天能做完..."
-          buttonText="加入"
-          toastSuccess="行动项已写入后端"
-          toastError="添加失败，请重试"
-          onSubmit={handleAdd}
-        />
-      </section>
+      </div>}
     </div>
   );
 }

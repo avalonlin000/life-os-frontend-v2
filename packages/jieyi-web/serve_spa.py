@@ -7,7 +7,7 @@ import traceback
 port = int(sys.argv[1]) if len(sys.argv) > 1 else 3001
 dist = os.path.join(os.path.dirname(__file__), "dist")
 api_host = "127.0.0.1"
-api_port = 8881
+api_port = int(os.getenv("JIEYI_API_PORT", "8881"))
 
 class SPAHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -61,6 +61,11 @@ class SPAHandler(http.server.SimpleHTTPRequestHandler):
         self.send_error(405)
 
     def do_PUT(self):
+        if self.path.startswith("/api/"):
+            return self._proxy_api()
+        self.send_error(405)
+
+    def do_PATCH(self):
         if self.path.startswith("/api/"):
             return self._proxy_api()
         self.send_error(405)

@@ -44,6 +44,9 @@ export interface DailyPlan {
   review?: DailyPlanReviewItem[];
   doTasks?: string[];
   suggestion?: string;
+  /** 产品数据库或旧文件兼容读取来源，供前端显式区分状态。 */
+  source?: 'product_db' | 'legacy_file' | 'none' | string;
+  status?: 'available' | 'compatibility' | 'empty' | string;
 }
 
 export interface JieyiDailyContext {
@@ -122,11 +125,17 @@ export interface DeepLearningAcceptanceInput {
   destination: string;
   cards: Record<string, string>;
   mode?: string;
+  source_date?: string;
+  source_materials?: Array<{ title: string; source?: string }>;
+  related_actions?: Array<number | string>;
+  related_knowledge?: Array<number | string>;
 }
 
 export interface DeepLearningAcceptanceResult {
   ok: boolean;
   destination?: string;
+  note_id?: number;
+  candidate?: JieyiPrincipleItem;
 }
 
 export interface JieyiThinkingCard {
@@ -272,6 +281,9 @@ export interface ScheduleCreate {
   priority?: number;
   category?: string;
   knowledge_id?: number;
+  stage_goal_id?: number;
+  reality_issue_id?: number;
+  method_entry_id?: number;
 }
 
 export interface ScheduleUpdate {
@@ -280,6 +292,10 @@ export interface ScheduleUpdate {
   priority?: number;
   category?: string;
   is_done?: boolean;
+  stage_goal_id?: number;
+  reality_issue_id?: number;
+  method_entry_id?: number;
+  practice_status?: 'active' | 'completed' | 'interrupted' | string;
 }
 
 export interface ScheduleOut {
@@ -291,6 +307,10 @@ export interface ScheduleOut {
   category: string | null;
   is_done: boolean;
   knowledge_id: number | null;
+  stage_goal_id: number | null;
+  reality_issue_id?: number | null;
+  method_entry_id?: number | null;
+  practice_status: 'active' | 'completed' | 'interrupted' | string;
   created_at: string;
   updated_at: string;
 }
@@ -534,11 +554,206 @@ export interface GoalOut {
   created_at: string;
 }
 
+export interface GrowthDomainCreate {
+  name: string;
+}
+
+export interface GrowthDomainOut {
+  id: number;
+  name: string;
+  status: string;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+export interface StageGoalCreate {
+  domain_id: number;
+  content: string;
+}
+
+export interface StageGoalOut {
+  id: number;
+  domain_id: number;
+  content: string;
+  status: string;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+export interface PracticeEventOut {
+  id: number;
+  schedule_id: number;
+  event_type: 'started' | 'completed' | 'interrupted' | 'returned' | string;
+  note: string | null;
+  created_at: string;
+}
+
+export interface CurrentPracticeCreate {
+  stage_goal_id: number;
+  date: string;
+  content: string;
+}
+
+export interface CurrentPracticeOut extends ScheduleOut {
+  events?: PracticeEventOut[];
+}
+
+export interface GrowthStageGoal extends StageGoalOut {
+  current_practices: CurrentPracticeOut[];
+}
+
+export interface GrowthDomainMapItem extends GrowthDomainOut {
+  stage_goals: GrowthStageGoal[];
+}
+
+export interface GrowthMap {
+  date: string;
+  domains: GrowthDomainMapItem[];
+  unlinked_practice_count: number;
+}
+
 export interface NoteOut {
   id: number;
   title: string;
   content: string;
   date: string;
+  created_at: string;
+}
+
+export interface NoteCreate {
+  title?: string;
+  content: string;
+  date?: string;
+}
+
+export type RealityIssueStatus = 'active' | 'paused' | 'resolved';
+export type RealityIssueEntryKind =
+  | 'fact'
+  | 'knowledge'
+  | 'understanding'
+  | 'question'
+  | 'method'
+  | 'feedback'
+  | 'worldview_update'
+  | 'method_update';
+export type RealityIssueEntryStatus = 'candidate' | 'confirmed' | 'rejected' | 'observed';
+
+export interface RealityIssueEntry {
+  id: number;
+  reality_issue_id: number;
+  kind: RealityIssueEntryKind;
+  content: string;
+  status: RealityIssueEntryStatus;
+  source_type?: string | null;
+  source_id?: number | string | null;
+  practice_id?: number | string | null;
+  occurred_at?: string | null;
+  created_at: string;
+  confirmed_at?: string | null;
+}
+
+export interface RealityIssue {
+  id: number;
+  title: string;
+  current_reality: string;
+  desired_change: string;
+  primary_contradiction: string | null;
+  objective_conditions: string | null;
+  status: RealityIssueStatus;
+  is_focus: boolean;
+  created_at: string;
+  updated_at: string;
+  facts: RealityIssueEntry[];
+  knowledge: RealityIssueEntry[];
+  understandings: RealityIssueEntry[];
+  questions: RealityIssueEntry[];
+  methods: RealityIssueEntry[];
+  practices: Array<ScheduleOut & { reality_issue_id?: number | null; events?: PracticeEventOut[] }>;
+  feedback: RealityIssueEntry[];
+  worldview_updates: RealityIssueEntry[];
+  method_updates: RealityIssueEntry[];
+  personal_method_versions?: PersonalMethodVersion[];
+}
+
+export interface RealityIssueCreate {
+  statement?: string;
+  title?: string;
+  current_reality?: string;
+  desired_change?: string;
+  primary_contradiction?: string;
+  objective_conditions?: string;
+}
+
+export interface RealityIssueUpdate {
+  title?: string;
+  current_reality?: string;
+  desired_change?: string;
+  primary_contradiction?: string;
+  objective_conditions?: string;
+  status?: RealityIssueStatus;
+}
+
+export interface RealityIssueEntryCreate {
+  kind: RealityIssueEntryKind;
+  content?: string;
+  source_type?: string;
+  source_id?: number;
+  practice_id?: number;
+  occurred_at?: string;
+}
+
+export interface RealityIssuePracticeCreate {
+  date: string;
+  content: string;
+  method_entry_id: number;
+}
+
+export interface RealityIssueFeedbackCreate {
+  content: string;
+  occurred_at?: string;
+}
+
+export type KnowledgeAnalysisStatus = 'ready' | 'knowledge_gap' | 'knowledge_unavailable';
+
+export interface KnowledgeAnalysisMatch {
+  knowledge_id: number;
+  title: string;
+  source_type: string | null;
+  source_url: string | null;
+  relevance_reason: string;
+  method: string;
+  applicable_conditions: string;
+  boundary: string;
+  verification_action: string;
+}
+
+export interface KnowledgeAnalysis {
+  analysis_id: number | string;
+  issue_id: number;
+  status: KnowledgeAnalysisStatus;
+  matches: KnowledgeAnalysisMatch[];
+  synthesis: string;
+  conflicts: string[];
+  unknowns: string[];
+  knowledge_gap?: string | null;
+}
+
+export interface KnowledgeMethodCandidateCreate {
+  analysis_id: number | string;
+  content?: string;
+}
+
+export interface PersonalMethodVersion {
+  id: number;
+  issue_id: number;
+  method_entry_id: number;
+  update_entry_id: number;
+  knowledge_ids: number[];
+  content: string;
+  applicable_conditions: string;
+  boundary: string;
+  evidence_feedback_id: number;
+  status: string;
   created_at: string;
 }
 

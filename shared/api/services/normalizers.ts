@@ -49,6 +49,8 @@ export const normalizeDailyPlan = (value: any): DailyPlan | null => {
         ? value.do_tasks
         : [],
     suggestion: value.suggestion,
+    source: typeof value.source === 'string' ? value.source : undefined,
+    status: typeof value.status === 'string' ? value.status : undefined,
   };
 };
 
