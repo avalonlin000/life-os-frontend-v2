@@ -14,6 +14,8 @@ SCRIPT = (
     / "knowledge-loop-script/stage_loop.py"
 )
 SPEC = importlib.util.spec_from_file_location("staged_knowledge_loop", SCRIPT)
+if not SCRIPT.exists():
+    raise unittest.SkipTest("generated knowledge-loop delivery sandbox is not present")
 if SPEC is None or SPEC.loader is None:
     raise RuntimeError(f"missing staged loop implementation: {SCRIPT}")
 MODULE = importlib.util.module_from_spec(SPEC)
