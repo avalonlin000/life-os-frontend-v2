@@ -14,8 +14,9 @@
 | 数据层 | `src/modules/*/api.js`, `xiaoxue_api/modules/*/repository.py` | API、SQLite、Wiki/TK 与文件读取 |
 | 组合入口 | `src/main.js`, `main.py`, `xiaoxue_api/app.py` | 只装载模块和处理壳层导航，不承载业务逻辑 |
 | LOL 数据库 | `/home/ubuntu/lol_data/英雄联盟数据库.db` SQLite | 源数据：队伍、选手、赛程、三维、TS、market_notes |
-| Wiki/TK | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/` | 长期依据、知识沉淀、日报和队伍交易备注 |
-| RAG | `localhost:8768` knowledge-rag | TK 搜索和 reindex |
+| Wiki/TK | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/` | 长期依据、知识沉淀、日报和交易 TK |
+| MemPalace TK adapter | `localhost:8770`，`xiaoxue-tk-mempalace.service` | TK 搜索和增量 reindex 主入口；只检索 `xiaoxue-tk` |
+| 旧 RAG | `localhost:8768` knowledge-rag | unit、索引、日志和专属环境已删除；仅留离线代码归档，不参与运行 |
 | 日报管道 | `/home/ubuntu/lol_data/scripts/daily_pipeline.py` | 赛事注册→TK manifest→冻结材料→单一渲染→三端发布回读 |
 | 日报合同 | `daily_report_contract.py` | 模块顺序、来源、TK、豆包、禁入项和回读校验 |
 | 健康审计 | `/api/health`, `xiaoxue_daily_maintenance_report.py`, `acceptance_check.py` | 给系统审计的真实产物检查 |
@@ -85,7 +86,7 @@ Main Content：
       ├─ 队伍资料：全部队伍总览 / 单队画像 / 选手 / 三维 / 版本理解 / 队伍 TK
       ├─ 当前赛事：赛事环境 / 重点队伍 / 资料缺口 / 完整《交易预案》
       └─ TK资料库：长期 LOL 知识检索与阅读
-隐藏辅助：market_notes 临场记录
+隐藏辅助：market_notes 盘口记录
 TK Editor Overlay：filename · content · tags · team · save/close
 ```
 

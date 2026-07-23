@@ -17,23 +17,23 @@
 | 长期依据 | MSI 环境 | 基本面页 | `/api/fundamentals/msi` | fundamentals teams | 小雪电竞相关资料 |
 | 长期依据 | 队伍选择 | 顶部栏 / 横向表 | `/api/teams` | SQLite teams / rosters / 3D | - |
 | 长期依据 | 选手查看 | 队伍详情 | `/api/players?team=` | SQLite rosters | `30_队伍与选手/选手画像/` |
-| 长期依据 / 复盘校准 | 三维数据 | 3D 面板 | `/api/team-3d/{team}` | SQLite team_3d_data | - |
+| 长期依据 / 复盘校准 | 三维 | 3D 面板 | `/api/team-3d/{team}` | SQLite team_3d_data | - |
 | 长期依据 | 队伍画像 | 左侧画像栏 | `/api/profile-full/{team}` | Wiki / skill / DB 兜底 | `30_队伍与选手/队伍画像/` |
 | 长期依据 | 版本理解 | 版本理解面板 | `/api/version-understanding/{team}` | team_3d_data + TK | `20_游戏理解/版本理解/` |
 | 知识生产 | TK 搜索 | TK 面板 | `/api/tk/search` | RAG + Wiki | `40_TK知识/` |
 | 知识生产 | TK 新增/编辑/删除 | TK 编辑器 | `/api/tk` 系列 | Wiki + RAG reindex | `原始资料/tk/` |
 | 知识生产 | 概念图 | 基本面页 / 外链 | `/tk-graph/index.html` | TK 图谱服务 | - |
-| 单场判断 | TS 单场底表 | 今日内容 / 盘口草稿 | `/api/fundamentals/msi-match-context` | teams + msi_ts_seed | - |
+| 单场判断 | TS 表 | 今日内容 / 盘口记录 | `/api/fundamentals/msi-match-context` | teams + msi_ts_seed | - |
 | 单场判断 | 赛前交易判断日报 | 今日内容 | `/api/pre-match-trading-report`, `build_pre_match_trading_report.py` | schedules + TS + trading_note | `10_日报/赛前摘要/` |
 | 市场对照 | 临场手写记录 | 隐藏辅助 | `/api/market-notes` | SQLite market_notes | 可手动沉淀为 TK |
-| 市场对照 | 队伍交易备注 | 盘口页 / 日报 | `/api/team-trading-notes` | TK 结构块 | `原始资料/tk/` |
+| 市场对照 | 交易 TK | 盘口页 / 日报 | `/api/team-trading-notes` | 队伍 TK 结构块 | `原始资料/tk/` |
 | 兼容层 | 旧交易记录 | 不作为主流程 | `/api/trades` 系列 | SQLite trade_records | - |
 | 数据工程 | 日报单流水线 | 后台/cron | `daily_pipeline.py`, `daily_report_contract.py`, `build_daily_report.py` | 冻结 DailyContext + run manifest | `10_日报/每日日报/` + 飞书分卷 |
 | 数据工程 | 健康检查 | 运维 | `/api/health`, `xiaoxue_daily_maintenance_report.py` | DB + 文件 + HTTP | `99_系统维护/` |
 
 ---
 
-## 2. 横向基本面映射
+## 2. 队伍资料映射
 
 ### `/api/fundamentals/teams`
 
@@ -98,7 +98,7 @@ scope：
 | `score_note` | 赔率 / 比分 |
 | `reason` | 我的判断 / 市场分歧点 / 不碰项 |
 | `confidence` | 信心 |
-| `review` | 临场记录的复盘辅助文本；不能证明完整复盘主流程已走通 |
+| `review` | 盘口记录的复盘辅助文本；不能证明完整复盘主流程已走通 |
 | `linked_team` | 可选关联队伍 |
 
 语义：当前盘口手写判断主链路。
@@ -115,7 +115,7 @@ scope：
 
 ---
 
-## 5. 队伍交易备注映射
+## 5. 交易 TK 映射
 
 ### `/api/team-trading-notes`
 

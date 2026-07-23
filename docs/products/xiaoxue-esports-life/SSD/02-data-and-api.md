@@ -11,8 +11,9 @@
 |---|---|---|---|
 | LOL SQLite | `/home/ubuntu/lol_data/英雄联盟数据库.db` | 队伍、选手、赛程、三维、TS、market_notes、兼容 trade_records | 源数据 / 市场对照 |
 | 小雪电竞 Wiki | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/` | 队伍画像、选手画像、战术概念、日报、单场分析 | 长期依据 / 沉淀 |
-| TK 原始资料 | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/原始资料/tk/` | B站、微信、用户记录、手动 TK、队伍交易备注 | 知识生产 |
-| RAG API | `localhost:8768` | TK 搜索和重索引 | 知识检索 |
+| TK 原始资料 | `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/原始资料/tk/` | B站、微信、用户记录、手动 TK、交易 TK | 知识生产 |
+| MemPalace TK adapter | `localhost:8770` | `xiaoxue-tk` 搜索和增量重索引 | 知识检索主入口 |
+| 旧 RAG API | `localhost:8768` | 已删除；仅保留离线代码归档 | 退役兼容层 |
 | FastAPI | `/home/ubuntu/xiaoxue-web/main.py` | 工作台和模型使用的统一 API | 服务层 |
 | DailyContext | `/home/ubuntu/lol_data/scripts/daily_context_YYYY-MM-DD.json` | 日报渲染前上下文 | 模型上下文 / 审计 |
 | 舆论材料包 | `/home/ubuntu/lol_data/scripts/online_sources_YYYY-MM-DD.json` | 只服务 public_opinion | 证据 |
@@ -27,7 +28,7 @@
 | GET | `/api/teams` | 所有队伍列表 | teams / rosters / team_3d_data | 当前 |
 | GET | `/api/schedules` | 赛程背景查询，不做主赛程 App | schedules | 当前 |
 | GET | `/api/players?team=` | 队伍选手 | rosters | 当前 |
-| GET | `/api/fundamentals/teams?scope=` | 队伍横向基本面聚合 | teams + team_3d_data + Wiki + TK + TS | 当前 |
+| GET | `/api/fundamentals/teams?scope=` | 队伍资料总览 | teams + team_3d_data + Wiki + TK + TS | 当前 |
 | GET | `/api/fundamentals/msi` | MSI 国际赛环境聚合 | fundamentals teams | 当前 |
 | GET | `/api/fundamentals/msi-match-context` | 单场 TS / mu / sigma / risk_gap 对比 | teams + msi_ts_seed | 当前 |
 | GET | `/api/team-3d/{team}` | 查询队伍三维 | team_3d_data | 当前 |
@@ -35,12 +36,12 @@
 | GET | `/api/version-understanding/{team}` | 只读聚合版本理解 | team_3d_data + TK 文件 | 当前 |
 | GET | `/api/tk/library` | 按时间/月份/关键词/队伍分页浏览可读 TK | Wiki TK 文件 | 当前 |
 | GET | `/api/tk/entry/{filename}` | 读取单条 TK 完整正文，不截断 | Wiki TK 文件 | 当前 |
-| GET | `/api/tk/search` | TK 搜索 | RAG + Wiki 文件 | 当前 |
-| POST | `/api/tk` | 新建 TK | Wiki + RAG reindex | 当前 |
-| PUT | `/api/tk/{filename}` | 编辑 TK | Wiki + RAG reindex | 当前 |
-| DELETE | `/api/tk/{filename}` | 删除 TK | Wiki + RAG reindex | 当前 |
-| POST | `/api/team-trading-notes` | 写入队伍交易备注 | TK 文件 | 当前 |
-| POST | `/api/team-trading-notes/from-text` | 从“小雪记到 HLE：...”解析队伍交易备注 | TK 文件 | 当前 |
+| GET | `/api/tk/search` | TK 搜索 | MemPalace `xiaoxue-tk` + Wiki 文件 | 当前 |
+| POST | `/api/tk` | 新建 TK | Wiki + MemPalace reindex | 当前 |
+| PUT | `/api/tk/{filename}` | 编辑 TK | Wiki + MemPalace reindex | 当前 |
+| DELETE | `/api/tk/{filename}` | 删除 TK | Wiki + MemPalace reindex | 当前 |
+| POST | `/api/team-trading-notes` | 写入交易 TK（归入队伍 TK） | TK 文件 | 当前 |
+| POST | `/api/team-trading-notes/from-text` | 从“小雪记到 HLE：...”解析交易 TK | TK 文件 | 当前 |
 | GET | `/api/team-trading-notes/{team}` | 读取队伍 active/inactive 交易备注 | TK 文件结构块 | 当前 |
 | GET | `/api/pre-match-trading-report` | 只读预览赛前交易判断日报 | schedules + TS + team_trading_notes | 当前 |
 | GET | `/api/market-notes` | 盘口手写判断列表 | market_notes | 当前盘口主链路 |
@@ -67,7 +68,7 @@ date=today|YYYY-MM-DD
 白名单：
 
 - `LOL电竞日报_YYYY-MM-DD.md`
-- `MSI赛前内容卡_YYYY-MM-DD.md`
+- `MSI赛前内容卡_YYYY-MM-DD.md`（历史配置占位，不属于当前正式资料）
 - `赛前交易判断日报_YYYY-MM-DD.md`
 - `ANALYST-ENTRY-COPY.md`
 
@@ -202,7 +203,7 @@ source: junjun_manual
 边界：
 
 - 队伍不明确时不写正式 TK。
-- 队伍交易备注跟随队伍知识，不新增交易 TK 实体。
+- 交易 TK 跟随队伍 TK，不新增独立交易库；队内和日报按比赛优先显示。
 - 日报命中该队比赛时可读取 active 备注。
 
 ---
@@ -251,7 +252,7 @@ competition registry + SQLite/Wiki manifest
 | 场景 | 前端/系统展示 |
 |---|---|
 | 队伍列表失败 | “队伍数据加载失败” |
-| 横向基本面失败 | “横向基本面加载失败” |
+| 队伍资料失败 | “队伍资料加载失败” |
 | MSI 环境失败 | “MSI 环境数据不可用” |
 | 三维保存失败 | “保存失败，未写入数据库” |
 | TK 搜索失败 | “TK 搜索服务不可用” |
@@ -260,5 +261,5 @@ competition registry + SQLite/Wiki manifest
 | 当天有比赛但今日内容文件不存在 | 返回 `content_missing`，明确显示真实比赛与缺失内容 |
 | 今日内容状态无法确认 | 不猜测休赛日、不显示旧赛程，提示稍后重试 |
 | market_notes 保存失败 | “保存失败，稍后重试” |
-| 队伍交易备注队伍不明确 | 不写正式 TK，提示队伍未确认 |
+| 交易 TK 队伍不明确 | 不写正式 TK，提示队伍未确认 |
 | 数据不足 | “暂不推荐”或“资料不足”，不硬编方向 |

@@ -2,13 +2,13 @@
 
 > 审计范围：`/home/ubuntu/lol_data`
 > 审计目标：只读梳理 tk_library 兼容代码，不删除、不重构业务代码。
-> 当前口径：TK 主源已迁至 Wiki / knowledge-rag；SQLite `tk_library` 不再作为主知识库。
+> 当前口径：TK 主源已迁至 Wiki + MemPalace `xiaoxue-tk`（`127.0.0.1:8770`）；SQLite `tk_library` 不再作为主知识库，旧 `knowledge-rag:8768` 已删除。下文保留迁移前的兼容审计证据。
 
 ## 1. 结论
 
 `/home/ubuntu/lol_data` 中仍存在 `tk_library` 引用，但用途混杂：
 
-- 主运行链路已经转向 Wiki / knowledge-rag：`embedding_engine.search_tk()` 走 `http://localhost:8768/api/search`，`db_util.get_tk_by_content_for_report()` 走 `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/原始资料/tk/*.md`。
+- 主运行链路已经转向 Wiki + MemPalace：`embedding_engine.search_tk()` 走 `http://localhost:8770/api/search`，`db_util.get_tk_by_content_for_report()` 走 `/home/ubuntu/workspace/knowledge/wiki/小雪电竞/原始资料/tk/*.md`；旧 8768 已停用。
 - 当前数据库 `/home/ubuntu/lol_data/英雄联盟数据库.db` 不存在 `tk_library` 表；直接执行旧写入/旧 SQLite 查询函数会失败。
 - 最需要谨慎的是 `libs/db_util.py`：同一文件里既有已迁移的 RAG 查询函数，也保留了旧 SQLite 写入和查询函数，后续 agent 容易误判“还能往 tk_library 写 TK”。
 - 本次未修改任何 `/home/ubuntu/lol_data` 业务代码。
@@ -19,7 +19,7 @@
 |---|---|---|---|---|
 | 历史兼容可保留 | `shared/SYSTEM_MANUAL.md:3-5` | 声明 `tk_library` 只作历史兼容，不再作为主知识库 | 文档已明确历史口径 | 可保留；如后续清理文档，可继续保留“已废弃”提示 |
 | 历史兼容可保留 | `shared/SYSTEM_MANUAL.md:82-85` | `tk_library | 已 DROP | knowledge-rag` | 明确旧表已 DROP | 可保留作为迁移审计依据 |
-| 可能仍被运行链路调用，需要谨慎处理 | `libs/embedding_engine.py:307-353` | `search_tk()` 走 `http://localhost:8768/api/search`，`source: "tk"` | 名称仍叫 search_tk，但实际已是 knowledge-rag API，不再查 SQLite `tk_library` | 必须保留；后续可改文档/注释，把“tk”解释为知识源类型而非 SQLite 表 |
+| 已完成迁移 | `libs/embedding_engine.py:307-353` | `search_tk()` 现走 `http://localhost:8770/api/search` | 名称仍叫 search_tk，但实际是 MemPalace TK API，不查 SQLite `tk_library` | 已验证；旧 8768 运行代码已删除 |
 | 历史兼容可保留 | `libs/embedding_engine.py:283-290` | `get_unembedded_rows(table)` 对 `table == "tk_library"` 加 `is_active = 1` 条件 | 通用 embedding 回填工具的旧表兼容分支；当前未发现运行链路传入 `tk_library` | 可保留；若后续删除，先搜索 CLI/cron 是否仍调用 `get_unembedded_rows("tk_library")` |
 | 会误导后续 agent | `libs/db_util.py:147-175` | `normalize_tk_tags()` 文档写“规范化 tk_library 的选手标签” | 函数本身只是标签规范化，有复用价值；docstring 把它绑定到旧表，易误导 | 后续可只改注释：改成“TK 标签规范化，历史用于 tk_library，现用于迁移兼容/导入前处理” |
 | 可能仍被运行链路调用，需要谨慎处理 | `libs/db_util.py:1309-1373` | `query_tk_by_team()` 注释写 `tk_library 表已 DROP`，实际调用 `embedding_engine.search_tk()` | 这是已迁移的兼容查询入口；不查旧表，可能被日报/接口调用 | 必须保留；动前需跑日报生成、单场分析、前端 API 相关测试 |

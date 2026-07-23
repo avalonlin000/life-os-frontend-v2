@@ -12,7 +12,7 @@
 | 工作台 | 队伍资料、当前赛事、TK 资料库 | 日报副本、BP 输入、聊天、预案生成、三层对照、复盘入口 |
 | 小雪对话 | 查询解释、外部搜索、知识导入、预案、阵容判断、三层对照、交易讨论与复盘 | 自动交易执行 |
 
-临场记录使用 `market_notes`，作为隐藏辅助继续保留。
+盘口记录使用 `market_notes`，作为隐藏辅助继续保留。
 
 ---
 
@@ -21,11 +21,11 @@
 | 编号 | 能力层 | 功能 | 当前状态 | 主要入口 |
 |---|---|---|---|---|
 | F1 | 使用入口层 | 项目入口、阅读顺序、今日内容、命令栏、三轴路由 | 已有，需统一口径 | README / PROJECT_INDEX / 工作台顶部 |
-| F2 | 长期依据层 | LOL 横向基本面、MSI 环境、队伍/选手画像、三维、版本理解 | 已有，LOL 第一项目核心底座 | 基本面页 / PRD/03 |
-| F3 | 知识生产与沉淀层 | TK 搜索、TK CRUD、概念图、B站/公众号知识导入、队伍交易备注 | 已有 | TK 面板 / Wiki / RAG |
+| F2 | 长期依据层 | 队伍资料、MSI 环境、画像、三维、版本理解、队伍 TK | 已有，LOL 第一项目核心底座 | 队伍资料页 / PRD/03 |
+| F3 | 知识生产与沉淀层 | TK 搜索、TK CRUD、知识图、B站/公众号知识导入、交易 TK | 已有 | TK资料库 / Wiki / RAG |
 | F4 | 单场判断层 | 分析师入口、赛前底稿、TS 单场底表、赛前交易判断日报 | 已有第一阶段 | 今日内容 / 单场分析入口 |
 | F5 | 阵容变量层 | `lol-lineup-analysis` 纯十英雄阵容分析 v8.1：完整分析过程、版本契合、24场景、四阶段、固定32分30秒、比赛画像、观赛信号 | 当前可用；需清理旧前端模板 | 小雪对话 |
-| F6 | 市场对照层 | 盘口手写判断、market_notes、team_trading_notes、赔率/盘口分歧 | 已有第一阶段 | 盘口页 / 交易判断日报 |
+| F6 | 市场对照层 | 盘口记录、market_notes、交易 TK、赔率/盘口分歧 | 已有第一阶段 | 盘口记录 / 交易判断日报 |
 | F7 | 复盘校准层 | 赛后复盘、判断兑现度、BP 兑现度、画像/三维/TK 回写 | 部分已有，后续增强 | Wiki 赛后复盘 / market_notes review |
 | F8 | 数据工程与自动化层 | DailyContext、日报结构契约、单一 pipeline、cron 说明、health、acceptance | 已有 | CRON / SSD / scripts |
 
@@ -69,11 +69,11 @@
 
 | 功能 | API / 文档 | 说明 |
 |---|---|---|
-| 队伍横向表 | `/api/fundamentals/teams?scope=` | 聚合 teams、team_3d_data、Wiki、TK、TS 和资料状态 |
+| 队伍资料总览 | `/api/fundamentals/teams?scope=` | 聚合 teams、team_3d_data、Wiki、队伍 TK、TS 和资料状态 |
 | MSI 环境 | `/api/fundamentals/msi` | 国际赛环境研究，不是赛程表 |
-| 队伍画像 | `/api/profile-full/{team}` | Wiki 优先、skill 回退、数据库只读兜底 |
-| 队伍三维 | `/api/team-3d/{team}` | 优势局、劣势局、胜负手、战术笔记、版本理解 |
-| 版本理解 | `/api/version-understanding/{team}` | 只读聚合三维版本理解和 TK 版本条目 |
+| 画像 | `/api/profile-full/{team}` | Wiki 优先、skill 回退、数据库只读兜底 |
+| 三维 | `/api/team-3d/{team}` | 优势局、劣势局、胜负手和三维内战术笔记 |
+| 交易 TK 优先展示 | `/api/team-trading-notes/{team}` | 队伍 TK 内单列交易 TK，队内和日报按比赛优先显示 |
 | 概念图 | `/tk-graph/index.html?q=MSI` | TK 关系图和概念入口 |
 
 ### AC
@@ -107,7 +107,7 @@
 
 | ACID | 验收条件 |
 |---|---|
-| F3-1 | team_trading_notes 明确归属队伍知识，不新增交易 TK 实体。 |
+| F3-1 | 交易 TK 明确归属队伍 TK，不新增独立交易库。 |
 | F3-2 | 不恢复 `tk_library` 为主链路。 |
 | F3-3 | 舆论资料必须先进入材料包，再进入日报正文。 |
 
@@ -177,9 +177,9 @@
 
 | 功能 | API / 表 | 说明 |
 |---|---|---|
-| 盘口手写判断 | `/api/market-notes` / `market_notes` | 当前主链路 |
+| 盘口记录 | `/api/market-notes` / `market_notes` | 当前主链路 |
 | 旧交易记录 | `/api/trades` / `trade_records` | 兼容层，不回主流程 |
-| 队伍交易备注 | `/api/team-trading-notes` | 长期市场观察，跟随队伍 TK |
+| 交易 TK | `/api/team-trading-notes` | 长期市场观察，跟随队伍 TK |
 | 赛前交易判断层 | `/api/pre-match-trading-report` | 交易前发布物，不自动下单 |
 
 ### AC
@@ -202,7 +202,7 @@
 ### 输出去向
 
 - 队伍画像：长期结构变化。
-- 三维数据：优势局、劣势局、胜负手、版本理解。
+- 三维：优势局、劣势局、胜负手和三维内战术笔记。
 - TK：可复用战术/市场/阵容结论。
 - 日报/赛后复盘：当日可读沉淀。
 - `market_notes.review`：钧钧手写盘口复盘。

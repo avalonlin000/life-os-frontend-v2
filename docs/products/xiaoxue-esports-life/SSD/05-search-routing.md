@@ -12,7 +12,7 @@
 
 | 层 | 正源或工具 | 用途 |
 |---|---|---|
-| 内部事实层 | LOL 数据库、ScoreGG、Wiki、TK/RAG | 赛程、赛果、队伍、选手、TS、三维、历史知识 |
+| 内部事实层 | LOL 数据库、ScoreGG、Wiki、TK/MemPalace | 赛程、赛果、队伍、选手、TS、三维、历史知识；旧 RAG 已删除 |
 | 普通外部资料层 | Agent Reach（Exa、Jina、B站/YouTube、RSS） | 最新公告、新闻、外部链接、官方原文、视频发现 |
 | 正式舆情层 | `lol-daily-online-sources` + 豆包/byted 冻结包 | 日报赛前 `public_opinion` |
 | 判断层 | 小雪基本面、`lol-lineup-analysis`、日报渲染器 | 使用前三层证据形成分析；不由搜索器直接下结论 |
@@ -35,7 +35,7 @@
 
 - 不将 Agent Reach 自动接入日报 cron。
 - 不修改 `online_sources_YYYY-MM-DD.json` 或 `DailyContext` schema。
-- 不取代 TK/Wiki/RAG 内部搜索。
+- 不取代 TK/Wiki/MemPalace 内部搜索。
 - 不从网络摘要直接生成交易方向。
 - 不修改外部平台账号、Cookie、Token 或代理。
 
