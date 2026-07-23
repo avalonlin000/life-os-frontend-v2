@@ -1,0 +1,19 @@
+# ===== systemd: hermes-cron.timer — 采集定时器 =====
+# 每天 8:00/12:00/18:00/22:00 各跑一次
+
+[Unit]
+Description=Hermes 采集定时器（每日 4 次）
+Requires=hermes-cron.service
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+# 更精确的调度（上线后按需启用）：
+# OnCalendar=*-*-* 08:00:00
+# OnCalendar=*-*-* 12:00:00
+# OnCalendar=*-*-* 18:00:00
+# OnCalendar=*-*-* 22:00:00
+
+[Install]
+WantedBy=timers.target

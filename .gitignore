@@ -1,0 +1,54 @@
+# ===== Hermes 系统重构 · .gitignore =====
+
+# ── 环境变量 & 密钥 ──
+.env
+.env.local
+*.key
+*.pem
+
+# ── 数据库 ──
+*.db
+*.db-shm
+*.db-wal
+*.db.*
+*.sqlite
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+
+# ── Node / 前端（预留） ──
+node_modules/
+dist/
+.vite/
+
+# ── 飞书 ──
+feishu_seen_message_ids.json
+
+# ── IDE ──
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── 系统 ──
+.DS_Store
+Thumbs.db
+
+# ── 日志 ──
+*.log
+logs/
+
+# ── 临时文件 ──
+tmp/
+temp/
+*.bak
+*.bak-*
+*.tmp

@@ -1,0 +1,43 @@
+# ===== systemd: hermes-xiaoxue.service — 小雪后端 =====
+# 部署路径：/etc/systemd/system/hermes-xiaoxue.service
+# 用法：
+#   sudo cp deploy/systemd/hermes-xiaoxue.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable hermes-xiaoxue
+#   sudo systemctl start hermes-xiaoxue
+
+[Unit]
+Description=Hermes 小雪后端（LOL 数据管家 + 交易记录）
+Documentation=https://hermes-agent.nousresearch.com/docs
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/workspace/hermes-refactor/backend
+
+# 环境变量从 .env 加载（或通过 EnvironmentFile 指定）
+EnvironmentFile=/home/ubuntu/workspace/hermes-refactor/.env
+
+# 启动命令
+ExecStart=/usr/bin/python3 -m uvicorn app.main:app \
+  --host 0.0.0.0 \
+  --port 8880 \
+  --log-level info \
+  --workers 1
+
+# 重启策略
+Restart=always
+RestartSec=10
+
+# 资源限制
+LimitNOFILE=65536
+MemoryMax=512M
+
+# 日志
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
